@@ -1,0 +1,935 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dartfx.dataverse.dataverse &mdash; dartfx-dataverse 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            dartfx-dataverse
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#development-installation-current-method">Development Installation (Current Method)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#using-hatch-recommended-for-development">Using Hatch (Recommended for Development)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#dependencies">Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#core-dependencies">Core Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#optional-dependencies">Optional Dependencies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../installation.html#development-tools-dev">Development Tools (<code class="docutils literal notranslate"><span class="pre">[dev]</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../installation.html#documentation-tools-docs">Documentation Tools (<code class="docutils literal notranslate"><span class="pre">[docs]</span></code>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#installing-with-optional-dependencies">Installing with Optional Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#future-pypi-installation">Future PyPI Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#using-uv-recommended">Using uv (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#using-pip">Using pip</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#verifying-installation">Verifying Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#import-errors">Import Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../installation.html#ssl-certificate-errors">SSL Certificate Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#upgrading">Upgrading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#uninstalling">Uninstalling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quickstart Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#step-1-discover-dataverse-installations">Step 1: Discover Dataverse Installations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#step-2-connect-to-a-server">Step 2: Connect to a Server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../quickstart.html#with-api-key-optional">With API Key (Optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#step-3-search-for-data">Step 3: Search for Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../quickstart.html#advanced-search">Advanced Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#step-4-filter-and-refine">Step 4: Filter and Refine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#working-with-multiple-servers">Working with Multiple Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#handling-errors">Handling Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#configuring-caching">Configuring Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#next-steps">Next Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#common-use-cases">Common Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../quickstart.html#finding-datasets-by-subject">Finding Datasets by Subject</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../quickstart.html#searching-within-a-collection">Searching Within a Collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../quickstart.html#geographic-search">Geographic Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#getting-help">Getting Help</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#server-management">Server Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#creating-server-connections">Creating Server Connections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#configuration-options">Configuration Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#custom-session-configuration">Custom Session Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#server-information">Server Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#searching">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#simple-search">Simple Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#advanced-search-with-parameters">Advanced Search with Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#search-query-syntax">Search Query Syntax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#filtering-results">Filtering Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#faceted-search">Faceted Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#geographic-search">Geographic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#searching-multiple-types">Searching Multiple Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#pagination">Pagination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#error-handling">Error Handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#understanding-errors">Understanding Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#error-handling-modes">Error Handling Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#retry-logic">Retry Logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#use-caching">Use Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#rate-limiting">Rate Limiting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#validate-input">Validate Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#handle-missing-data">Handle Missing Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#working-with-multiple-installations">Working with Multiple Installations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#comparing-results-across-servers">Comparing Results Across Servers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../usage.html#advanced-topics">Advanced Topics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#custom-user-agent">Custom User Agent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#response-format-options">Response Format Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../usage.html#debugging">Debugging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-1-find-all-climate-datasets">Example 1: Find All Climate Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-2-compare-datasets-across-installations">Example 2: Compare Datasets Across Installations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-3-download-dataset-metadata">Example 3: Download Dataset Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-4-geographic-search-for-environmental-data">Example 4: Geographic Search for Environmental Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-5-build-a-dataset-catalog">Example 5: Build a Dataset Catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-6-find-datasets-by-author">Example 6: Find Datasets by Author</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-7-monitor-new-datasets">Example 7: Monitor New Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-8-subject-based-analysis">Example 8: Subject-Based Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-9-batch-export-dataset-information">Example 9: Batch Export Dataset Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#example-10-create-a-simple-search-interface">Example 10: Create a Simple Search Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../examples.html#more-examples">More Examples</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#quick-links">Quick Links</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#main-classes">Main Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#main-functions">Main Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#complete-api">Complete API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html">Server Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dataverseserver">DataverseServer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html">Search Functionality</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#searchparameters">SearchParameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#search-methods">Search Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#search-query-syntax">Search Query Syntax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html">Data Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#searchparameters">SearchParameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#working-with-models">Working with Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#type-hints">Type Hints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#optional-vs-required-fields">Optional vs Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#field-constraints">Field Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/models.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dataverseapierror">DataverseApiError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#common-http-status-codes">Common HTTP Status Codes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#best-practices">Best Practices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#related">Related</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/index.html#module-dartfx.dataverse">Module Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseApiError"><code class="docutils literal notranslate"><span class="pre">DataverseApiError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseApiError.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer"><code class="docutils literal notranslate"><span class="pre">DataverseServer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseServer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_info_api_terms"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_api_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_info_export_formats"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_export_formats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_info_server"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_server()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_info_version"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_info_zip_download_limit"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_zip_download_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_metadatablock"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_metadatablocks"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.get_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.post_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.post_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.search"><code class="docutils literal notranslate"><span class="pre">DataverseServer.search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.ssl_verify"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.user_agent"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.api_key"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.installation"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.on_api_error"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.on_api_success_return"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.DataverseServer.session"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters"><code class="docutils literal notranslate"><span class="pre">SearchParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.model_config"><code class="docutils literal notranslate"><span class="pre">SearchParameters.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.q"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.type"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.subtree"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.sort"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.order"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.per_page"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.start"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.show_relevance"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.show_facets"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.fq"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.show_entity_ids"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.geo_point"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.geo_radius"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.SearchParameters.metadata_fields"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation"><code class="docutils literal notranslate"><span class="pre">ServerInstallation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.model_config"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.name"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.description"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.lat"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.lng"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.hostname"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.metrics"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.launch_year"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.country"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.continent"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.harvesting_sets"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.core_trust_seals"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.gdcc_member"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.doi_authority"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.board"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.ServerInstallation.contact_email"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/index.html#dartfx.dataverse.fetch_dataverse_installations"><code class="docutils literal notranslate"><span class="pre">fetch_dataverse_installations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/server.html">Server Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/server.html#dataverseserver">DataverseServer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer"><code class="docutils literal notranslate"><span class="pre">DataverseServer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.installation"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.api_key"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.session"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.user_agent"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.ssl_verify"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.on_api_error"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.on_api_success_return"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id0"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id1"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseServer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id2"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id3"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id4"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id5"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id6"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.post_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.post_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_info_api_terms"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_api_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_info_export_formats"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_export_formats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_info_server"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_server()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_info_version"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_info_zip_download_limit"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_zip_download_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_metadatablocks"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.get_metadatablock"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.DataverseServer.search"><code class="docutils literal notranslate"><span class="pre">DataverseServer.search()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/server.html#serverinstallation">ServerInstallation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation"><code class="docutils literal notranslate"><span class="pre">ServerInstallation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.name"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.description"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.hostname"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.lat"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.lng"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.metrics"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.launch_year"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.country"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.continent"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.harvesting_sets"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.core_trust_seals"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.gdcc_member"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.doi_authority"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.board"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.contact_email"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id7"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id8"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id9"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id10"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id11"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id12"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id13"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id14"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id15"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id16"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id17"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id18"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id19"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id20"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#id21"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.ServerInstallation.model_config"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/server.html#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#dartfx.dataverse.fetch_dataverse_installations"><code class="docutils literal notranslate"><span class="pre">fetch_dataverse_installations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/server.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#creating-a-server-connection">Creating a Server Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#with-api-key">With API Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#custom-configuration">Custom Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/server.html#getting-server-information">Getting Server Information</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/search.html">Search Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/search.html#searchparameters">SearchParameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters"><code class="docutils literal notranslate"><span class="pre">SearchParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.q"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.type"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.subtree"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.sort"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.order"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.per_page"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.start"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.show_relevance"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.show_facets"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.fq"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.show_entity_ids"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.geo_point"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.geo_radius"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.metadata_fields"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id0"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id1"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id2"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id3"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id4"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id5"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id6"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id7"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id8"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id9"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id10"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id11"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id12"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#id13"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/search.html#dartfx.dataverse.SearchParameters.model_config"><code class="docutils literal notranslate"><span class="pre">SearchParameters.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/search.html#search-methods">Search Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#search">search()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#search-simple">search_simple()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/search.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#basic-search">Basic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#advanced-search-with-filters">Advanced Search with Filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#geographic-search">Geographic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#search-with-metadata-fields">Search with Metadata Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#faceted-search">Faceted Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#pagination">Pagination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#simple-search">Simple Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/search.html#search-query-syntax">Search Query Syntax</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#field-specific-search">Field-Specific Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#boolean-operators">Boolean Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#phrase-search">Phrase Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#wildcards">Wildcards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/search.html#range-queries">Range Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/search.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">Data Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#searchparameters">SearchParameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#working-with-models">Working with Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#creating-model-instances">Creating Model Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#from-dictionary">From Dictionary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#model-validation">Model Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#exporting-models">Exporting Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#model-fields">Model Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#updating-models">Updating Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#model-schema">Model Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#type-hints">Type Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#optional-vs-required-fields">Optional vs Required Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#id1">ServerInstallation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#id2">SearchParameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#field-constraints">Field Constraints</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#numeric-constraints">Numeric Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#string-literals">String Literals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/models.html#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#use-type-hints">Use Type Hints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#validate-early">Validate Early</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#use-model-dump-for-serialization">Use model_dump() for Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/models.html#exclude-none-values">Exclude None Values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/exceptions.html">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/exceptions.html#dataverseapierror">DataverseApiError</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError"><code class="docutils literal notranslate"><span class="pre">DataverseApiError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.message"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.url"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.status_code"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.status_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.response"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.response</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.__str__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__str__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/exceptions.html#common-http-status-codes">Common HTTP Status Codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/exceptions.html#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#basic-error-handling">Basic Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#handling-specific-status-codes">Handling Specific Status Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#accessing-response-details">Accessing Response Details</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#retry-on-specific-errors">Retry on Specific Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#logging-errors">Logging Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#silent-error-handling">Silent Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#graceful-degradation">Graceful Degradation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#multiple-exception-types">Multiple Exception Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/exceptions.html#context-managers">Context Managers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/exceptions.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/exceptions.html#related">Related</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#development-workflow">Development Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#making-changes">Making Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#code-style">Code Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#test-structure">Test Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#running-tests">Running Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#writing-documentation">Writing Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#docstring-format">Docstring Format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#submitting-changes">Submitting Changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#pull-request-process">Pull Request Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#pull-request-checklist">Pull Request Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#code-review">Code Review</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#what-we-look-for">What We Look For</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#review-process">Review Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#reporting-bugs">Reporting Bugs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#bug-report-guidelines">Bug Report Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#feature-requests">Feature Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#community-guidelines">Community Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#communication">Communication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#development-tips">Development Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#useful-commands">Useful Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#debugging-tests">Debugging Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#working-with-virtual-environments">Working with Virtual Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#release-process">Release Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../contributing.html#for-maintainers">For Maintainers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../contributing.html#thank-you">Thank You!</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#unreleased">[Unreleased]</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#added">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#xx-xx">[0.1.0] - 2024-XX-XX</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#id1">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#development">Development</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#id2">[0.0.1] - 2024-XX-XX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#planned-features">Planned Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#v0-2-0">v0.2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#v0-3-0">v0.3.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#v0-4-0">v0.4.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#v1-0-0">v1.0.0</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#migration-notes">Migration Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#upgrading-to-0-1-0">Upgrading to 0.1.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#future-breaking-changes">Future Breaking Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#version-support">Version Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#python-version-support">Python Version Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../changelog.html#dataverse-version-support">Dataverse Version Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../changelog.html#links">Links</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">dartfx-dataverse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">dartfx.dataverse.dataverse</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dartfx.dataverse.dataverse</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests_cache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.__about__</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+
+
+<div class="viewcode-block" id="ServerInstallation">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.ServerInstallation">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ServerInstallation</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a dataverse installation.</span>
+<span class="sd">    Based on the content of the data.json file in the dataverse-installations</span>
+<span class="sd">    repository at https://github.com/IQSS/dataverse-installations</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">lng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">hostname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">launch_year</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">country</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">continent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">harvesting_sets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">core_trust_seals</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">gdcc_member</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">doi_authority</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">board</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">contact_email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="fetch_dataverse_installations">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.fetch_dataverse_installations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_dataverse_installations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServerInstallation</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a list of dataverse installations from the main branch of the dataverse-installations GitHub repo&quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/IQSS/dataverse-installations/refs/heads/main/data/data.json&quot;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">servers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;installations&quot;</span><span class="p">):</span>
+        <span class="n">servers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ServerInstallation</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">servers</span></div>
+
+
+<div class="viewcode-block" id="DataverseApiError">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseApiError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataverseApiError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom exception for Dataverse API errors.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DataverseApiError.__init__">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseApiError.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">status_code</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="n">status_code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">response</span></div>
+
+
+<div class="viewcode-block" id="DataverseApiError.__str__">
+<a class="viewcode-back" href="../../../api/exceptions.html#dartfx.dataverse.DataverseApiError.__str__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">base_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">base_message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;; URL: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">url</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">status_code</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">base_message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;; Status Code: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">base_message</span></div>
+</div>
+
+
+<div class="viewcode-block" id="SearchParameters">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.SearchParameters">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SearchParameters</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the parameters that can be passed to the search endpoint.</span>
+<span class="sd">    See https://guides.dataverse.org/en/latest/api/search.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The search term or terms. Using “title:data” will search only the “title” field. “*” can be used as a wildcard either alone or adjacent to a term (i.e. “bird*”).&#39;</span><span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Can be either “dataverse”, “dataset”, or “file”. Multiple “type” parameters can be used to include multiple types&#39;</span><span class="p">)</span>
+    <span class="n">subtree</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The identifier of the Dataverse collection to which the search should be narrowed. The subtree of this Dataverse collection and all its children will be searched. Multiple “subtree” parameters can be used to include multiple Dataverse collections.&#39;</span><span class="p">)</span>
+    <span class="n">sort</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The sort field. Supported values include “name” and “date”.&#39;</span><span class="p">)</span>
+    <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The order in which to sort. Can either be “asc” or “desc”&#39;</span><span class="p">)</span>
+    <span class="n">per_page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The number of results to return per request. The default is 10. The max is 1000.&#39;</span><span class="p">)</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A cursor for paging through search results.&#39;</span><span class="p">)</span>
+    <span class="n">show_relevance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show details of which fields were matched by the query. False by default.&#39;</span><span class="p">)</span>
+    <span class="n">show_facets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show facets that can be operated on by the “fq” parameter. False by default.&#39;</span><span class="p">)</span>
+    <span class="n">fq</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A filter query on the search term. Multiple “fq” parameters can be used.&#39;</span><span class="p">)</span>
+    <span class="n">show_entity_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show the database IDs of the search results (for developer use).&#39;</span><span class="p">)</span>
+    <span class="n">geo_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Latitude and longitude in the form geo_point=42.3,-71.1. You must supply geo_radius as well.&#39;</span><span class="p">)</span>
+    <span class="n">geo_radius</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Radial distance in kilometers from geo_point (which must be supplied as well) such as geo_radius=1.5.&#39;</span><span class="p">)</span>
+    <span class="n">metadata_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Includes the requested fields for each dataset in the response. Multiple “metadata_fields” parameters can be used to include several fields.&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="_get_caller_name">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse._get_caller_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_caller_name</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the name of the function that called the current function.&quot;&quot;&quot;</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">caller_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span><span class="o">.</span><span class="n">f_back</span> <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_back</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># f_back of the current frame&#39;s caller</span>
+        <span class="k">return</span> <span class="n">caller_frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span> <span class="k">if</span> <span class="n">caller_frame</span> <span class="k">else</span> <span class="s2">&quot;&lt;unknown&gt;&quot;</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="c1"># Clean up to avoid reference cycles</span>
+        <span class="k">del</span> <span class="n">frame</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataverseServer</span><span class="p">:</span>
+    <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">installation</span><span class="p">:</span> <span class="n">ServerInstallation</span>
+    <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># controls how to handle API errors: &#39;raise&#39; | &#39;none&#39;</span>
+    <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># controls how to handle API success: &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
+    <span class="n">session</span><span class="p">:</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span>
+    <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dartfx-dataverse/</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">ssl_verify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># whether to verify SSL certificates when calling the API. Can also be set on request-cache session.</span>
+
+<div class="viewcode-block" id="DataverseServer.__init__">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">server</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ServerInstallation</span><span class="p">,</span> <span class="c1"># hostname or ServerInstallation</span>
+            <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="c1"># &#39;raise&#39; | &#39;none&#39;</span>
+            <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="c1"># &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
+            <span class="n">session</span><span class="p">:</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># requests_cache.CachedSession</span>
+            <span class="n">lookup_installation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># if true and server is a hostname, look up the installation</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># server</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="c1"># convert hostname to a ServerInstallation</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">server</span> <span class="o">=</span> <span class="n">ServerInstallation</span><span class="p">(</span><span class="n">hostname</span><span class="o">=</span><span class="n">server</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">lookup_installation</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">installation</span> <span class="ow">in</span> <span class="n">fetch_dataverse_installations</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="o">==</span> <span class="n">server</span><span class="o">.</span><span class="n">hostname</span><span class="p">:</span>
+                        <span class="n">server</span> <span class="o">=</span> <span class="n">installation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">ServerInstallation</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;server must be either a hostname or a ServerInstallation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">installation</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+        <span class="c1"># session</span>
+        <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Create a new session if one is not provided</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">,</span> <span class="n">cache_name</span><span class="o">=</span><span class="s1">&#39;dataverse&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
+        <span class="c1"># other params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">=</span> <span class="n">on_api_error</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">=</span> <span class="n">on_api_success_return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span></div>
+
+
+    <span class="c1">#</span>
+    <span class="c1"># API REQUESTS</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="DataverseServer.request">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.request">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the API.&quot;&quot;&quot;</span>
+        <span class="c1"># prepare headers</span>
+        <span class="n">default_headers</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
+            <span class="n">default_headers</span><span class="p">[</span><span class="s2">&quot;X-Dataverse-key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="n">default_headers</span> <span class="o">|</span> <span class="n">headers</span>
+        <span class="c1"># call the API</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="si">}</span><span class="s2">/api/</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_verify</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># handle response</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">success</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2"> -- JSONDecodeError: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">DataverseApiError</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+                    <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+            <span class="k">return</span> <span class="n">response</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">DataverseApiError</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.get_request">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_request">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the API using the GET method.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">_get_caller_name</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.post_request">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.post_request">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the API using the POST method.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
+            <span class="n">description</span> <span class="o">=</span> <span class="n">_get_caller_name</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+            <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1">#</span>
+    <span class="c1"># INFO</span>
+    <span class="c1">#</span>
+<div class="viewcode-block" id="DataverseServer.get_info_api_terms">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_api_terms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info_api_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get API Terms of Use. The response contains the text value inserted as API Terms of use which uses the database setting :ApiTermsOfUse:.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/apiTermsOfUse&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.get_info_export_formats">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_export_formats">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info_export_formats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the available export formats, including custom formats.</span>
+<span class="sd">        Introduced in version 6.5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/exportFormats&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.get_info_server">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_server">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info_server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the server name. This is useful when a Dataverse installation is composed of multiple app servers behind a load balancer.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/server&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.get_info_version">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_version">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the Dataverse installation version. The response contains the version and build numbers:.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/version&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataverseServer.get_info_zip_download_limit">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_zip_download_limit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_info_zip_download_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the configured zip file download limit. The response contains the long value of the limit in bytes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/zipDownloadLimit&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1">#</span>
+    <span class="c1"># METADATA BLOCKS</span>
+    <span class="c1">#</span>
+
+<div class="viewcode-block" id="DataverseServer.get_metadatablocks">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_metadatablocks">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadatablocks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Lists brief info about all metadata blocks registered in the system.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;metadatablocks&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DataverseServer.get_metadatablock">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_metadatablock">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metadatablock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return data about the block whose identifier is passed, including allowed controlled vocabulary values. identifier can either be the block’s database id, or its name (i.e. “citation”).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metadatablocks/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1">#</span>
+    <span class="c1"># SEARCH</span>
+    <span class="c1">#</span>
+
+<div class="viewcode-block" id="DataverseServer.search">
+<a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.search">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">SearchParameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Search for dataverses, datasets, and files.</span>
+
+<span class="sd">        References:</span>
+<span class="sd">        - https://guides.dataverse.org/en/latest/api/search.html</span>
+<span class="sd">        - https://github.com/IQSS/dataverse/issues/2558</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;search&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Search&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">parameters</span><span class="o">.</span><span class="n">model_dump</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2025, Pascal Heus (Data Artifex).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

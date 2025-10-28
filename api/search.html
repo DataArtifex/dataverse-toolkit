@@ -1,0 +1,1106 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Search Functionality &mdash; dartfx-dataverse 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Models" href="models.html" />
+    <link rel="prev" title="Server Classes" href="server.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            dartfx-dataverse
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#development-installation-current-method">Development Installation (Current Method)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#using-hatch-recommended-for-development">Using Hatch (Recommended for Development)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#dependencies">Dependencies</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#core-dependencies">Core Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#optional-dependencies">Optional Dependencies</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../installation.html#development-tools-dev">Development Tools (<code class="docutils literal notranslate"><span class="pre">[dev]</span></code>)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../installation.html#documentation-tools-docs">Documentation Tools (<code class="docutils literal notranslate"><span class="pre">[docs]</span></code>)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#installing-with-optional-dependencies">Installing with Optional Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#future-pypi-installation">Future PyPI Installation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#using-uv-recommended">Using uv (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#using-pip">Using pip</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#verifying-installation">Verifying Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting">Troubleshooting</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#import-errors">Import Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../installation.html#ssl-certificate-errors">SSL Certificate Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#upgrading">Upgrading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#uninstalling">Uninstalling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quickstart Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#basic-workflow">Basic Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#step-1-discover-dataverse-installations">Step 1: Discover Dataverse Installations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#step-2-connect-to-a-server">Step 2: Connect to a Server</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#with-api-key-optional">With API Key (Optional)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#step-3-search-for-data">Step 3: Search for Data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#advanced-search">Advanced Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#step-4-filter-and-refine">Step 4: Filter and Refine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#working-with-multiple-servers">Working with Multiple Servers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#handling-errors">Handling Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configuring-caching">Configuring Caching</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#next-steps">Next Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#common-use-cases">Common Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#finding-datasets-by-subject">Finding Datasets by Subject</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#searching-within-a-collection">Searching Within a Collection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../quickstart.html#geographic-search">Geographic Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#getting-help">Getting Help</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#server-management">Server Management</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#creating-server-connections">Creating Server Connections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#configuration-options">Configuration Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#custom-session-configuration">Custom Session Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#server-information">Server Information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#searching">Searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#simple-search">Simple Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#advanced-search-with-parameters">Advanced Search with Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#search-query-syntax">Search Query Syntax</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#filtering-results">Filtering Results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#faceted-search">Faceted Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#geographic-search">Geographic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#searching-multiple-types">Searching Multiple Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#pagination">Pagination</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#error-handling">Error Handling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#understanding-errors">Understanding Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#error-handling-modes">Error Handling Modes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#retry-logic">Retry Logic</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#use-caching">Use Caching</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#rate-limiting">Rate Limiting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#validate-input">Validate Input</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#handle-missing-data">Handle Missing Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#working-with-multiple-installations">Working with Multiple Installations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#comparing-results-across-servers">Comparing Results Across Servers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../usage.html#advanced-topics">Advanced Topics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#custom-user-agent">Custom User Agent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#response-format-options">Response Format Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../usage.html#debugging">Debugging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-1-find-all-climate-datasets">Example 1: Find All Climate Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-2-compare-datasets-across-installations">Example 2: Compare Datasets Across Installations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-3-download-dataset-metadata">Example 3: Download Dataset Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-4-geographic-search-for-environmental-data">Example 4: Geographic Search for Environmental Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-5-build-a-dataset-catalog">Example 5: Build a Dataset Catalog</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-6-find-datasets-by-author">Example 6: Find Datasets by Author</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-7-monitor-new-datasets">Example 7: Monitor New Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-8-subject-based-analysis">Example 8: Subject-Based Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-9-batch-export-dataset-information">Example 9: Batch Export Dataset Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#example-10-create-a-simple-search-interface">Example 10: Create a Simple Search Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../examples.html#more-examples">More Examples</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#quick-links">Quick Links</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#main-classes">Main Classes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#main-functions">Main Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#complete-api">Complete API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="server.html">Server Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dataverseserver">DataverseServer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Search Functionality</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#searchparameters">SearchParameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#search-methods">Search Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#search-query-syntax">Search Query Syntax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="models.html">Data Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="models.html#overview">Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#searchparameters">SearchParameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#working-with-models">Working with Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#type-hints">Type Hints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#optional-vs-required-fields">Optional vs Required Fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#field-constraints">Field Constraints</a></li>
+<li class="toctree-l4"><a class="reference internal" href="models.html#best-practices">Best Practices</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html">Exceptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dataverseapierror">DataverseApiError</a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#common-http-status-codes">Common HTTP Status Codes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#usage-examples">Usage Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#best-practices">Best Practices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#related">Related</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#module-dartfx.dataverse">Module Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseApiError"><code class="docutils literal notranslate"><span class="pre">DataverseApiError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseApiError.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer"><code class="docutils literal notranslate"><span class="pre">DataverseServer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseServer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_info_api_terms"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_api_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_info_export_formats"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_export_formats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_info_server"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_server()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_info_version"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_info_zip_download_limit"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_zip_download_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_metadatablock"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_metadatablocks"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.get_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.post_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.post_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.search"><code class="docutils literal notranslate"><span class="pre">DataverseServer.search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.ssl_verify"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.user_agent"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.api_key"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.installation"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.on_api_error"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.on_api_success_return"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.DataverseServer.session"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters"><code class="docutils literal notranslate"><span class="pre">SearchParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.model_config"><code class="docutils literal notranslate"><span class="pre">SearchParameters.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.q"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.type"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.subtree"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.sort"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.order"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.per_page"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.start"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.show_relevance"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.show_facets"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.fq"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.show_entity_ids"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.geo_point"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.geo_radius"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.SearchParameters.metadata_fields"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation"><code class="docutils literal notranslate"><span class="pre">ServerInstallation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.model_config"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.name"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.description"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.lat"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.lng"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.hostname"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.metrics"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.launch_year"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.country"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.continent"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.harvesting_sets"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.core_trust_seals"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.gdcc_member"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.doi_authority"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.board"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#dartfx.dataverse.ServerInstallation.contact_email"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#dartfx.dataverse.fetch_dataverse_installations"><code class="docutils literal notranslate"><span class="pre">fetch_dataverse_installations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="server.html">Server Classes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="server.html#dataverseserver">DataverseServer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer"><code class="docutils literal notranslate"><span class="pre">DataverseServer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.installation"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.api_key"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.session"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.user_agent"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.ssl_verify"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.on_api_error"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.on_api_success_return"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id0"><code class="docutils literal notranslate"><span class="pre">DataverseServer.user_agent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id1"><code class="docutils literal notranslate"><span class="pre">DataverseServer.ssl_verify</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseServer.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id2"><code class="docutils literal notranslate"><span class="pre">DataverseServer.installation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id3"><code class="docutils literal notranslate"><span class="pre">DataverseServer.api_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id4"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_error</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id5"><code class="docutils literal notranslate"><span class="pre">DataverseServer.on_api_success_return</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id6"><code class="docutils literal notranslate"><span class="pre">DataverseServer.session</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.post_request"><code class="docutils literal notranslate"><span class="pre">DataverseServer.post_request()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_info_api_terms"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_api_terms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_info_export_formats"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_export_formats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_info_server"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_server()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_info_version"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_version()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_info_zip_download_limit"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_info_zip_download_limit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_metadatablocks"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.get_metadatablock"><code class="docutils literal notranslate"><span class="pre">DataverseServer.get_metadatablock()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.DataverseServer.search"><code class="docutils literal notranslate"><span class="pre">DataverseServer.search()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="server.html#serverinstallation">ServerInstallation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation"><code class="docutils literal notranslate"><span class="pre">ServerInstallation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.name"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.description"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.hostname"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.lat"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.lng"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.metrics"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.launch_year"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.country"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.continent"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.harvesting_sets"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.core_trust_seals"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.gdcc_member"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.doi_authority"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.board"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.contact_email"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id7"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id8"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id9"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lat</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id10"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.lng</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id11"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.hostname</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id12"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.metrics</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id13"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.launch_year</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id14"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id15"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.continent</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id16"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.harvesting_sets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id17"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.core_trust_seals</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id18"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.gdcc_member</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id19"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.doi_authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id20"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.board</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#id21"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.contact_email</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="server.html#dartfx.dataverse.ServerInstallation.model_config"><code class="docutils literal notranslate"><span class="pre">ServerInstallation.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="server.html#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.html#dartfx.dataverse.fetch_dataverse_installations"><code class="docutils literal notranslate"><span class="pre">fetch_dataverse_installations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="server.html#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="server.html#creating-a-server-connection">Creating a Server Connection</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.html#with-api-key">With API Key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.html#custom-configuration">Custom Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="server.html#getting-server-information">Getting Server Information</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Search Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#searchparameters">SearchParameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dartfx.dataverse.SearchParameters"><code class="docutils literal notranslate"><span class="pre">SearchParameters</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.q"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.type"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.subtree"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.sort"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.order"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.per_page"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.start"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.show_relevance"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.show_facets"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.fq"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.show_entity_ids"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.geo_point"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.geo_radius"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.metadata_fields"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">SearchParameters.q</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">SearchParameters.type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">SearchParameters.subtree</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">SearchParameters.sort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">SearchParameters.order</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">SearchParameters.per_page</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">SearchParameters.start</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_relevance</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_facets</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">SearchParameters.fq</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">SearchParameters.show_entity_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_point</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">SearchParameters.geo_radius</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">SearchParameters.metadata_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dartfx.dataverse.SearchParameters.model_config"><code class="docutils literal notranslate"><span class="pre">SearchParameters.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#search-methods">Search Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#search">search()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-simple">search_simple()</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-search">Basic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-search-with-filters">Advanced Search with Filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#geographic-search">Geographic Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search-with-metadata-fields">Search with Metadata Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#faceted-search">Faceted Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pagination">Pagination</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-search">Simple Search</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#search-query-syntax">Search Query Syntax</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#field-specific-search">Field-Specific Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#boolean-operators">Boolean Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#phrase-search">Phrase Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#wildcards">Wildcards</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#range-queries">Range Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Data Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="models.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#serverinstallation">ServerInstallation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#searchparameters">SearchParameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#working-with-models">Working with Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#creating-model-instances">Creating Model Instances</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#from-dictionary">From Dictionary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#model-validation">Model Validation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#exporting-models">Exporting Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#model-fields">Model Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#updating-models">Updating Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#model-schema">Model Schema</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#type-hints">Type Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#optional-vs-required-fields">Optional vs Required Fields</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#id1">ServerInstallation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#id2">SearchParameters</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#field-constraints">Field Constraints</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#numeric-constraints">Numeric Constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#string-literals">String Literals</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="models.html#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="models.html#use-type-hints">Use Type Hints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#validate-early">Validate Early</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#use-model-dump-for-serialization">Use model_dump() for Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html#exclude-none-values">Exclude None Values</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exceptions.html">Exceptions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#dataverseapierror">DataverseApiError</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError"><code class="docutils literal notranslate"><span class="pre">DataverseApiError</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.message"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.url"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.status_code"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.status_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.response"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.response</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.__init__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="exceptions.html#dartfx.dataverse.DataverseApiError.__str__"><code class="docutils literal notranslate"><span class="pre">DataverseApiError.__str__()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#common-http-status-codes">Common HTTP Status Codes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#basic-error-handling">Basic Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#handling-specific-status-codes">Handling Specific Status Codes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#accessing-response-details">Accessing Response Details</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#retry-on-specific-errors">Retry on Specific Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#logging-errors">Logging Errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#silent-error-handling">Silent Error Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#graceful-degradation">Graceful Degradation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#multiple-exception-types">Multiple Exception Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="exceptions.html#context-managers">Context Managers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#best-practices">Best Practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="exceptions.html#related">Related</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#development-workflow">Development Workflow</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#making-changes">Making Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#code-style">Code Style</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#test-structure">Test Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#running-tests">Running Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#documentation">Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#writing-documentation">Writing Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#docstring-format">Docstring Format</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#submitting-changes">Submitting Changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#pull-request-process">Pull Request Process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#pull-request-checklist">Pull Request Checklist</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#code-review">Code Review</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#what-we-look-for">What We Look For</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#review-process">Review Process</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#reporting-bugs">Reporting Bugs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#bug-report-guidelines">Bug Report Guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#feature-requests">Feature Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#community-guidelines">Community Guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#code-of-conduct">Code of Conduct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#communication">Communication</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#getting-help">Getting Help</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#development-tips">Development Tips</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#useful-commands">Useful Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#debugging-tests">Debugging Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#working-with-virtual-environments">Working with Virtual Environments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#release-process">Release Process</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../contributing.html#for-maintainers">For Maintainers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#thank-you">Thank You!</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../changelog.html">Changelog</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#unreleased">[Unreleased]</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#added">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#changed">Changed</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#xx-xx">[0.1.0] - 2024-XX-XX</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#id1">Added</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#dependencies">Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#development">Development</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#id2">[0.0.1] - 2024-XX-XX</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#planned-features">Planned Features</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#v0-2-0">v0.2.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#v0-3-0">v0.3.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#v0-4-0">v0.4.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#v1-0-0">v1.0.0</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#migration-notes">Migration Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#upgrading-to-0-1-0">Upgrading to 0.1.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#future-breaking-changes">Future Breaking Changes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#version-support">Version Support</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#python-version-support">Python Version Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../changelog.html#dataverse-version-support">Dataverse Version Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#contributing">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../changelog.html#links">Links</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">dartfx-dataverse</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">API Reference</a></li>
+      <li class="breadcrumb-item active">Search Functionality</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/DataArtifex/dataverse-toolkit/blob/main/docs/source/api/search.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="search-functionality">
+<h1>Search Functionality<a class="headerlink" href="#search-functionality" title="Link to this heading"></a></h1>
+<p>This module provides search capabilities for querying Dataverse installations.</p>
+<section id="searchparameters">
+<h2>SearchParameters<a class="headerlink" href="#searchparameters" title="Link to this heading"></a></h2>
+<p>Model for specifying search query parameters.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dartfx.dataverse.</span></span><span class="sig-name descname"><span class="pre">SearchParameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subtree</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_relevance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_facets</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_entity_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_point</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geo_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dartfx/dataverse/dataverse.html#SearchParameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.SearchParameters" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel" title="(in Pydantic Validation v0.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></a></p>
+<p>Represents the parameters that can be passed to the search endpoint.
+See <a class="reference external" href="https://guides.dataverse.org/en/latest/api/search.html">https://guides.dataverse.org/en/latest/api/search.html</a></p>
+<p class="rubric">Parameters</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.q">
+<span class="sig-name descname"><span class="pre">q</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.q" title="Link to this definition"></a></dt>
+<dd><p>The search term or terms. Default is <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> (match all).</p>
+<ul class="simple">
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">&quot;title:data&quot;</span></code> to search only the <code class="docutils literal notranslate"><span class="pre">title</span></code> field</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code> as a wildcard (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;bird*&quot;</span></code>)</p></li>
+<li><p>Supports Boolean operators: <code class="docutils literal notranslate"><span class="pre">AND</span></code>, <code class="docutils literal notranslate"><span class="pre">OR</span></code>, <code class="docutils literal notranslate"><span class="pre">NOT</span></code></p></li>
+<li><p>Use quotes for phrase search: <code class="docutils literal notranslate"><span class="pre">&quot;climate</span> <span class="pre">change&quot;</span></code></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.type">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dataverse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dataset'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'file'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.type" title="Link to this definition"></a></dt>
+<dd><p>Filter by type. Can be:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;dataverse&quot;</span></code> - Search dataverse collections</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;dataset&quot;</span></code> - Search datasets only</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;file&quot;</span></code> - Search files only</p></li>
+<li><p>List of multiple types: <code class="docutils literal notranslate"><span class="pre">[&quot;dataset&quot;,</span> <span class="pre">&quot;file&quot;]</span></code></p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.subtree">
+<span class="sig-name descname"><span class="pre">subtree</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.subtree" title="Link to this definition"></a></dt>
+<dd><p>Identifier of a Dataverse collection to narrow the search.
+The subtree and all its children will be searched.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'name'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'date'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.sort" title="Link to this definition"></a></dt>
+<dd><p>Sort field for results:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;name&quot;</span></code> - Sort by name</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;date&quot;</span></code> - Sort by date</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.order">
+<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.order" title="Link to this definition"></a></dt>
+<dd><p>Sort order:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;asc&quot;</span></code> - Ascending order</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;desc&quot;</span></code> - Descending order</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.per_page">
+<span class="sig-name descname"><span class="pre">per_page</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.per_page" title="Link to this definition"></a></dt>
+<dd><p>Number of results per request.</p>
+<ul class="simple">
+<li><p>Default: 10</p></li>
+<li><p>Minimum: 1</p></li>
+<li><p>Maximum: 1000</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.start">
+<span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.start" title="Link to this definition"></a></dt>
+<dd><p>Cursor for pagination. Starting position for results.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.show_relevance">
+<span class="sig-name descname"><span class="pre">show_relevance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.show_relevance" title="Link to this definition"></a></dt>
+<dd><p>Whether to show which fields were matched by the query.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.show_facets">
+<span class="sig-name descname"><span class="pre">show_facets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.show_facets" title="Link to this definition"></a></dt>
+<dd><p>Whether to show facets for filtering results.
+Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.fq">
+<span class="sig-name descname"><span class="pre">fq</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.fq" title="Link to this definition"></a></dt>
+<dd><p>Filter queries to narrow results. Examples:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[&quot;publicationDate:[2020</span> <span class="pre">TO</span> <span class="pre">*]&quot;]</span></code> - From 2020 onwards</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[&quot;authorName:Smith&quot;]</span></code> - Author is Smith</p></li>
+<li><p>Multiple filters can be combined</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.show_entity_ids">
+<span class="sig-name descname"><span class="pre">show_entity_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.show_entity_ids" title="Link to this definition"></a></dt>
+<dd><p>Whether to show database IDs in results (for developers).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.geo_point">
+<span class="sig-name descname"><span class="pre">geo_point</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.geo_point" title="Link to this definition"></a></dt>
+<dd><p>Geographic point in format <code class="docutils literal notranslate"><span class="pre">&quot;latitude,longitude&quot;</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;42.3,-71.1&quot;</span></code>).
+Must be used with <code class="docutils literal notranslate"><span class="pre">geo_radius</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.geo_radius">
+<span class="sig-name descname"><span class="pre">geo_radius</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.geo_radius" title="Link to this definition"></a></dt>
+<dd><p>Radial distance in kilometers from <code class="docutils literal notranslate"><span class="pre">geo_point</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;1.5&quot;</span></code>).
+Must be used with <code class="docutils literal notranslate"><span class="pre">geo_point</span></code>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.metadata_fields">
+<span class="sig-name descname"><span class="pre">metadata_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.metadata_fields" title="Link to this definition"></a></dt>
+<dd><p>Specific metadata fields to include in response.
+Multiple fields can be requested.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">q</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dataverse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dataset'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'file'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'dataverse'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'dataset'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'file'</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">subtree</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">sort</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'name'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'date'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">order</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Literal" title="(in Python v3.14)"><span class="pre">Literal</span></a><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'asc'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'desc'</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">per_page</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">show_relevance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">show_facets</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">fq</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">show_entity_ids</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">geo_point</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">geo_radius</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">metadata_fields</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="dartfx.dataverse.SearchParameters.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#dartfx.dataverse.SearchParameters.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="search-methods">
+<h2>Search Methods<a class="headerlink" href="#search-methods" title="Link to this heading"></a></h2>
+<p>These methods are available on the <a class="reference internal" href="../modules.html#dartfx.dataverse.DataverseServer" title="dartfx.dataverse.DataverseServer"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataverseServer</span></code></a> class.</p>
+<section id="search">
+<h3>search()<a class="headerlink" href="#search" title="Link to this heading"></a></h3>
+<p>Perform a search with detailed parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">SearchParameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute a search query with specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parameters: SearchParameters object with query details</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Search results with metadata and items</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DataverseApiError: If the API request fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="search-simple">
+<h3>search_simple()<a class="headerlink" href="#search-simple" title="Link to this heading"></a></h3>
+<p>Perform a simple text search without creating a SearchParameters object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">search_simple</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">per_page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Execute a simple search query.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        query: Search term(s)</span>
+<span class="sd">        start: Starting position for results</span>
+<span class="sd">        per_page: Number of results per page</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Search results</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        DataverseApiError: If the API request fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading"></a></h2>
+<section id="basic-search">
+<h3>Basic Search<a class="headerlink" href="#basic-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dartfx.dataverse</span><span class="w"> </span><span class="kn">import</span> <span class="n">SearchParameters</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;climate change&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">per_page</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="advanced-search-with-filters">
+<h3>Advanced Search with Filters<a class="headerlink" href="#advanced-search-with-filters" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;title:education AND description:data&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">fq</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;publicationDate:[2020 TO 2024]&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;authorName:Smith&quot;</span>
+    <span class="p">],</span>
+    <span class="n">sort</span><span class="o">=</span><span class="s2">&quot;date&quot;</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="s2">&quot;desc&quot;</span><span class="p">,</span>
+    <span class="n">per_page</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">show_facets</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="geographic-search">
+<h3>Geographic Search<a class="headerlink" href="#geographic-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">geo_point</span><span class="o">=</span><span class="s2">&quot;42.3601,-71.0589&quot;</span><span class="p">,</span>  <span class="c1"># Boston, MA</span>
+    <span class="n">geo_radius</span><span class="o">=</span><span class="s2">&quot;50&quot;</span><span class="p">,</span>                <span class="c1"># 50 km</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="search-with-metadata-fields">
+<h3>Search with Metadata Fields<a class="headerlink" href="#search-with-metadata-fields" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;health&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">metadata_fields</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;citation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;identifier&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;subjects&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;authorName&quot;</span>
+    <span class="p">],</span>
+    <span class="n">per_page</span><span class="o">=</span><span class="mi">10</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="faceted-search">
+<h3>Faceted Search<a class="headerlink" href="#faceted-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+    <span class="n">show_facets</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="c1"># Access facets</span>
+<span class="k">if</span> <span class="s1">&#39;facets&#39;</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]:</span>
+    <span class="k">for</span> <span class="n">facet</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;facets&#39;</span><span class="p">]:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Facet: </span><span class="si">{</span><span class="n">facet</span><span class="p">[</span><span class="s1">&#39;friendly_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">facet</span><span class="p">[</span><span class="s1">&#39;labels&#39;</span><span class="p">]:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">label</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">label</span><span class="p">[</span><span class="s1">&#39;count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pagination">
+<h3>Pagination<a class="headerlink" href="#pagination" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Page 1</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">,</span>
+    <span class="n">per_page</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+    <span class="n">start</span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
+<span class="n">page1</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="c1"># Page 2</span>
+<span class="n">params</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">page2</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+<span class="c1"># Page 3</span>
+<span class="n">params</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">page3</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="simple-search">
+<h3>Simple Search<a class="headerlink" href="#simple-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick search without SearchParameters</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">search_simple</span><span class="p">(</span><span class="s2">&quot;climate&quot;</span><span class="p">,</span> <span class="n">per_page</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;total_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> results&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">][</span><span class="s1">&#39;items&#39;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;- </span><span class="si">{</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="search-query-syntax">
+<h2>Search Query Syntax<a class="headerlink" href="#search-query-syntax" title="Link to this heading"></a></h2>
+<p>The search query supports Solr syntax:</p>
+<section id="field-specific-search">
+<h3>Field-Specific Search<a class="headerlink" href="#field-specific-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;title:climate&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;authorName:Smith&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;description:temperature&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="boolean-operators">
+<h3>Boolean Operators<a class="headerlink" href="#boolean-operators" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;climate AND temperature&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;climate OR weather&quot;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;climate NOT politics&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="phrase-search">
+<h3>Phrase Search<a class="headerlink" href="#phrase-search" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s1">&#39;&quot;climate change&quot;&#39;</span><span class="p">)</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s1">&#39;&quot;data analysis&quot;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="wildcards">
+<h3>Wildcards<a class="headerlink" href="#wildcards" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;climat*&quot;</span><span class="p">)</span>     <span class="c1"># Prefix</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;*climate*&quot;</span><span class="p">)</span>   <span class="c1"># Contains</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="s2">&quot;climat?&quot;</span><span class="p">)</span>     <span class="c1"># Single character</span>
+</pre></div>
+</div>
+</section>
+<section id="range-queries">
+<h3>Range Queries<a class="headerlink" href="#range-queries" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Date range in filter</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">fq</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;publicationDate:[2020 TO 2024]&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Numeric range</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">SearchParameters</span><span class="p">(</span>
+    <span class="n">q</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+    <span class="n">fq</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fileCount:[10 TO 100]&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="response-format">
+<h2>Response Format<a class="headerlink" href="#response-format" title="Link to this heading"></a></h2>
+<p>Search results are returned as a dictionary with the following structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;OK&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;total_count&quot;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+        <span class="s2">&quot;start&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Dataset Name&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;https://...&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;identifier&quot;</span><span class="p">:</span> <span class="s2">&quot;doi:...&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;published_at&quot;</span><span class="p">:</span> <span class="s2">&quot;2024-01-15&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;...&quot;</span><span class="p">,</span>
+                <span class="c1"># Additional fields...</span>
+            <span class="p">},</span>
+            <span class="c1"># More items...</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;facets&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;subject_ss&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;friendly_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Subject&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">[</span>
+                    <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Medicine&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">45</span><span class="p">},</span>
+                    <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;Social Sciences&quot;</span><span class="p">,</span> <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">},</span>
+                    <span class="c1"># More labels...</span>
+                <span class="p">]</span>
+            <span class="p">},</span>
+            <span class="c1"># More facets...</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="server.html" class="btn btn-neutral float-left" title="Server Classes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="models.html" class="btn btn-neutral float-right" title="Data Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2025, Pascal Heus (Data Artifex).</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

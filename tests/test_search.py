@@ -1,35 +1,35 @@
-from dartfx.dataverse.dataverse import SearchParameters
+from dartfx.dataverse.dataverse import DataverseServer, SearchParameters
 
 
-def test_harvard_demo_all(test_server):
+def test_harvard_demo_all(test_server: DataverseServer) -> None:
     params = SearchParameters()
     data = test_server.search(params)
     print(data)
     assert data
 
 
-def test_search_all_dataverses(test_server):
+def test_search_all_dataverses(test_server: DataverseServer) -> None:
     params = SearchParameters(type=["dataverse"], per_page=1)
     data = test_server.search(params)
     print(data)
     assert data
 
 
-def test_search_all_datasets(test_server):
+def test_search_all_datasets(test_server: DataverseServer) -> None:
     params = SearchParameters(type=["dataset"], per_page=1)
     data = test_server.search(params)
     print(data)
     assert data
 
 
-def test_search_all_files(test_server):
+def test_search_all_files(test_server: DataverseServer) -> None:
     params = SearchParameters(type=["file"], per_page=1)
     data = test_server.search(params)
     print(data)
     assert data
 
 
-def test_search_all_files_and_datasets(test_server):
+def test_search_all_files_and_datasets(test_server: DataverseServer) -> None:
     params = SearchParameters(type="dataset", per_page=1)
     data = test_server.search(params)
     total_datasets = data["data"]["total_count"]

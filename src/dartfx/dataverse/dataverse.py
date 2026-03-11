@@ -1,7 +1,7 @@
 import inspect
 import json
 import logging
-from typing import Literal
+from typing import Any, Literal
 
 import requests
 import requests_cache
@@ -48,14 +48,20 @@ def fetch_dataverse_installations() -> list[ServerInstallation]:
 class DataverseApiError(Exception):
     """Custom exception for Dataverse API errors."""
 
-    def __init__(self, message, url, status_code=None, response=None):
+    def __init__(
+        self,
+        message: str,
+        url: str,
+        status_code: int | None = None,
+        response: requests.Response | None = None,
+    ) -> None:
         super().__init__(message)
         self.message = message
         self.url = url
         self.status_code = status_code
         self.response = response
 
-    def __str__(self):
+    def __str__(self) -> str:
         base_message = f"{self.message}"
         base_message += f"; URL: {self.url}"
         if self.status_code is not None:
@@ -197,7 +203,15 @@ class DataverseServer:
     #
     # API REQUESTS
     #
-    def request(self, method, path, description=None, headers=None, success=200, **kwargs):
+    def request(
+        self,
+        method: str,
+        path: str,
+        description: str | None = None,
+        headers: dict[str, str] | None = None,
+        success: int = 200,
+        **kwargs: Any,
+    ) -> Any:
         """Call the API."""
         # prepare headers
         default_headers = {"Content-Type": "application/json", "User-Agent": self.user_agent}
@@ -226,10 +240,17 @@ class DataverseServer:
         logging.error(f"{description} -- {response.status_code}")
         logging.error(response.text)
         if self.on_api_error != "none":
-            raise DataverseApiError(description, path, response.status_code, response)
+            raise DataverseApiError(description or "Dataverse API Error", path, response.status_code, response)
         return None
 
-    def get_request(self, path, description=None, headers=None, success=200, **kwargs):
+    def get_request(
+        self,
+        path: str,
+        description: str | None = None,
+        headers: dict[str, str] | None = None,
+        success: int = 200,
+        **kwargs: Any,
+    ) -> Any:
         """Call the API using the GET method."""
         if headers is None:
             headers = {}
@@ -237,7 +258,14 @@ class DataverseServer:
             description = _get_caller_name()
         return self.request("get", path, description, headers=headers, success=success, **kwargs)
 
-    def post_request(self, path, description=None, headers=None, success=200, **kwargs):
+    def post_request(
+        self,
+        path: str,
+        description: str | None = None,
+        headers: dict[str, str] | None = None,
+        success: int = 200,
+        **kwargs: Any,
+    ) -> Any:
         """Call the API using the POST method."""
         if headers is None:
             headers = {}
@@ -248,7 +276,7 @@ class DataverseServer:
     #
     # INFO
     #
-    def get_info_api_terms(self):
+    def get_info_api_terms(self) -> Any:
         """Get API Terms of Use.
 
         The response contains the text value inserted as API Terms of use
@@ -256,13 +284,13 @@ class DataverseServer:
         """
         return self.get_request("info/apiTermsOfUse")
 
-    def get_info_export_formats(self):
+    def get_info_export_formats(self) -> Any:
         """Get the available export formats, including custom formats.
         Introduced in version 6.5
         """
         return self.get_request("info/exportFormats")
 
-    def get_info_server(self):
+    def get_info_server(self) -> Any:
         """Get the server name.
 
         This is useful when a Dataverse installation is composed of multiple app
@@ -270,11 +298,11 @@ class DataverseServer:
         """
         return self.get_request("info/server")
 
-    def get_info_version(self):
+    def get_info_version(self) -> Any:
         """Get the Dataverse installation version. The response contains the version and build numbers:."""
         return self.get_request("info/version")
 
-    def get_info_zip_download_limit(self):
+    def get_info_zip_download_limit(self) -> Any:
         """Get the configured zip file download limit. The response contains the long value of the limit in bytes."""
         return self.get_request("info/zipDownloadLimit")
 
@@ -282,11 +310,11 @@ class DataverseServer:
     # METADATA BLOCKS
     #
 
-    def get_metadatablocks(self):
+    def get_metadatablocks(self) -> Any:
         """Lists brief info about all metadata blocks registered in the system."""
         return self.get_request("metadatablocks")
 
-    def get_metadatablock(self, identifier: str):
+    def get_metadatablock(self, identifier: str) -> Any:
         """Return data about the block whose identifier is passed, including
         allowed controlled vocabulary values. identifier can either be the
         block’s database id, or its name (i.e. “citation”).
@@ -297,7 +325,7 @@ class DataverseServer:
     # SEARCH
     #
 
-    def search(self, parameters: SearchParameters):
+    def search(self, parameters: SearchParameters) -> Any:
         """Search for dataverses, datasets, and files.
 
         References:

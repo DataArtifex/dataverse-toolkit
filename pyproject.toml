@@ -67,7 +67,7 @@ python = ["3.12", "3.13"]
 [tool.hatch.envs.types]
 dependencies = [{ include-group = "dev" }]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src/dartfx/dataverse tests}"
+check = "mypy --install-types --non-interactive {args:src tests}"
 
 [tool.hatch.envs.docs]
 dependencies = [{ include-group = "docs" }]
@@ -130,3 +130,13 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.12"
+mypy_path = "src"
+explicit_package_bases = true
+strict = true
+warn_unreachable = true
+pretty = true
+show_error_codes = true
+show_error_context = true

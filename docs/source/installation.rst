@@ -2,8 +2,8 @@ Installation
 ============
 
 .. important::
-   **This package is not yet published on PyPI.** Please use the development 
-   installation method below. Once the package is stable, it will be released 
+   **This package is not yet published on PyPI.** Please use the development
+   installation method below. Once the package is stable, it will be released
    on PyPI for easier installation.
 
 Requirements
@@ -14,8 +14,8 @@ Requirements
 * Git (for cloning the repository)
 
 .. note::
-   We recommend using `uv <https://github.com/astral-sh/uv>`_, a fast Python package 
-   installer and resolver written in Rust. It's significantly faster than pip and 
+   We recommend using `uv <https://github.com/astral-sh/uv>`_, a fast Python package
+   installer and resolver written in Rust. It's significantly faster than pip and
    provides better dependency resolution.
 
 Development Installation (Current Method)
@@ -38,10 +38,10 @@ Since the package is not yet on PyPI, you must clone the repository and install 
 
       # Install uv if you haven't already
       curl -LsSf https://astral.sh/uv/install.sh | sh
-      
+
       # Install the package in editable mode
       uv pip install -e .
-      
+
       # Or with development dependencies
       uv pip install -e ".[dev]"
 
@@ -50,7 +50,7 @@ Since the package is not yet on PyPI, you must clone the repository and install 
    .. code-block:: bash
 
       pip install -e .
-      
+
       # Or with development dependencies
       pip install -e ".[dev]"
 
@@ -63,7 +63,7 @@ This project uses Hatch for development. Hatch will automatically use uv if avai
 
    # Install Hatch (will use uv if available)
    uv tool install hatch
-   
+
    # Or using pip
    pip install hatch
 
@@ -149,10 +149,10 @@ Using uv (Recommended)
 
    # Install uv if you haven't already
    curl -LsSf https://astral.sh/uv/install.sh | sh
-   
+
    # Install the package
    uv pip install dartfx-dataverse
-   
+
    # With optional dependencies
    uv pip install dartfx-dataverse[dev,docs]
 
@@ -162,7 +162,7 @@ Using pip
 .. code-block:: bash
 
    pip install dartfx-dataverse
-   
+
    # With optional dependencies
    pip install dartfx-dataverse[dev,docs]
 
@@ -175,7 +175,7 @@ To verify that the package is installed correctly:
 
    import dartfx.dataverse
    from dartfx.dataverse.__about__ import __version__
-   
+
    print(f"dartfx-dataverse version: {__version__}")
 
 You should see the version number printed without any errors.
@@ -200,16 +200,16 @@ If you encounter SSL certificate errors when connecting to Dataverse servers:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer
-   
+
    # Disable SSL verification (not recommended for production)
    server = DataverseServer(
-       installation=installation,
+       server=installation,
        ssl_verify=False
    )
 
 .. warning::
-   Disabling SSL verification should only be done in development environments 
-   or when absolutely necessary. It makes your connection vulnerable to 
+   Disabling SSL verification should only be done in development environments
+   or when absolutely necessary. It makes your connection vulnerable to
    man-in-the-middle attacks.
 
 Upgrading
@@ -243,6 +243,6 @@ To uninstall the package:
 .. code-block:: bash
 
    uv pip uninstall dartfx-dataverse
-   
+
    # Or using pip
    pip uninstall dartfx-dataverse

@@ -16,15 +16,15 @@ dartfx-dataverse Documentation
 **A Python toolkit for interacting with Dataverse repositories**
 
 .. warning::
-   This project is in its early development stages. Stability is not guaranteed, 
+   This project is in its early development stages. Stability is not guaranteed,
    and documentation is limited. We welcome your feedback and contributions.
 
 Overview
 --------
 
-``dartfx-dataverse`` is a Python package that facilitates interactions with Dataverse 
-server installations via their API. The package focuses on discovery and access rather 
-than content management, making it ideal for researchers and data scientists who need 
+``dartfx-dataverse`` is a Python package that facilitates interactions with Dataverse
+server installations via their API. The package focuses on discovery and access rather
+than content management, making it ideal for researchers and data scientists who need
 to programmatically search and retrieve data from Dataverse repositories.
 
 Key Features
@@ -47,7 +47,7 @@ Installation
    # Using uv (recommended - fast and reliable)
    curl -LsSf https://astral.sh/uv/install.sh | sh
    uv pip install dartfx-dataverse
-   
+
    # Or using pip
    pip install dartfx-dataverse
 
@@ -62,7 +62,7 @@ Get a list of all known Dataverse installations:
 .. code-block:: python
 
    from dartfx.dataverse import fetch_dataverse_installations
-   
+
    installations = fetch_dataverse_installations()
    for installation in installations:
        print(f"{installation.name}: {installation.hostname}")
@@ -75,16 +75,16 @@ Create a connection to a specific Dataverse server:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation
-   
+
    # Create a server installation object
    server_info = ServerInstallation(
        name="Harvard Dataverse",
        hostname="dataverse.harvard.edu"
    )
-   
+
    # Connect to the server
-   server = DataverseServer(installation=server_info)
-   
+   server = DataverseServer(server_info)
+
    # Get server information
    info = server.get_server_info()
    print(info)
@@ -97,7 +97,7 @@ Perform searches across datasets:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, SearchParameters
-   
+
    # Search with parameters
    params = SearchParameters(
        q="climate change",
@@ -106,7 +106,7 @@ Perform searches across datasets:
        sort="date",
        order="desc"
    )
-   
+
    results = server.search(params)
    for item in results['data']['items']:
        print(f"{item['name']} - {item.get('description', 'No description')}")
@@ -117,7 +117,7 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
    :caption: User Guide
-   
+
    installation
    quickstart
    usage
@@ -126,7 +126,7 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
-   
+
    api/index
    api/server
    api/search
@@ -136,7 +136,7 @@ Table of Contents
 .. toctree::
    :maxdepth: 1
    :caption: Development
-   
+
    contributing
    changelog
 

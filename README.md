@@ -68,10 +68,10 @@ To install the package, clone the repository and install locally:
    ```bash
    # Install Hatch
    uv tool install hatch
-   
+
    # Activate development environment
    hatch shell
-   
+
    # Run tests
    hatch run test
    ```
@@ -126,11 +126,11 @@ harvard = ServerInstallation(
 )
 
 # Create server connection
-server = DataverseServer(installation=harvard)
+server = DataverseServer(harvard)
 
 # Get server information
 info = server.get_server_info()
-print(f"Server version: {info['data']['version']}")
+print(f"Server version: {info['status']}")
 ```
 
 ### Search for Datasets

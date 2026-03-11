@@ -307,6 +307,10 @@ class DataverseServer(BaseModel):
         """
         return self.get_request("info/server")
 
+    def get_server_info(self) -> Any:
+        """Alias for get_info_server."""
+        return self.get_info_server()
+
     def get_info_version(self) -> Any:
         """Get the Dataverse installation version. The response contains the version and build numbers:."""
         return self.get_request("info/version")
@@ -334,6 +338,16 @@ class DataverseServer(BaseModel):
     # SEARCH
     #
 
+    def search_simple(self, q: str, **kwargs: Any) -> Any:
+        """Search for dataverses, datasets, and files using a simple query string.
+
+        Args:
+            q: The search query string.
+            **kwargs: Additional search parameters (type, sort, order, per_page, start, etc.)
+        """
+        params = SearchParameters(q=q, **kwargs)
+        return self.search(params)
+
     def search(self, parameters: SearchParameters) -> Any:
         """Search for dataverses, datasets, and files.
 
@@ -342,4 +356,4 @@ class DataverseServer(BaseModel):
         - https://github.com/IQSS/dataverse/issues/2558
 
         """
-        return self.get_request("search", description="Search", params=parameters.model_dump())
+        return self.get_request("search", description="Search", params=parameters.model_dump(exclude_none=True))

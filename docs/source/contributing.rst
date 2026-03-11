@@ -23,10 +23,10 @@ Getting Started
 
       # Install uv first (recommended)
       curl -LsSf https://astral.sh/uv/install.sh | sh
-      
+
       # Install Hatch
       uv tool install hatch
-      
+
       # Or using pip
       pip install hatch
 
@@ -90,7 +90,7 @@ Code Style
 
 We use Ruff for linting and formatting. The configuration is in ``pyproject.toml``.
 
-* Line length: 100 characters
+* Line length: 120 characters
 * Follow PEP 8 guidelines
 * Use type hints for all functions
 * Write descriptive docstrings
@@ -108,20 +108,20 @@ Tests are located in the ``tests/`` directory. We use pytest for testing.
    # tests/test_feature.py
    import pytest
    from dartfx.dataverse import DataverseServer, ServerInstallation
-   
+
    def test_my_feature():
        """Test description."""
        # Arrange
        server = DataverseServer(
-           installation=ServerInstallation(
+           server=ServerInstallation(
                name="Test",
                hostname="test.example.com"
            )
        )
-       
+
        # Act
        result = server.some_method()
-       
+
        # Assert
        assert result is not None
        assert isinstance(result, dict)
@@ -133,13 +133,13 @@ Running Tests
 
    # Run all tests
    hatch run test
-   
+
    # Run specific test file
    hatch run test tests/test_search.py
-   
+
    # Run specific test
    hatch run test tests/test_search.py::test_search_simple
-   
+
    # Run with coverage
    hatch run cov
 
@@ -180,23 +180,23 @@ We use Google-style docstrings:
 
    def search(self, query: str, per_page: int = 10) -> dict:
        """Execute a search query.
-       
+
        This method searches the Dataverse installation using the
        provided query parameters.
-       
+
        Args:
            query: The search term or terms to query for
            per_page: Number of results to return per page
-           
+
        Returns:
            A dictionary containing search results and metadata
-           
+
        Raises:
            DataverseApiError: If the API request fails
-           
+
        Example:
-           >>> server = DataverseServer(installation=inst)
-           >>> results = server.search("climate")
+           >>> server = DataverseServer(inst)
+           >>> results = server.search_simple("climate")
            >>> print(results['data']['total_count'])
        """
        pass
@@ -228,7 +228,7 @@ Pull Request Process
    * Click "New Pull Request"
    * Select your fork and branch
    * Fill out the PR template with:
-     
+
      * Description of changes
      * Related issues
      * Testing performed
@@ -287,7 +287,7 @@ When reporting bugs, please include:
 3. **Expected Behavior**: What you expected to happen
 4. **Actual Behavior**: What actually happened
 5. **Environment**:
-   
+
    * Python version
    * Package version
    * Operating system
@@ -300,12 +300,12 @@ Example Bug Report:
 
    ## Bug Description
    Search fails when using geo_point parameter
-   
+
    ## Steps to Reproduce
    ```python
    from dartfx.dataverse import DataverseServer, SearchParameters
-   
-   server = DataverseServer(installation=...)
+
+   server = DataverseServer(installation)
    params = SearchParameters(
        q="*",
        geo_point="42.3,-71.1",
@@ -313,13 +313,13 @@ Example Bug Report:
    )
    results = server.search(params)  # Fails here
    ```
-   
+
    ## Expected Behavior
    Should return search results within 10km radius
-   
+
    ## Actual Behavior
    Raises DataverseApiError with status 400
-   
+
    ## Environment
    - Python: 3.12.0
    - dartfx-dataverse: 0.1.0
@@ -375,25 +375,25 @@ Useful Commands
 
    # Run all tests
    hatch run test
-   
+
    # Run tests with coverage
    hatch run cov
-   
+
    # Type checking
    hatch run types:check
-   
+
    # Format code
    ruff format .
-   
+
    # Lint code
    ruff check .
-   
+
    # Fix linting issues
    ruff check . --fix
-   
+
    # Build documentation
    hatch run docs:build
-   
+
    # Serve documentation locally
    hatch run docs:serve
 
@@ -404,10 +404,10 @@ Debugging Tests
 
    # Run with verbose output
    hatch run test -v
-   
+
    # Run with print statements
    hatch run test -s
-   
+
    # Drop into debugger on failure
    hatch run test --pdb
 
@@ -418,13 +418,13 @@ Working with Virtual Environments
 
    # Create environment
    hatch env create
-   
+
    # Activate shell
    hatch shell
-   
+
    # Run command in environment
    hatch run python --version
-   
+
    # Remove environment
    hatch env remove
 
@@ -449,5 +449,5 @@ For Maintainers
 Thank You!
 ----------
 
-Thank you for contributing to ``dartfx-dataverse``! Your contributions help 
+Thank you for contributing to ``dartfx-dataverse``! Your contributions help
 make this project better for everyone.

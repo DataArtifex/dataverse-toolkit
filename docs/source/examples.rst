@@ -11,15 +11,15 @@ Search for all datasets related to climate change published in the last 5 years:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
-   
+
    # Connect to Harvard Dataverse
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Search for climate datasets from 2020 onwards
    params = SearchParameters(
        q="climate change OR global warming",
@@ -30,11 +30,11 @@ Search for all datasets related to climate change published in the last 5 years:
        per_page=50,
        show_facets=True
    )
-   
+
    results = server.search(params)
-   
+
    print(f"Found {results['data']['total_count']} datasets\n")
-   
+
    # Display results
    for idx, item in enumerate(results['data']['items'], 1):
        print(f"{idx}. {item['name']}")
@@ -51,26 +51,26 @@ Search for datasets across multiple Dataverse installations and compare results:
 
    from dartfx.dataverse import fetch_dataverse_installations, DataverseServer
    import pandas as pd
-   
+
    # Get all installations
    installations = fetch_dataverse_installations()
-   
+
    # Filter for specific installations with active hostnames
    target_installations = [
-       i for i in installations 
-       if i.hostname and any(name in i.name.lower() 
+       i for i in installations
+       if i.hostname and any(name in i.name.lower()
            for name in ['harvard', 'demo', 'johns hopkins'])
    ]
-   
+
    # Search across installations
    search_query = "COVID-19"
    results_data = []
-   
+
    for installation in target_installations:
        try:
-           server = DataverseServer(installation=installation)
+           server = DataverseServer(installation)
            results = server.search_simple(search_query, per_page=1)
-           
+
            results_data.append({
                'Installation': installation.name,
                'Country': installation.country or 'N/A',
@@ -79,7 +79,7 @@ Search for datasets across multiple Dataverse installations and compare results:
            })
        except Exception as e:
            print(f"Error with {installation.name}: {e}")
-   
+
    # Create DataFrame and display
    df = pd.DataFrame(results_data)
    df = df.sort_values('Total Results', ascending=False)
@@ -94,14 +94,14 @@ Retrieve detailed metadata for datasets matching a query:
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
    import json
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Demo Dataverse",
            hostname="demo.dataverse.org"
        )
    )
-   
+
    # Search with metadata fields
    params = SearchParameters(
        q="education",
@@ -114,9 +114,9 @@ Retrieve detailed metadata for datasets matching a query:
            "subjects"
        ]
    )
-   
+
    results = server.search(params)
-   
+
    # Save metadata to file
    metadata_list = []
    for item in results['data']['items']:
@@ -128,11 +128,11 @@ Retrieve detailed metadata for datasets matching a query:
            'url': item.get('url')
        }
        metadata_list.append(metadata)
-   
+
    # Save to JSON file
    with open('dataset_metadata.json', 'w') as f:
        json.dump(metadata_list, f, indent=2)
-   
+
    print(f"Saved metadata for {len(metadata_list)} datasets")
 
 Example 4: Geographic Search for Environmental Data
@@ -143,14 +143,14 @@ Find environmental datasets within a specific geographic area:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Search within 100km of Boston, MA
    params = SearchParameters(
        q="environment OR ecology OR biodiversity",
@@ -160,11 +160,11 @@ Find environmental datasets within a specific geographic area:
        per_page=25,
        show_facets=True
    )
-   
+
    results = server.search(params)
-   
+
    print(f"Found {results['data']['total_count']} datasets within 100km of Boston\n")
-   
+
    for item in results['data']['items']:
        print(f"- {item['name']}")
        if 'geolocation' in item:
@@ -180,21 +180,21 @@ Create a catalog of datasets from a specific dataverse collection:
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
    from datetime import datetime
    import csv
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Function to paginate through all results
    def get_all_datasets(server, subtree, max_results=1000):
        """Retrieve all datasets from a dataverse collection."""
        datasets = []
        per_page = 100
        start = 0
-       
+
        while len(datasets) < max_results:
            params = SearchParameters(
                q="*",
@@ -205,35 +205,35 @@ Create a catalog of datasets from a specific dataverse collection:
                sort="date",
                order="desc"
            )
-           
+
            try:
                results = server.search(params)
                items = results['data']['items']
-               
+
                if not items:
                    break
-               
+
                datasets.extend(items)
                start += per_page
-               
+
                print(f"Retrieved {len(datasets)} datasets...")
-               
+
            except Exception as e:
                print(f"Error: {e}")
                break
-       
+
        return datasets[:max_results]
-   
+
    # Get datasets from a specific dataverse
    datasets = get_all_datasets(server, "your-dataverse-name", max_results=500)
-   
+
    # Export to CSV
    with open('dataset_catalog.csv', 'w', newline='', encoding='utf-8') as f:
        writer = csv.DictWriter(f, fieldnames=[
            'name', 'identifier', 'type', 'url', 'published_at', 'description'
        ])
        writer.writeheader()
-       
+
        for ds in datasets:
            writer.writerow({
                'name': ds.get('name', ''),
@@ -243,7 +243,7 @@ Create a catalog of datasets from a specific dataverse collection:
                'published_at': ds.get('published_at', ''),
                'description': ds.get('description', '')[:200]  # Truncate
            })
-   
+
    print(f"\nExported {len(datasets)} datasets to dataset_catalog.csv")
 
 Example 6: Find Datasets by Author
@@ -254,14 +254,14 @@ Search for all datasets by a specific author:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Search by author name
    author_name = "Smith"
    params = SearchParameters(
@@ -272,11 +272,11 @@ Search for all datasets by a specific author:
        order="desc",
        show_facets=True
    )
-   
+
    results = server.search(params)
-   
+
    print(f"Datasets by {author_name}: {results['data']['total_count']}\n")
-   
+
    for item in results['data']['items']:
        print(f"Title: {item['name']}")
        if 'authors' in item:
@@ -294,21 +294,21 @@ Check for newly published datasets since a specific date:
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
    from datetime import datetime, timedelta
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Calculate date range (last 7 days)
    end_date = datetime.now()
    start_date = end_date - timedelta(days=7)
-   
+
    # Format dates for Dataverse query
    date_query = f"publicationDate:[{start_date.strftime('%Y-%m-%d')} TO {end_date.strftime('%Y-%m-%d')}]"
-   
+
    params = SearchParameters(
        q="*",
        type="dataset",
@@ -317,11 +317,11 @@ Check for newly published datasets since a specific date:
        order="desc",
        per_page=100
    )
-   
+
    results = server.search(params)
-   
+
    print(f"New datasets in the last 7 days: {results['data']['total_count']}\n")
-   
+
    for item in results['data']['items']:
        print(f"- {item['name']}")
        print(f"  Published: {item.get('published_at')}")
@@ -337,14 +337,14 @@ Analyze the distribution of datasets across different subjects:
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
    from collections import Counter
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # Search with facets enabled
    params = SearchParameters(
        q="*",
@@ -352,9 +352,9 @@ Analyze the distribution of datasets across different subjects:
        per_page=100,
        show_facets=True
    )
-   
+
    results = server.search(params)
-   
+
    # Extract subject facets
    subject_counts = {}
    if 'facets' in results['data']:
@@ -362,7 +362,7 @@ Analyze the distribution of datasets across different subjects:
            if facet.get('name') == 'subject_ss':
                for label in facet.get('labels', []):
                    subject_counts[label['label']] = label['count']
-   
+
    # Display top 10 subjects
    print("Top 10 Subjects:\n")
    for subject, count in sorted(subject_counts.items(), key=lambda x: x[1], reverse=True)[:10]:
@@ -377,23 +377,23 @@ Export information for multiple datasets based on identifiers:
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
    import json
-   
+
    server = DataverseServer(
-       installation=ServerInstallation(
+       server=ServerInstallation(
            name="Harvard Dataverse",
            hostname="dataverse.harvard.edu"
        )
    )
-   
+
    # List of dataset identifiers to export
    dataset_identifiers = [
        "doi:10.7910/DVN/XXXXX1",
        "doi:10.7910/DVN/XXXXX2",
        "doi:10.7910/DVN/XXXXX3",
    ]
-   
+
    exported_data = []
-   
+
    for identifier in dataset_identifiers:
        try:
            params = SearchParameters(
@@ -401,9 +401,9 @@ Export information for multiple datasets based on identifiers:
                type="dataset",
                per_page=1
            )
-           
+
            results = server.search(params)
-           
+
            if results['data']['items']:
                item = results['data']['items'][0]
                exported_data.append({
@@ -416,14 +416,14 @@ Export information for multiple datasets based on identifiers:
                print(f"✓ Exported: {identifier}")
            else:
                print(f"✗ Not found: {identifier}")
-       
+
        except Exception as e:
            print(f"✗ Error with {identifier}: {e}")
-   
+
    # Save to file
    with open('batch_export.json', 'w') as f:
        json.dump(exported_data, f, indent=2)
-   
+
    print(f"\nExported {len(exported_data)} datasets")
 
 Example 10: Create a Simple Search Interface
@@ -434,36 +434,36 @@ Build a simple command-line search interface:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation, SearchParameters
-   
+
    def search_interface():
        """Simple interactive search interface."""
-       
+
        # Setup server
        server = DataverseServer(
-           installation=ServerInstallation(
+           server=ServerInstallation(
                name="Harvard Dataverse",
                hostname="dataverse.harvard.edu"
            )
        )
-       
+
        print("=== Dataverse Search Interface ===\n")
-       
+
        while True:
            # Get search query
            query = input("Enter search term (or 'quit' to exit): ").strip()
-           
+
            if query.lower() == 'quit':
                break
-           
+
            if not query:
                continue
-           
+
            # Get number of results
            try:
                num_results = int(input("Number of results (default 10): ") or "10")
            except ValueError:
                num_results = 10
-           
+
            # Perform search
            try:
                params = SearchParameters(
@@ -471,20 +471,20 @@ Build a simple command-line search interface:
                    type="dataset",
                    per_page=num_results
                )
-               
+
                results = server.search(params)
-               
+
                print(f"\nFound {results['data']['total_count']} total results")
                print(f"Showing top {len(results['data']['items'])}:\n")
-               
+
                for idx, item in enumerate(results['data']['items'], 1):
                    print(f"{idx}. {item['name']}")
                    print(f"   {item.get('url', 'N/A')}")
                    print()
-               
+
            except Exception as e:
                print(f"Error: {e}\n")
-   
+
    if __name__ == "__main__":
        search_interface()
 

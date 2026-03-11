@@ -37,8 +37,8 @@ def get_server(hostname: str, api_key: str | None = None) -> DataverseServer:
 
 @app.command()
 def installations(
-    format: Annotated[OutputFormat, typer.Option(help="Output format")] = OutputFormat.TABLE,
-    limit: Annotated[int | None, typer.Option(help="Limit the number of results")] = None,
+    format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
+    limit: Annotated[int | None, typer.Option("--limit", "-l", help="Limit the number of results")] = None,
 ) -> None:
     """List worldwide Dataverse installations."""
     with console.status("[bold green]Fetching installations..."):
@@ -85,7 +85,7 @@ def installations(
 @app.command()
 def info(
     hostname: Annotated[str, typer.Argument(help="Dataverse server hostname")],
-    api_key: Annotated[str | None, typer.Option(envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
 ) -> None:
     """Get information about a specific Dataverse server."""
     server = get_server(hostname, api_key)
@@ -105,11 +105,13 @@ def info(
 @app.command()
 def search(
     query: Annotated[str, typer.Argument(help="Search query")],
-    hostname: Annotated[str, typer.Option(help="Dataverse server hostname")] = "dataverse.harvard.edu",
-    type: Annotated[str | None, typer.Option(help="Type of object (dataverse, dataset, file)")] = None,
-    per_page: Annotated[int, typer.Option(help="Results per page")] = 10,
-    format: Annotated[OutputFormat, typer.Option(help="Output format")] = OutputFormat.TABLE,
-    api_key: Annotated[str | None, typer.Option(envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    hostname: Annotated[
+        str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
+    ] = "dataverse.harvard.edu",
+    type: Annotated[str | None, typer.Option("--type", "-t", help="Type of object (dataverse, dataset, file)")] = None,
+    per_page: Annotated[int, typer.Option("--per-page", "-p", help="Results per page")] = 10,
+    format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
+    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
 ) -> None:
     """Search for dataverses, datasets, and files."""
     server = get_server(hostname, api_key)
@@ -165,8 +167,8 @@ def search(
 @app.command()
 def metadatablocks(
     hostname: Annotated[str, typer.Argument(help="Dataverse server hostname")],
-    format: Annotated[OutputFormat, typer.Option(help="Output format")] = OutputFormat.TABLE,
-    api_key: Annotated[str | None, typer.Option(envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
+    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
 ) -> None:
     """List metadata blocks for a specific Dataverse server."""
     server = get_server(hostname, api_key)

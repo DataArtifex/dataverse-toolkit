@@ -609,10 +609,14 @@
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dartfx.dataverse.</span></span><span class="sig-name descname"><span class="pre">DataverseApiError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseApiError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseApiError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Custom exception for Dataverse API errors.</p>
+<dl class="field-list simple">
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseApiError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseApiError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseApiError.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -635,6 +639,8 @@
 <dd><p>Get API Terms of Use.</p>
 <p>The response contains the text value inserted as API Terms of use
 which uses the database setting :ApiTermsOfUse:.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -642,6 +648,8 @@ which uses the database setting :ApiTermsOfUse:.</p>
 <span class="sig-name descname"><span class="pre">get_info_export_formats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_export_formats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.get_info_export_formats" title="Link to this definition"></a></dt>
 <dd><p>Get the available export formats, including custom formats.
 Introduced in version 6.5</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -650,18 +658,24 @@ Introduced in version 6.5</p>
 <dd><p>Get the server name.</p>
 <p>This is useful when a Dataverse installation is composed of multiple app
 servers behind a load balancer.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.get_info_version">
 <span class="sig-name descname"><span class="pre">get_info_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.get_info_version" title="Link to this definition"></a></dt>
 <dd><p>Get the Dataverse installation version. The response contains the version and build numbers:.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.get_info_zip_download_limit">
 <span class="sig-name descname"><span class="pre">get_info_zip_download_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_zip_download_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.get_info_zip_download_limit" title="Link to this definition"></a></dt>
 <dd><p>Get the configured zip file download limit. The response contains the long value of the limit in bytes.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -678,24 +692,32 @@ block’s database id, or its name (i.e. “citation”).</p>
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.get_metadatablocks">
 <span class="sig-name descname"><span class="pre">get_metadatablocks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_metadatablocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.get_metadatablocks" title="Link to this definition"></a></dt>
 <dd><p>Lists brief info about all metadata blocks registered in the system.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.get_request">
 <span class="sig-name descname"><span class="pre">get_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.get_request" title="Link to this definition"></a></dt>
 <dd><p>Call the API using the GET method.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.post_request">
 <span class="sig-name descname"><span class="pre">post_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.post_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.post_request" title="Link to this definition"></a></dt>
 <dd><p>Call the API using the POST method.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.DataverseServer.request">
 <span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.DataverseServer.request" title="Link to this definition"></a></dt>
 <dd><p>Call the API.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1045,10 +1067,14 @@ repository at <a class="reference external" href="https://github.com/IQSS/datave
 <em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dartfx.dataverse.dataverse.</span></span><span class="sig-name descname"><span class="pre">DataverseApiError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseApiError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseApiError" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
 <p>Custom exception for Dataverse API errors.</p>
+<dl class="field-list simple">
+</dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseApiError.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseApiError.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseApiError.__init__" title="Link to this definition"></a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -1203,18 +1229,24 @@ See <a class="reference external" href="https://guides.dataverse.org/en/latest/a
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.request">
 <span class="sig-name descname"><span class="pre">request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.request" title="Link to this definition"></a></dt>
 <dd><p>Call the API.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.get_request">
 <span class="sig-name descname"><span class="pre">get_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.get_request" title="Link to this definition"></a></dt>
 <dd><p>Call the API using the GET method.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.post_request">
 <span class="sig-name descname"><span class="pre">post_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">success</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.post_request"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.post_request" title="Link to this definition"></a></dt>
 <dd><p>Call the API using the POST method.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1223,6 +1255,8 @@ See <a class="reference external" href="https://guides.dataverse.org/en/latest/a
 <dd><p>Get API Terms of Use.</p>
 <p>The response contains the text value inserted as API Terms of use
 which uses the database setting :ApiTermsOfUse:.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1230,6 +1264,8 @@ which uses the database setting :ApiTermsOfUse:.</p>
 <span class="sig-name descname"><span class="pre">get_info_export_formats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_export_formats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.get_info_export_formats" title="Link to this definition"></a></dt>
 <dd><p>Get the available export formats, including custom formats.
 Introduced in version 6.5</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1238,24 +1274,32 @@ Introduced in version 6.5</p>
 <dd><p>Get the server name.</p>
 <p>This is useful when a Dataverse installation is composed of multiple app
 servers behind a load balancer.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.get_info_version">
 <span class="sig-name descname"><span class="pre">get_info_version</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_version"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.get_info_version" title="Link to this definition"></a></dt>
 <dd><p>Get the Dataverse installation version. The response contains the version and build numbers:.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.get_info_zip_download_limit">
 <span class="sig-name descname"><span class="pre">get_info_zip_download_limit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_info_zip_download_limit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.get_info_zip_download_limit" title="Link to this definition"></a></dt>
 <dd><p>Get the configured zip file download limit. The response contains the long value of the limit in bytes.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="dartfx.dataverse.dataverse.DataverseServer.get_metadatablocks">
 <span class="sig-name descname"><span class="pre">get_metadatablocks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dartfx/dataverse/dataverse.html#DataverseServer.get_metadatablocks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dartfx.dataverse.dataverse.DataverseServer.get_metadatablocks" title="Link to this definition"></a></dt>
 <dd><p>Lists brief info about all metadata blocks registered in the system.</p>
+<dl class="field-list simple">
+</dl>
 </dd></dl>
 
 <dl class="py method">

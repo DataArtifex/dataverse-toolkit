@@ -5,7 +5,7 @@ from typing import Any, Literal
 
 import requests
 import requests_cache
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .__about__ import __version__
 
@@ -155,50 +155,59 @@ def _get_caller_name() -> str:
         del frame
 
 
-class DataverseServer:
-    api_key: str | None
+class DataverseServer(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     installation: ServerInstallation
-    on_api_error: str  # controls how to handle API errors: 'raise' | 'none'
-    on_api_success_return: str  # controls how to handle API success: 'json' | 'text' | 'response'
-    session: requests_cache.CachedSession
-    user_agent: str = f"dartfx-dataverse/{__version__}"
-    ssl_verify: bool = (
-        True  # whether to verify SSL certificates when calling the API. Can also be set on request-cache session.
+    api_key: str | None = None
+    on_api_error: Literal["raise", "none"] = "raise"
+    on_api_success_return: Literal["json", "text", "response"] = "json"
+    session: requests_cache.CachedSession = Field(
+        default_factory=lambda: requests_cache.CachedSession(backend="memory", cache_name="dataverse")
     )
+    user_agent: str = Field(default=f"dartfx-dataverse/{__version__}")
+    ssl_verify: bool = True
 
     def __init__(
         self,
         server: str | ServerInstallation,  # hostname or ServerInstallation
         api_key: str | None = None,
-        on_api_error: str = "raise",  # 'raise' | 'none'
-        on_api_success_return: str = "json",  # 'json' | 'text' | 'response'
-        session: requests_cache.CachedSession | None = None,  # requests_cache.CachedSession
-        lookup_installation: bool = True,  # if true and server is a hostname, look up the installation
+        on_api_error: Literal["raise", "none"] = "raise",
+        on_api_success_return: Literal["json", "text", "response"] = "json",
+        session: requests_cache.CachedSession | None = None,
+        lookup_installation: bool = True,
+        **kwargs: Any,
     ) -> None:
         # server
         if isinstance(server, str):
             # convert hostname to a ServerInstallation
-            server = server.replace("https://", "").replace("http://", "")
-            server = ServerInstallation(hostname=server)
+            clean_host = server.replace("https://", "").replace("http://", "")
+            server_inst = ServerInstallation(hostname=clean_host)
             if lookup_installation:
-                for installation in fetch_dataverse_installations():
-                    if installation.hostname == server.hostname:
-                        server = installation
-        if not isinstance(server, ServerInstallation):
+                for inst in fetch_dataverse_installations():
+                    if inst.hostname == server_inst.hostname:
+                        server_inst = inst
+        else:
+            server_inst = server
+
+        if not isinstance(server_inst, ServerInstallation):
             raise TypeError("server must be either a hostname or a ServerInstallation")
-        self.installation = server
-        if self.installation.hostname and self.installation.hostname.startswith("https://"):
-            self.installation.hostname = self.installation.hostname[8:]
-        # session
+
+        if server_inst.hostname and server_inst.hostname.startswith("https://"):
+            server_inst.hostname = server_inst.hostname[8:]
+
+        # Create session if not provided
         if session is None:
-            # Create a new session if one is not provided
             session = requests_cache.CachedSession(backend="memory", cache_name="dataverse")
-        self.session = session
-        # other params
-        self.api_key = api_key
-        self.on_api_error = on_api_error
-        self.on_api_success_return = on_api_success_return
-        self.session = session
+
+        super().__init__(
+            installation=server_inst,
+            api_key=api_key,
+            on_api_error=on_api_error,
+            on_api_success_return=on_api_success_return,
+            session=session,
+            **kwargs,
+        )
 
     #
     # API REQUESTS

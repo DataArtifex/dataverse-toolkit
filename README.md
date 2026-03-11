@@ -36,6 +36,21 @@
 - Python 3.12 or higher
 - uv or pip for package management
 
+### Command Line Interface
+
+The toolkit includes a command-line interface `dartfx-dataverse` for quick discovery:
+
+```bash
+# List worldwide installations
+dartfx-dataverse installations --limit 10
+
+# Search Harvard Dataverse
+dartfx-dataverse search "climate change" --per-page 5
+
+# Get server information
+dartfx-dataverse info dataverse.harvard.edu
+```
+
 ## Installation
 
 > **Note**: This package is not yet published on PyPI. Please use the development installation method below.

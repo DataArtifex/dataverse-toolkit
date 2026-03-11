@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sphinx documentation with detailed guides and API reference.
 - Strict Pydantic V2 integration for all core models.
 - Convenience `search_simple` and `get_server_info` methods.
+- Typer-based Command Line Interface (`dartfx-dataverse`) with Table, JSON, and CSV support.
 
 ### Changed
 - Refactored `DataverseServer` to inherit from `pydantic.BaseModel`.

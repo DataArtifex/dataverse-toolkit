@@ -109,13 +109,17 @@ def search(
         str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
     ] = "dataverse.harvard.edu",
     type: Annotated[str | None, typer.Option("--type", "-t", help="Type of object (dataverse, dataset, file)")] = None,
-    per_page: Annotated[int, typer.Option("--per-page", "-p", help="Results per page")] = 10,
+    limit: Annotated[
+        int, typer.Option("--per-page", "--limit", "-p", "-l", help="Limit the number of results per page")
+    ] = 25,
+    sort: Annotated[str | None, typer.Option("--sort", "-s", help="Sort field (name, date)")] = None,
+    order: Annotated[str | None, typer.Option("--order", "-o", help="Sort order (asc, desc)")] = None,
     format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
     api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
 ) -> None:
     """Search for dataverses, datasets, and files."""
     server = get_server(hostname, api_key)
-    params = SearchParameters(q=query, type=type, per_page=per_page)
+    params = SearchParameters(q=query, type=type, per_page=limit, sort=sort, order=order)
 
     with console.status(f"[bold green]Searching {hostname} for '{query}'..."):
         try:

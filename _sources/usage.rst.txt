@@ -499,6 +499,9 @@ Search for dataverses, datasets, and files:
    # Filter by type
    dartfx-dataverse search "biology" --type dataset
 
+   # Sort and order
+   dartfx-dataverse search "climate" --sort date --order desc
+
 Server Info
 ~~~~~~~~~~~
 

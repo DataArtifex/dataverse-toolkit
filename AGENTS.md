@@ -2,9 +2,15 @@
 
 Welcome, fellow AI. This file provides context and instructions for working on this repository effectively.
 
-## Project Specifications
-
-...
+- **Mission**: Provide a high-level, type-safe Python toolkit for programmatic interaction with [Dataverse](https://dataverse.org/) repositories.
+- **Primary Focus**: Discovery and retrieval of research data. Currently focuses on searching and information gathering rather than content management (CRUD operations on datasets).
+- **Core Capabilities**:
+    - **Global Discovery**: Fetching and interacting with the worldwide network of Dataverse installations.
+    - **Advanced Search**: Wrapper for the Dataverse Search API supporting filtering, faceting, and geographic queries.
+    - **Robust Interoperability**: Type-safe Pydantic models for request parameters and metadata structures.
+    - **Performance Optimizations**: Native support for request caching via `requests-cache`.
+- **Target Audience**: Researchers, data scientists, and developers building tools on top of Dataverse.
+- **Status**: Early development (Beta). APIs are functional but subject to refinement.
 
 
 ## Project Stack
@@ -61,7 +67,7 @@ This project uses `hatch` for environment management, but `uv` is preferred for 
 ## Version Management
 
 - This project uses **dynamic versioning** via Hatch.
-- The source of truth for the version is located in: `src/dartfx/hatch_foo/__about__.py`.
+- The source of truth for the version is located in: `src/dartfx/dataverse/__about__.py`.
 - To bump versions, modify that file manually or use `hatch version <segment>` (e.g., `hatch version minor`).
 - Follow [Semantic Versioning (SemVer)](https://semver.org/).
 

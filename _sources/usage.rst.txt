@@ -469,6 +469,74 @@ Control the response format:
    print(response.status_code)
    print(response.headers)
 
+Command Line Interface
+----------------------
+
+The toolkit includes a command-line interface ``dartfx-dataverse`` for quick discovery and interaction.
+
+Installations
+~~~~~~~~~~~~~
+
+List worldwide Dataverse installations:
+
+.. code-block:: bash
+
+   dartfx-dataverse installations --limit 10
+
+Search
+~~~~~~
+
+Search for dataverses, datasets, and files:
+
+.. code-block:: bash
+
+   # Default (Harvard Dataverse)
+   dartfx-dataverse search "climate change"
+
+   # Specific server and limit
+   dartfx-dataverse search "physics" --hostname demo.dataverse.org --per-page 5
+
+   # Filter by type
+   dartfx-dataverse search "biology" --type dataset
+
+Server Info
+~~~~~~~~~~~
+
+Get information about a specific Dataverse server:
+
+.. code-block:: bash
+
+   dartfx-dataverse info dataverse.harvard.edu
+
+Metadata Blocks
+~~~~~~~~~~~~~~~
+
+List available metadata blocks for a server:
+
+.. code-block:: bash
+
+   dartfx-dataverse metadatablocks dataverse.harvard.edu
+
+Output Formats
+~~~~~~~~~~~~~~
+
+All commands support a ``--format`` option (``table``, ``json``, or ``csv``):
+
+.. code-block:: bash
+
+   dartfx-dataverse installations --format csv
+   dartfx-dataverse search "climate" --format json
+
+API Key
+~~~~~~~
+
+Commands that require authentication (or to avoid rate limits) can use the ``--api-key`` option or the ``DATAVERSE_API_KEY`` environment variable:
+
+.. code-block:: bash
+
+   export DATAVERSE_API_KEY="your-api-key"
+   dartfx-dataverse search "confidential data"
+
 Debugging
 ~~~~~~~~~
 

@@ -143,6 +143,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#advanced-topics">Advanced Topics</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#custom-user-agent">Custom User Agent</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#response-format-options">Response Format Options</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#command-line-interface">Command Line Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#installations">Installations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#search">Search</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#server-info">Server Info</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metadata-blocks">Metadata Blocks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#output-formats">Output Formats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#api-key">API Key</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#debugging">Debugging</a></li>
 </ul>
 </li>
@@ -1029,6 +1038,61 @@
 <span class="n">response</span> <span class="o">=</span> <span class="n">server</span><span class="o">.</span><span class="n">get_server_info</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="command-line-interface">
+<h2>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading"></a></h2>
+<p>The toolkit includes a command-line interface <code class="docutils literal notranslate"><span class="pre">dartfx-dataverse</span></code> for quick discovery and interaction.</p>
+<section id="installations">
+<h3>Installations<a class="headerlink" href="#installations" title="Link to this heading"></a></h3>
+<p>List worldwide Dataverse installations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dartfx-dataverse<span class="w"> </span>installations<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+</section>
+<section id="search">
+<h3>Search<a class="headerlink" href="#search" title="Link to this heading"></a></h3>
+<p>Search for dataverses, datasets, and files:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Default (Harvard Dataverse)</span>
+dartfx-dataverse<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;climate change&quot;</span>
+
+<span class="c1"># Specific server and limit</span>
+dartfx-dataverse<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;physics&quot;</span><span class="w"> </span>--hostname<span class="w"> </span>demo.dataverse.org<span class="w"> </span>--per-page<span class="w"> </span><span class="m">5</span>
+
+<span class="c1"># Filter by type</span>
+dartfx-dataverse<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;biology&quot;</span><span class="w"> </span>--type<span class="w"> </span>dataset
+</pre></div>
+</div>
+</section>
+<section id="server-info">
+<h3>Server Info<a class="headerlink" href="#server-info" title="Link to this heading"></a></h3>
+<p>Get information about a specific Dataverse server:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dartfx-dataverse<span class="w"> </span>info<span class="w"> </span>dataverse.harvard.edu
+</pre></div>
+</div>
+</section>
+<section id="metadata-blocks">
+<h3>Metadata Blocks<a class="headerlink" href="#metadata-blocks" title="Link to this heading"></a></h3>
+<p>List available metadata blocks for a server:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dartfx-dataverse<span class="w"> </span>metadatablocks<span class="w"> </span>dataverse.harvard.edu
+</pre></div>
+</div>
+</section>
+<section id="output-formats">
+<h3>Output Formats<a class="headerlink" href="#output-formats" title="Link to this heading"></a></h3>
+<p>All commands support a <code class="docutils literal notranslate"><span class="pre">--format</span></code> option (<code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code>, or <code class="docutils literal notranslate"><span class="pre">csv</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>dartfx-dataverse<span class="w"> </span>installations<span class="w"> </span>--format<span class="w"> </span>csv
+dartfx-dataverse<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;climate&quot;</span><span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="api-key">
+<h3>API Key<a class="headerlink" href="#api-key" title="Link to this heading"></a></h3>
+<p>Commands that require authentication (or to avoid rate limits) can use the <code class="docutils literal notranslate"><span class="pre">--api-key</span></code> option or the <code class="docutils literal notranslate"><span class="pre">DATAVERSE_API_KEY</span></code> environment variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">DATAVERSE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-api-key&quot;</span>
+dartfx-dataverse<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;confidential data&quot;</span>
 </pre></div>
 </div>
 </section>

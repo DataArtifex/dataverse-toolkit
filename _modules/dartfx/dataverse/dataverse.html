@@ -618,6 +618,7 @@
 <span class="sd">    Based on the content of the data.json file in the dataverse-installations</span>
 <span class="sd">    repository at https://github.com/IQSS/dataverse-installations</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -635,6 +636,7 @@
     <span class="n">contact_email</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
+
 <div class="viewcode-block" id="fetch_dataverse_installations">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.fetch_dataverse_installations">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">fetch_dataverse_installations</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">ServerInstallation</span><span class="p">]:</span>
@@ -647,6 +649,7 @@
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;installations&quot;</span><span class="p">):</span>
         <span class="n">servers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ServerInstallation</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">servers</span></div>
+
 
 
 <div class="viewcode-block" id="DataverseApiError">
@@ -675,26 +678,80 @@
 </div>
 
 
+
 <div class="viewcode-block" id="SearchParameters">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.SearchParameters">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SearchParameters</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents the parameters that can be passed to the search endpoint.</span>
 <span class="sd">    See https://guides.dataverse.org/en/latest/api/search.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">q</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The search term or terms. Using “title:data” will search only the “title” field. “*” can be used as a wildcard either alone or adjacent to a term (i.e. “bird*”).&#39;</span><span class="p">)</span>
-    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Can be either “dataverse”, “dataset”, or “file”. Multiple “type” parameters can be used to include multiple types&#39;</span><span class="p">)</span>
-    <span class="n">subtree</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The identifier of the Dataverse collection to which the search should be narrowed. The subtree of this Dataverse collection and all its children will be searched. Multiple “subtree” parameters can be used to include multiple Dataverse collections.&#39;</span><span class="p">)</span>
-    <span class="n">sort</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span><span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The sort field. Supported values include “name” and “date”.&#39;</span><span class="p">)</span>
-    <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span><span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The order in which to sort. Can either be “asc” or “desc”&#39;</span><span class="p">)</span>
-    <span class="n">per_page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The number of results to return per request. The default is 10. The max is 1000.&#39;</span><span class="p">)</span>
-    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A cursor for paging through search results.&#39;</span><span class="p">)</span>
-    <span class="n">show_relevance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show details of which fields were matched by the query. False by default.&#39;</span><span class="p">)</span>
-    <span class="n">show_facets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show facets that can be operated on by the “fq” parameter. False by default.&#39;</span><span class="p">)</span>
-    <span class="n">fq</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A filter query on the search term. Multiple “fq” parameters can be used.&#39;</span><span class="p">)</span>
-    <span class="n">show_entity_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether or not to show the database IDs of the search results (for developer use).&#39;</span><span class="p">)</span>
-    <span class="n">geo_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Latitude and longitude in the form geo_point=42.3,-71.1. You must supply geo_radius as well.&#39;</span><span class="p">)</span>
-    <span class="n">geo_radius</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Radial distance in kilometers from geo_point (which must be supplied as well) such as geo_radius=1.5.&#39;</span><span class="p">)</span>
-    <span class="n">metadata_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Includes the requested fields for each dataset in the response. Multiple “metadata_fields” parameters can be used to include several fields.&#39;</span><span class="p">)</span></div>
+
+    <span class="n">q</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;*&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;The search term or terms. Using “title:data” will search only the “title” field. &quot;</span>
+            <span class="s2">&quot;“*” can be used as a wildcard either alone or adjacent to a term (i.e. “bird*”).&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;dataverse&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;file&quot;</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Can be either “dataverse”, “dataset”, or “file”. &quot;</span>
+            <span class="s2">&quot;Multiple “type” parameters can be used to include multiple types&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">subtree</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;The identifier of the Dataverse collection to which the search should be narrowed. &quot;</span>
+            <span class="s2">&quot;The subtree of this Dataverse collection and all its children will be searched. &quot;</span>
+            <span class="s2">&quot;Multiple “subtree” parameters can be used to include multiple Dataverse collections.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">sort</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The sort field. Supported values include “name” and “date”.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">order</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;asc&quot;</span><span class="p">,</span> <span class="s2">&quot;desc&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The order in which to sort. Can either be “asc” or “desc”&quot;</span>
+    <span class="p">)</span>
+    <span class="n">per_page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">ge</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">le</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The number of results to return per request. The default is 10. The max is 1000.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A cursor for paging through search results.&quot;</span><span class="p">)</span>
+    <span class="n">show_relevance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether or not to show details of which fields were matched by the query. False by default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">show_facets</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether or not to show facets that can be operated on by the “fq” parameter. False by default.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">fq</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;A filter query on the search term. Multiple “fq” parameters can be used.&quot;</span>
+    <span class="p">)</span>
+    <span class="n">show_entity_ids</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Whether or not to show the database IDs of the search results (for developer use).&quot;</span>
+    <span class="p">)</span>
+    <span class="n">geo_point</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Latitude and longitude in the form geo_point=42.3,-71.1. You must supply geo_radius as well.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">geo_radius</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Radial distance in kilometers from geo_point (which must be supplied as well) such as geo_radius=1.5.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">metadata_fields</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Includes the requested fields for each dataset in the response. &quot;</span>
+            <span class="s2">&quot;Multiple “metadata_fields” parameters can be used to include several fields.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span></div>
 
 
 
@@ -713,27 +770,31 @@
         <span class="k">del</span> <span class="n">frame</span></div>
 
 
+
 <div class="viewcode-block" id="DataverseServer">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataverseServer</span><span class="p">:</span>
     <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">installation</span><span class="p">:</span> <span class="n">ServerInstallation</span>
-    <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># controls how to handle API errors: &#39;raise&#39; | &#39;none&#39;</span>
-    <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span> <span class="c1"># controls how to handle API success: &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
+    <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># controls how to handle API errors: &#39;raise&#39; | &#39;none&#39;</span>
+    <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span>  <span class="c1"># controls how to handle API success: &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
     <span class="n">session</span><span class="p">:</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span>
     <span class="n">user_agent</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;dartfx-dataverse/</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">ssl_verify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># whether to verify SSL certificates when calling the API. Can also be set on request-cache session.</span>
+    <span class="n">ssl_verify</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="kc">True</span>  <span class="c1"># whether to verify SSL certificates when calling the API. Can also be set on request-cache session.</span>
+    <span class="p">)</span>
 
 <div class="viewcode-block" id="DataverseServer.__init__">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-            <span class="n">server</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ServerInstallation</span><span class="p">,</span> <span class="c1"># hostname or ServerInstallation</span>
-            <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="c1"># &#39;raise&#39; | &#39;none&#39;</span>
-            <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span> <span class="c1"># &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
-            <span class="n">session</span><span class="p">:</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="c1"># requests_cache.CachedSession</span>
-            <span class="n">lookup_installation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># if true and server is a hostname, look up the installation</span>
-        <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">server</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">ServerInstallation</span><span class="p">,</span>  <span class="c1"># hostname or ServerInstallation</span>
+        <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">on_api_error</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raise&quot;</span><span class="p">,</span>  <span class="c1"># &#39;raise&#39; | &#39;none&#39;</span>
+        <span class="n">on_api_success_return</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;json&quot;</span><span class="p">,</span>  <span class="c1"># &#39;json&#39; | &#39;text&#39; | &#39;response&#39;</span>
+        <span class="n">session</span><span class="p">:</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># requests_cache.CachedSession</span>
+        <span class="n">lookup_installation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># if true and server is a hostname, look up the installation</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># server</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="c1"># convert hostname to a ServerInstallation</span>
@@ -747,11 +808,11 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;server must be either a hostname or a ServerInstallation&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">installation</span> <span class="o">=</span> <span class="n">server</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
         <span class="c1"># session</span>
         <span class="k">if</span> <span class="n">session</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Create a new session if one is not provided</span>
-            <span class="n">session</span> <span class="o">=</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;memory&#39;</span><span class="p">,</span> <span class="n">cache_name</span><span class="o">=</span><span class="s1">&#39;dataverse&#39;</span><span class="p">)</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">requests_cache</span><span class="o">.</span><span class="n">CachedSession</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="n">cache_name</span><span class="o">=</span><span class="s2">&quot;dataverse&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">session</span>
         <span class="c1"># other params</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">api_key</span>
@@ -768,10 +829,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the API.&quot;&quot;&quot;</span>
         <span class="c1"># prepare headers</span>
-        <span class="n">default_headers</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span>
-        <span class="p">}</span>
+        <span class="n">default_headers</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="s2">&quot;User-Agent&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_agent</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span><span class="p">:</span>
             <span class="n">default_headers</span><span class="p">[</span><span class="s2">&quot;X-Dataverse-key&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">api_key</span>
         <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -779,24 +837,24 @@
         <span class="n">headers</span> <span class="o">=</span> <span class="n">default_headers</span> <span class="o">|</span> <span class="n">headers</span>
         <span class="c1"># call the API</span>
         <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;https://</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">installation</span><span class="o">.</span><span class="n">hostname</span><span class="si">}</span><span class="s2">/api/</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_verify</span><span class="p">,</span>  <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ssl_verify</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># handle response</span>
         <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="n">success</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
                 <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                     <span class="n">message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2"> -- JSONDecodeError: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span>
                     <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">DataverseApiError</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
                     <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_success_return</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
             <span class="k">return</span> <span class="n">response</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">description</span><span class="si">}</span><span class="s2"> -- </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_api_error</span> <span class="o">!=</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DataverseApiError</span><span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
@@ -809,9 +867,7 @@
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
             <span class="n">description</span> <span class="o">=</span> <span class="n">_get_caller_name</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-            <span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataverseServer.post_request">
@@ -822,9 +878,7 @@
             <span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">description</span><span class="p">:</span>
             <span class="n">description</span> <span class="o">=</span> <span class="n">_get_caller_name</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-            <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
     <span class="c1">#</span>
@@ -833,7 +887,11 @@
 <div class="viewcode-block" id="DataverseServer.get_info_api_terms">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_api_terms">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_info_api_terms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get API Terms of Use. The response contains the text value inserted as API Terms of use which uses the database setting :ApiTermsOfUse:.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get API Terms of Use.</span>
+
+<span class="sd">        The response contains the text value inserted as API Terms of use</span>
+<span class="sd">        which uses the database setting :ApiTermsOfUse:.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/apiTermsOfUse&quot;</span><span class="p">)</span></div>
 
 
@@ -849,7 +907,11 @@
 <div class="viewcode-block" id="DataverseServer.get_info_server">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_info_server">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_info_server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the server name. This is useful when a Dataverse installation is composed of multiple app servers behind a load balancer.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the server name.</span>
+
+<span class="sd">        This is useful when a Dataverse installation is composed of multiple app</span>
+<span class="sd">        servers behind a load balancer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;info/server&quot;</span><span class="p">)</span></div>
 
 
@@ -878,11 +940,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="s2">&quot;metadatablocks&quot;</span><span class="p">)</span></div>
 
 
-
 <div class="viewcode-block" id="DataverseServer.get_metadatablock">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.get_metadatablock">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_metadatablock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifier</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return data about the block whose identifier is passed, including allowed controlled vocabulary values. identifier can either be the block’s database id, or its name (i.e. “citation”).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return data about the block whose identifier is passed, including</span>
+<span class="sd">        allowed controlled vocabulary values. identifier can either be the</span>
+<span class="sd">        block’s database id, or its name (i.e. “citation”).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_request</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;metadatablocks/</span><span class="si">{</span><span class="n">identifier</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
@@ -893,7 +957,7 @@
 <div class="viewcode-block" id="DataverseServer.search">
 <a class="viewcode-back" href="../../../modules.html#dartfx.dataverse.DataverseServer.search">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="n">SearchParameters</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Search for dataverses, datasets, and files.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Search for dataverses, datasets, and files.</span>
 
 <span class="sd">        References:</span>
 <span class="sd">        - https://guides.dataverse.org/en/latest/api/search.html</span>
@@ -912,7 +976,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024-2025, Pascal Heus (Data Artifex).</p>
+    <p>&#169; Copyright 2024-2026, Pascal Heus (Data Artifex).</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

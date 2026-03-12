@@ -2,7 +2,7 @@ import csv
 import json
 import sys
 from enum import StrEnum
-from typing import Annotated
+from typing import Annotated, Literal
 
 import typer
 from rich.console import Console
@@ -108,12 +108,19 @@ def search(
     hostname: Annotated[
         str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
     ] = "dataverse.harvard.edu",
-    type: Annotated[str | None, typer.Option("--type", "-t", help="Type of object (dataverse, dataset, file)")] = None,
+    type: Annotated[
+        Literal["dataverse", "dataset", "file"] | None,
+        typer.Option("--type", "-t", help="Type of object (dataverse, dataset, file)"),
+    ] = None,
     limit: Annotated[
         int, typer.Option("--per-page", "--limit", "-p", "-l", help="Limit the number of results per page")
     ] = 25,
-    sort: Annotated[str | None, typer.Option("--sort", "-s", help="Sort field (name, date)")] = None,
-    order: Annotated[str | None, typer.Option("--order", "-o", help="Sort order (asc, desc)")] = None,
+    sort: Annotated[
+        Literal["name", "date"] | None, typer.Option("--sort", "-s", help="Sort field (name, date)")
+    ] = None,
+    order: Annotated[
+        Literal["asc", "desc"] | None, typer.Option("--order", "-o", help="Sort order (asc, desc)")
+    ] = None,
     format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
     api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
 ) -> None:

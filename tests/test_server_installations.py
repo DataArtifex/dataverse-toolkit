@@ -30,6 +30,6 @@ def test_no_lookup_installation() -> None:
 
 
 def test_strip_https_prefix() -> None:
-    server = DataverseServer("https://data.harvard.edu", lookup_installation=False)
+    server = DataverseServer("https://dataverse.harvard.edu", lookup_installation=False)
     print(server.installation)
     assert server.installation.hostname == "dataverse.harvard.edu"

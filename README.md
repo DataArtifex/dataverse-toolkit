@@ -17,6 +17,7 @@
 
 - 🔍 **Powerful Search**: Advanced search capabilities with filtering, faceting, and geographic queries
 - 🌍 **Server Discovery**: Retrieve information about known Dataverse installations worldwide
+- 📦 **Dataset Metadata**: Retrieve dataset metadata and export formats (DDI, Dublin Core, schema.org)
 - 🛡️ **Type-Safe**: Built with Pydantic models for robust data validation
 - ⚡ **Performance**: Built-in request caching for improved performance
 - 🔧 **Configurable**: Flexible error handling, SSL verification, and session management
@@ -27,6 +28,7 @@
 - Retrieve server installation information and metadata
 - Search datasets, dataverses, and files
 - Advanced search with filters, facets, and geographic queries
+- Retrieve dataset metadata and export formats
 - Paginated result handling
 - Comprehensive error handling
 - Request caching support
@@ -49,6 +51,15 @@ dartfx-dataverse search "climate change" --per-page 5
 
 # Get server information
 dartfx-dataverse info dataverse.harvard.edu
+
+# Get dataset metadata (JSON)
+dartfx-dataverse dataset doi:10.5683/SP3/FNS9EF -H borealisdata.ca
+
+# Get dataset in DDI format
+dartfx-dataverse dataset doi:10.5683/SP3/FNS9EF -H borealisdata.ca --export ddi
+
+# List metadata blocks
+dartfx-dataverse metadatablocks dataverse.harvard.edu
 ```
 
 ## Installation
@@ -114,7 +125,7 @@ pip install dartfx-dataverse
 
 ### Discover Dataverse Installations
 
-Get a list of known Dataverse installations worldwide:
+Get a list of known Dataverse installations worldwide. This functionality leverages the community-maintained [dataverse-installations](https://github.com/IQSS/dataverse-installations) project:
 
 ```python
 from dartfx.dataverse import fetch_dataverse_installations
@@ -222,27 +233,26 @@ This is an early development release. The core functionality is working, but API
 
 ### Roadmap
 
-#### v0.2.0
-- [ ] Pydantic models for search results
+#### v0.2.0 (Planned)
+- [ ] Pydantic models for search results and datasets
 - [ ] Enhanced error messages and debugging
 - [ ] Batch operation support
 - [ ] Progress indicators for long-running operations
 
-#### v0.3.0
-- [ ] Dataset metadata retrieval (DDI, Dublin Core, DataCite)
+#### Completed Features (v0.1.x)
+- [x] Dataset metadata retrieval (DDI, Dublin Core, DataCite)
+- [x] Server information and versioning
+- [x] Export formats discovery
+- [x] Metadata block listing
+- [x] Search API wrapper with caching
+- [x] CLI for discovery and search
+
+#### Future (v0.3.0+)
 - [ ] File metadata retrieval
 - [ ] Support for additional metadata formats (Croissant, schema.org)
-
-#### v0.4.0
 - [ ] Dataset and file download capabilities
-- [ ] Download progress tracking
-- [ ] Resume interrupted downloads
-
-#### v1.0.0
-- [ ] Stable API
-- [ ] Complete test coverage
-- [ ] Performance optimizations
-- [ ] Full documentation
+- [ ] Download progress tracking and resuming
+- [ ] Stable API (v1.0.0)
 ## Contributing
 
 We welcome contributions! Here's how you can help:
@@ -297,6 +307,7 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 ## Acknowledgments
 
+- Dataverse installations inventory provided by the community-maintained [IQSS/dataverse-installations](https://github.com/IQSS/dataverse-installations) project.
 - Built with [Pydantic](https://docs.pydantic.dev/) for data validation
 - Uses [Requests](https://requests.readthedocs.io/) and [requests-cache](https://requests-cache.readthedocs.io/) for HTTP operations
 - Developed using [Hatch](https://hatch.pypa.io/) project manager

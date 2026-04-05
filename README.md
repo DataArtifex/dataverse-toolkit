@@ -1,9 +1,16 @@
 # dartfx-dataverse
 
-[![PyPI - Version](https://img.shields.io/pypi/v/dartfx-dataverse.svg)](https://pypi.org/project/dartfx-dataverse)
-[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/dartfx-dataverse.svg)](https://pypi.org/project/dartfx-dataverse)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+
+[![Development Status](https://img.shields.io/badge/status-early%20release-orange.svg)](https://github.com/DataArtifex/ dataverse-toolkit)
+[![Documentation](https://img.shields.io/badge/docs-blue)](https://www.dataartifex.org/docs/dartfx-dataverse/)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DataArtifex/dataverse-toolkit)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Package Status](https://img.shields.io/badge/PyPI-not%20published-lightgrey)](https://github.com/DataArtifex/dataverse-toolkit)
+[![CI](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml/badge.svg)](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+[![License](https://img.shields.io/github/license/DataArtifex/dataverse-toolkit.svg)](https://github.com/DataArtifex/dataverse-toolkit/blob/main/LICENSE.txt)
 
 **A Python toolkit for interacting with Dataverse repositories**
 
@@ -224,6 +231,56 @@ Comprehensive documentation is available, including:
 - **Contributing Guide**: How to contribute to the project
 
 Visit the [full documentation](https://dataverse-toolkit.readthedocs.io/) for more details.
+
+## Caching
+
+The library automatically caches API requests to improve performance and reduce server load.
+
+### Default Behavior
+- **Backend**: In-memory (`memory`)
+- **Persistence**: Cached data is lost when the Python process exits.
+- **CLI Scope**: In the CLI, the cache is active only for the duration of a single command (effectively transient).
+
+### Custom Configuration (Python API)
+You can provide your own `requests_cache.CachedSession` to customize the caching behavior (e.g., using a persistent SQLite backend or setting an expiration time):
+
+```python
+import requests_cache
+from dartfx.dataverse import DataverseServer
+
+# Create a persistent cache with 24-hour expiration
+session = requests_cache.CachedSession(
+    'dataverse_cache',
+    backend='sqlite',
+    expire_after=86400  # 24 hours
+)
+
+server = DataverseServer(
+    server="dataverse.harvard.edu",
+    session=session
+)
+```
+
+### Clearing the Cache
+If you are using a persistent cache and need to clear it manually:
+
+```python
+# Clear all cached responses
+server.session.cache.clear()
+```
+
+### Disabling Caching
+To disable caching entirely, you can pass a standard `requests.Session`:
+
+```python
+import requests
+from dartfx.dataverse import DataverseServer
+
+server = DataverseServer(
+    server="dataverse.harvard.edu",
+    session=requests.Session()
+)
+```
 
 ## Project Status & Roadmap
 

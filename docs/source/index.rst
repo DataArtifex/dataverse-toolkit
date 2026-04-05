@@ -32,6 +32,7 @@ Key Features
 
 * **Server Discovery**: Retrieve information about known Dataverse installations worldwide
 * **Search Functionality**: Powerful search capabilities with advanced filtering options
+* **Dataset Metadata**: Retrieve dataset metadata and export formats (DDI, Dublin Core, schema.org)
 * **Type-Safe**: Built with Pydantic models for robust data validation
 * **Caching**: Built-in request caching for improved performance
 * **Error Handling**: Comprehensive error handling with detailed exception information
@@ -145,11 +146,12 @@ Roadmap
 
 Planned features for future releases:
 
-* Pydantic models for search results
-* Dataset and file metadata retrieval (DDI, Croissant, schema.org)
-* Dataset and file download capabilities
-* Advanced metadata operations
-* Batch operations support
+* **v0.2.0 (Planned)**: Pydantic models for search results and datasets
+* **v0.2.0 (Planned)**: Batch operations support and progress indicators
+* **v0.1.x (Completed)**: Dataset metadata retrieval (DDI, Dublin Core, DataCite)
+* **v0.1.x (Completed)**: Server information and metadata block listing
+* **v0.1.x (Completed)**: Search API wrapper with caching
+* **Future**: Dataset and file download capabilities (v0.3.0+)
 
 Contributing
 ------------

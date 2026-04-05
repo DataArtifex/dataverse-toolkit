@@ -250,6 +250,54 @@ Handle large result sets with pagination:
    for item in paginate_search(server, "climate"):
        print(item['name'])
 
+Dataset Metadata
+----------------
+
+Retrieve detailed metadata and exported formats for specific datasets using their persistent identifier (e.g., DOI).
+
+Getting Dataset Metadata (JSON)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``get_dataset`` method returns the full metadata for a dataset in JSON format:
+
+.. code-block:: python
+
+   # Retrieve dataset by DOI
+   dataset = server.get_dataset("doi:10.5683/SP3/FNS9EF")
+
+   # Accessing fields
+   version = dataset['data']['latestVersion']
+   for block_name, block in version['metadataBlocks'].items():
+       print(f"Block: {block_name}")
+
+Getting Exported Formats
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dataverse supports several metadata export formats (e.g., DDI, OAI_ORE, DataCite, Dublin Core). Use the ``get_dataset_export`` method:
+
+.. code-block:: python
+
+   # Get DDI (XML) export
+   ddi_content = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="ddi")
+
+   # Get Dublin Core (XML) export
+   dc_content = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="oai_dc")
+
+   # Get Schema.org (JSON-LD) export
+   # Note: Some exporters return JSON strings
+   schema_json = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="schema.org")
+
+Listing Available Exporters
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can find out which export formats are supported by a specific server:
+
+.. code-block:: python
+
+   formats = server.get_info_export_formats()
+   for format_name, details in formats['data'].items():
+       print(f"{format_name}: {details['displayName']} ({details['mediaType']})")
+
 Error Handling
 --------------
 
@@ -519,6 +567,19 @@ List available metadata blocks for a server:
 .. code-block:: bash
 
    dartfx-dataverse metadatablocks dataverse.harvard.edu
+
+Dataset Metadata
+~~~~~~~~~~~~~~~~
+
+Retrieve dataset metadata or exports:
+
+.. code-block:: bash
+
+   # Get JSON metadata
+   dartfx-dataverse dataset doi:10.5683/SP3/FNS9EF --hostname borealisdata.ca
+
+   # Get specific export format
+   dartfx-dataverse dataset doi:10.5683/SP3/FNS9EF -H borealisdata.ca --export ddi
 
 Output Formats
 ~~~~~~~~~~~~~~

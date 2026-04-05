@@ -39,11 +39,8 @@ Since the package is not yet on PyPI, you must clone the repository and install 
       # Install uv if you haven't already
       curl -LsSf https://astral.sh/uv/install.sh | sh
 
-      # Install the package in editable mode
-      uv pip install -e .
-
-      # Or with development dependencies
-      uv pip install -e ".[dev]"
+      # Sync the project environment (replaces editable install)
+      uv sync
 
    Using pip:
 
@@ -115,14 +112,14 @@ Using uv (recommended):
 
 .. code-block:: bash
 
-   # Install with development tools
-   uv pip install -e ".[dev]"
+   # Install development tools
+   uv sync --group dev
 
-   # Install with documentation tools
-   uv pip install -e ".[docs]"
+   # Install documentation tools
+   uv sync --group docs
 
-   # Install with all optional dependencies
-   uv pip install -e ".[dev,docs]"
+   # Install all optional dependencies
+   uv sync --all-groups
 
 Using pip:
 

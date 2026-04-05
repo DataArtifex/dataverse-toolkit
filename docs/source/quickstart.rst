@@ -35,7 +35,7 @@ The typical workflow for using this package involves:
 Step 1: Discover Dataverse Installations
 -----------------------------------------
 
-Get a list of all known Dataverse installations worldwide:
+Get a list of all known Dataverse installations worldwide. This functionality leverages the community-maintained `dataverse-installations <https://github.com/IQSS/dataverse-installations>`_ project:
 
 .. code-block:: python
 
@@ -177,6 +177,21 @@ You can work with multiple Dataverse installations simultaneously:
 
    print(f"Harvard: {harvard_results['data']['total_count']} results")
    print(f"Demo: {demo_results['data']['total_count']} results")
+
+Step 5: Retrieve Dataset Metadata
+----------------------------------
+
+Retrieve full metadata or specific exports for a dataset:
+
+.. code-block:: python
+
+   # Get dataset metadata (JSON)
+   dataset = server.get_dataset("doi:10.5683/SP3/FNS9EF")
+   print(f"Title: {dataset['data']['latestVersion']['metadataBlocks']['citation']['fields'][0]['value']}")
+
+   # Get dataset in specific export format (e.g., DDI)
+   ddi_xml = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="ddi")
+   print(ddi_xml[:500])  # Print first 500 characters of XML
 
 Handling Errors
 ---------------

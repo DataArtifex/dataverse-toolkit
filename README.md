@@ -81,7 +81,7 @@ To install the package, clone the repository and install locally:
 
    Using uv (recommended):
    ```bash
-   uv pip install -e ".[dev]"
+   uv sync
    ```
 
    Or using pip:

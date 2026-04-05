@@ -38,7 +38,7 @@ Added
 * ``DataverseApiError`` exception for error handling
 * ``fetch_dataverse_installations()`` function to retrieve known installations
 * Basic search functionality:
-  
+
   * Simple text search
   * Advanced search with parameters
   * Faceted search
@@ -46,7 +46,7 @@ Added
   * Filter queries
 
 * Server information retrieval:
-  
+
   * Get server version and metadata
   * Get metadata blocks
 
@@ -99,7 +99,7 @@ v0.3.0
 * Dataset metadata retrieval (DDI, Dublin Core)
 * File metadata retrieval
 * Support for additional metadata formats:
-  
+
   * Croissant
   * schema.org
   * DataCite
@@ -161,7 +161,7 @@ Older versions may work but are not officially supported.
 Contributing
 ------------
 
-See the :doc:`contributing` guide for information on how to contribute 
+See the :doc:`contributing` guide for information on how to contribute
 to this project.
 
 Links

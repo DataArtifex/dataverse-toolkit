@@ -18,22 +18,22 @@ The main exception class for API-related errors.
 
    .. attribute:: message
       :type: str
-      
+
       Human-readable error message describing what went wrong.
 
    .. attribute:: url
       :type: str
-      
+
       The URL that was being accessed when the error occurred.
 
    .. attribute:: status_code
       :type: int | None
-      
+
       HTTP status code from the response, if available.
 
    .. attribute:: response
       :type: requests.Response | None
-      
+
       The raw response object from the failed request, if available.
 
 Common HTTP Status Codes
@@ -85,14 +85,14 @@ Basic Error Handling
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, DataverseApiError, ServerInstallation
-   
+
    server = DataverseServer(
        installation=ServerInstallation(
            name="Test",
            hostname="dataverse.example.com"
        )
    )
-   
+
    try:
        results = server.search_simple("test")
    except DataverseApiError as e:
@@ -128,13 +128,13 @@ Accessing Response Details
        results = server.search_simple("test")
    except DataverseApiError as e:
        print(f"Error: {e.message}")
-       
+
        # Access raw response if available
        if e.response:
            print(f"Response Status: {e.response.status_code}")
            print(f"Response Headers: {e.response.headers}")
            print(f"Response Text: {e.response.text}")
-           
+
            # Try to parse JSON error response
            try:
                error_data = e.response.json()
@@ -148,7 +148,7 @@ Retry on Specific Errors
 .. code-block:: python
 
    from time import sleep
-   
+
    def search_with_retry(server, query, max_retries=3):
        """Retry search on specific error codes."""
        for attempt in range(max_retries):
@@ -164,7 +164,7 @@ Retry on Specific Errors
                        continue
                # Re-raise for all other errors
                raise
-       
+
        raise DataverseApiError(
            "Max retries exceeded",
            server.installation.hostname or "",
@@ -178,9 +178,9 @@ Logging Errors
 .. code-block:: python
 
    import logging
-   
+
    logger = logging.getLogger(__name__)
-   
+
    try:
        results = server.search_simple("test")
    except DataverseApiError as e:
@@ -208,10 +208,10 @@ Use ``on_api_error="none"`` to suppress exceptions:
        installation=installation,
        on_api_error="none"
    )
-   
+
    # No exception will be raised
    result = server.get_server_info()
-   
+
    if result is None:
        print("An error occurred, but was suppressed")
    else:
@@ -241,7 +241,7 @@ Graceful Degradation
                }
            else:
                raise  # Re-raise unexpected errors
-   
+
    info = get_server_info_safe(server)
 
 Multiple Exception Types
@@ -253,7 +253,7 @@ Handle both API and network errors:
 
    import requests
    from dartfx.dataverse import DataverseApiError
-   
+
    try:
        results = server.search_simple("test")
    except DataverseApiError as e:
@@ -271,7 +271,7 @@ Use context managers for cleanup:
 .. code-block:: python
 
    from contextlib import contextmanager
-   
+
    @contextmanager
    def handle_dataverse_errors():
        """Context manager for Dataverse error handling."""
@@ -283,7 +283,7 @@ Use context managers for cleanup:
                print("Please check your API key")
            elif e.status_code == 429:
                print("Rate limit exceeded")
-   
+
    # Usage
    with handle_dataverse_errors():
        results = server.search_simple("test")
@@ -292,7 +292,7 @@ Best Practices
 --------------
 
 1. **Always Catch Specific Exceptions**
-   
+
    Catch ``DataverseApiError`` specifically instead of generic ``Exception``:
 
    .. code-block:: python
@@ -302,7 +302,7 @@ Best Practices
           results = server.search_simple("test")
       except DataverseApiError as e:
           handle_api_error(e)
-      
+
       # Avoid
       try:
           results = server.search_simple("test")
@@ -310,7 +310,7 @@ Best Practices
           pass
 
 2. **Check Status Codes**
-   
+
    Different status codes require different handling:
 
    .. code-block:: python
@@ -329,7 +329,7 @@ Best Practices
               pass
 
 3. **Provide User-Friendly Messages**
-   
+
    Translate technical errors to user-friendly messages:
 
    .. code-block:: python
@@ -345,15 +345,15 @@ Best Practices
               print(f"An error occurred: {e.message}")
 
 4. **Log for Debugging**
-   
+
    Always log errors for troubleshooting:
 
    .. code-block:: python
 
       import logging
-      
+
       logger = logging.getLogger(__name__)
-      
+
       try:
           results = server.search_simple("test")
       except DataverseApiError as e:
@@ -363,15 +363,15 @@ Best Practices
           })
 
 5. **Implement Retry Logic**
-   
+
    For transient errors, implement exponential backoff:
 
    .. code-block:: python
 
       from time import sleep
-      
+
       retryable_codes = [429, 500, 502, 503, 504]
-      
+
       for attempt in range(3):
           try:
               results = server.search_simple("test")

@@ -12,7 +12,7 @@ First, install the package using uv (recommended):
 
    # Install uv if you haven't already
    curl -LsSf https://astral.sh/uv/install.sh | sh
-   
+
    # Install dartfx-dataverse
    uv pip install dartfx-dataverse
 
@@ -40,10 +40,10 @@ Get a list of all known Dataverse installations worldwide:
 .. code-block:: python
 
    from dartfx.dataverse import fetch_dataverse_installations
-   
+
    # Fetch all known installations
    installations = fetch_dataverse_installations()
-   
+
    # Display the first 5 installations
    for installation in installations[:5]:
        print(f"{installation.name}")
@@ -60,16 +60,16 @@ Create a connection to a specific Dataverse server:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, ServerInstallation
-   
+
    # Create server installation object
    harvard = ServerInstallation(
        name="Harvard Dataverse",
        hostname="dataverse.harvard.edu"
    )
-   
+
    # Create server connection
    server = DataverseServer(installation=harvard)
-   
+
    # Get server information
    info = server.get_server_info()
    print(f"Server version: {info['data']['version']}")
@@ -95,9 +95,9 @@ Perform a simple search:
 
    # Simple text search
    results = server.search_simple("climate")
-   
+
    print(f"Found {results['data']['total_count']} results")
-   
+
    # Display first 5 results
    for item in results['data']['items'][:5]:
        print(f"- {item['name']}")
@@ -110,7 +110,7 @@ Use the ``SearchParameters`` model for more control:
 .. code-block:: python
 
    from dartfx.dataverse import SearchParameters
-   
+
    # Create search parameters
    params = SearchParameters(
        q="climate change",          # Search query
@@ -120,10 +120,10 @@ Use the ``SearchParameters`` model for more control:
        order="desc",                # Descending order
        show_facets=True            # Include facets in results
    )
-   
+
    # Execute search
    results = server.search(params)
-   
+
    # Process results
    for item in results['data']['items']:
        print(f"Dataset: {item['name']}")
@@ -148,7 +148,7 @@ Use filters to refine your search:
        ],
        per_page=20
    )
-   
+
    results = server.search(params)
 
 Working with Multiple Servers
@@ -159,22 +159,22 @@ You can work with multiple Dataverse installations simultaneously:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, fetch_dataverse_installations
-   
+
    # Get installations
    installations = fetch_dataverse_installations()
-   
+
    # Filter for specific installations
    harvard = next(i for i in installations if "harvard" in i.name.lower())
    demo = next(i for i in installations if "demo" in i.name.lower())
-   
+
    # Create connections
    harvard_server = DataverseServer(installation=harvard)
    demo_server = DataverseServer(installation=demo)
-   
+
    # Search both servers
    harvard_results = harvard_server.search_simple("education")
    demo_results = demo_server.search_simple("education")
-   
+
    print(f"Harvard: {harvard_results['data']['total_count']} results")
    print(f"Demo: {demo_results['data']['total_count']} results")
 
@@ -186,7 +186,7 @@ The package provides structured error handling:
 .. code-block:: python
 
    from dartfx.dataverse import DataverseServer, DataverseApiError, ServerInstallation
-   
+
    try:
        server = DataverseServer(
            installation=ServerInstallation(
@@ -211,14 +211,14 @@ The package uses request caching by default. You can configure it:
 
    import requests_cache
    from datetime import timedelta
-   
+
    # Create a custom cache session
    session = requests_cache.CachedSession(
        cache_name='my_dataverse_cache',
        backend='sqlite',
        expire_after=timedelta(hours=1)
    )
-   
+
    # Use with server
    server = DataverseServer(
        installation=harvard,
@@ -230,7 +230,7 @@ Disable caching if needed:
 .. code-block:: python
 
    import requests
-   
+
    # Use regular requests session (no caching)
    server = DataverseServer(
        installation=harvard,

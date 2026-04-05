@@ -82,8 +82,8 @@ myst_enable_extensions = [
     "tasklist",
 ]
 
-templates_path = ["_templates"]
-exclude_patterns = []
+templates_path: list[str] = ["_templates"]
+exclude_patterns: list[str] = []
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
@@ -94,7 +94,6 @@ html_theme_options = {
     "canonical_url": "",
     "analytics_id": "",
     "logo_only": False,
-    "display_version": True,
     "prev_next_buttons_location": "bottom",
     "style_external_links": True,
     "collapse_navigation": False,

@@ -19,10 +19,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-  "pydantic>=2.0.0",
-  "requests>=2.31.0",
+  "pydantic>=2.10.0",
+  "requests>=2.32.0",
   "requests-cache>=1.0.0",
-  "typer[all]>=0.12.0",
+  "typer>=0.24.0",
   "rich>=13.0.0",
 ]
 
@@ -46,20 +46,20 @@ path = "src/dartfx/dataverse/__about__.py"
 
 [dependency-groups]
 dev = [
-  "coverage[toml]>=6.5",
-  "pytest>=7.0.0",
-  "pytest-benchmark>=4.0.0",
+  "coverage[toml]>=7.0.0",
+  "pytest>=9",
+  "pytest-benchmark>=5.0.0",
   "mypy>=1.0.0",
   "python-dotenv>=1.0.0",
   "ruff>=0.3.0",
-  "pre-commit>=3.0.0",
+  "pre-commit>=4.0.0",
   "types-requests>=2.32.4.20260107",
 ]
 docs = [
-  "sphinx>=7.0.0",
-  "sphinx-rtd-theme>=1.2.0",
-  "myst-parser>=1.0.0",
-  "sphinx-copybutton>=0.5.0",
+  "sphinx>=8.0.0",
+  "sphinx-rtd-theme>=3.0.0",
+  "myst-parser>=4.0.0",
+  "sphinx-copybutton>=0.5.2",
 ]
 
 [tool.hatch.envs.default]
@@ -142,10 +142,10 @@ line-ending = "auto"
 
 [tool.mypy]
 python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+show_error_codes = true
 mypy_path = "src"
 explicit_package_bases = true
-strict = true
-warn_unreachable = true
-pretty = true
-show_error_codes = true
-show_error_context = true
+plugins = ["pydantic.mypy"]

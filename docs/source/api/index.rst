@@ -1,7 +1,7 @@
 API Reference
 =============
 
-This section provides detailed documentation for all classes, functions, and modules 
+This section provides detailed documentation for all classes, functions, and modules
 in the ``dartfx-dataverse`` package.
 
 Overview
@@ -35,7 +35,7 @@ Complete API
 
 .. toctree::
    :maxdepth: 2
-   
+
    server
    search
    models

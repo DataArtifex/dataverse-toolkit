@@ -22,7 +22,12 @@ The main class for interacting with a Dataverse server installation.
       ~DataverseServer.__init__
       ~DataverseServer.get_server_info
       ~DataverseServer.get_info_server
+      ~DataverseServer.get_info_api_terms
+      ~DataverseServer.get_info_export_formats
+      ~DataverseServer.get_info_version
+      ~DataverseServer.get_info_zip_download_limit
       ~DataverseServer.get_metadatablocks
+      ~DataverseServer.get_metadatablock
       ~DataverseServer.search
       ~DataverseServer.search_simple
 

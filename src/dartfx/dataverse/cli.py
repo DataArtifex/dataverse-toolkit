@@ -93,13 +93,37 @@ def info(
         try:
             version_info = server.get_info_version()
             server_info = server.get_info_server()
+            export_formats = server.get_info_export_formats()
         except Exception as e:
             console.print(f"[bold red]Error:[/] {e}")
             raise typer.Exit(code=1) from e
 
-    console.print(f"[bold cyan]Server:[/] {server_info.get('data', {}).get('message', 'N/A')}")
+    console.print(f"\n[bold cyan]Server:[/] {server_info.get('data', {}).get('message', 'N/A')}")
     console.print(f"[bold cyan]Version:[/] {version_info.get('data', {}).get('version', 'N/A')}")
     console.print(f"[bold cyan]Build:[/] {version_info.get('data', {}).get('build', 'N/A')}")
+
+    formats_data = export_formats.get("data", {})
+    if formats_data:
+        table = Table(title=f"\nExport Formats for {hostname}", show_header=True, header_style="bold magenta")
+        table.add_column("ID", style="dim")
+        table.add_column("Display Name", style="white")
+        table.add_column("Media Type", style="yellow")
+        table.add_column("Harvest", justify="center")
+        table.add_column("Visible", justify="center")
+
+        # Sort formats by ID for consistent output
+        sorted_formats = sorted(formats_data.items())
+
+        for fid, finfo in sorted_formats:
+            table.add_row(
+                fid,
+                finfo.get("displayName", "N/A"),
+                finfo.get("mediaType", "N/A"),
+                "[green]Yes[/]" if finfo.get("isHarvestable") else "[red]No[/]",
+                "[green]Yes[/]" if finfo.get("isVisibleInUserInterface") else "[red]No[/]",
+            )
+
+        console.print(table)
 
 
 @app.command()
@@ -173,6 +197,34 @@ def search(
         table.add_row(item_type, name, identifier, published)
 
     console.print(table)
+
+
+@app.command()
+def dataset(
+    identifier: Annotated[str, typer.Argument(help="Dataset persistent identifier (e.g., DOI)")],
+    hostname: Annotated[
+        str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
+    ] = "dataverse.harvard.edu",
+    export: Annotated[
+        str | None, typer.Option("--export", "-e", help="Export format name (e.g., ddi, oai_dc, schema.org)")
+    ] = None,
+    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+) -> None:
+    """Get metadata or a specific export format for a dataset."""
+    server = get_server(hostname, api_key)
+
+    with console.status(f"[bold green]Fetching dataset '{identifier}' from {hostname}..."):
+        try:
+            if export:
+                result = server.get_dataset_export(identifier, export)
+                # Export results are usually raw strings (XML, JSON, or text)
+                console.print(result)
+            else:
+                result = server.get_dataset(identifier)
+                console.print_json(data=result)
+        except Exception as e:
+            console.print(f"[bold red]Error:[/] {e}")
+            raise typer.Exit(code=1) from e
 
 
 @app.command()

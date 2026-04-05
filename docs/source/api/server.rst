@@ -28,6 +28,8 @@ The main class for interacting with a Dataverse server installation.
       ~DataverseServer.get_info_zip_download_limit
       ~DataverseServer.get_metadatablocks
       ~DataverseServer.get_metadatablock
+      ~DataverseServer.get_dataset
+      ~DataverseServer.get_dataset_export
       ~DataverseServer.search
       ~DataverseServer.search_simple
 

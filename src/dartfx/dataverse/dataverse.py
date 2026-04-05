@@ -219,6 +219,7 @@ class DataverseServer(BaseModel):
         description: str | None = None,
         headers: dict[str, str] | None = None,
         success: int = 200,
+        return_type: str | None = None,
         **kwargs: Any,
     ) -> Any:
         """Call the API."""
@@ -233,8 +234,9 @@ class DataverseServer(BaseModel):
         url = f"https://{self.installation.hostname}/api/{path}"
         response = self.session.request(method, url, headers=headers, verify=self.ssl_verify, **kwargs)
         # handle response
+        actual_return_type = return_type or self.on_api_success_return
         if response.status_code == success:
-            if self.on_api_success_return == "json":
+            if actual_return_type == "json":
                 try:
                     return response.json()
                 except json.JSONDecodeError as e:
@@ -243,7 +245,7 @@ class DataverseServer(BaseModel):
                     if self.on_api_error != "none":
                         raise DataverseApiError(message, path, response.status_code, response) from e
                     return None
-            elif self.on_api_success_return == "text":
+            elif actual_return_type == "text":
                 return response.text
             return response
         logging.error(f"{description} -- {response.status_code}")
@@ -258,6 +260,7 @@ class DataverseServer(BaseModel):
         description: str | None = None,
         headers: dict[str, str] | None = None,
         success: int = 200,
+        return_type: str | None = None,
         **kwargs: Any,
     ) -> Any:
         """Call the API using the GET method."""
@@ -265,7 +268,9 @@ class DataverseServer(BaseModel):
             headers = {}
         if not description:
             description = _get_caller_name()
-        return self.request("get", path, description, headers=headers, success=success, **kwargs)
+        return self.request(
+            "get", path, description, headers=headers, success=success, return_type=return_type, **kwargs
+        )
 
     def post_request(
         self,
@@ -333,6 +338,29 @@ class DataverseServer(BaseModel):
         block’s database id, or its name (i.e. “citation”).
         """
         return self.get_request(f"metadatablocks/{identifier}")
+
+    #
+    # DATASETS
+    #
+
+    def get_dataset(self, identifier: str) -> Any:
+        """Get information about a specific dataset by its persistent identifier.
+
+        Args:
+            identifier: Persistent identifier (e.g., "doi:10.5683/SP3/FNS9EF")
+        """
+        return self.get_request("datasets/:persistentId/", params={"persistentId": identifier})
+
+    def get_dataset_export(self, identifier: str, exporter: str) -> Any:
+        """Get a dataset in a specific export format.
+
+        Args:
+            identifier: Persistent identifier (e.g., "doi:10.5683/SP3/FNS9EF")
+            exporter: Name of the exporter (e.g., "ddi", "oai_dc", "schema.org")
+        """
+        return self.get_request(
+            "datasets/export/", params={"exporter": exporter, "persistentId": identifier}, return_type="text"
+        )
 
     #
     # SEARCH

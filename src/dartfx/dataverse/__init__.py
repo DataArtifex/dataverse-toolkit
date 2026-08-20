@@ -8,6 +8,13 @@ from .dataverse import (
     ServerInstallation,
     fetch_dataverse_installations,
 )
+from .harvester import (
+    ServerHarvester,
+    fetch_active_datasets,
+    fetch_server_stats,
+    resolve_server_token,
+    save_server_token,
+)
 
 __all__ = [
     "DataverseApiError",
@@ -15,4 +22,9 @@ __all__ = [
     "SearchParameters",
     "ServerInstallation",
     "fetch_dataverse_installations",
+    "ServerHarvester",
+    "fetch_active_datasets",
+    "fetch_server_stats",
+    "resolve_server_token",
+    "save_server_token",
 ]

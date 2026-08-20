@@ -59,6 +59,12 @@ dartfx-dataverse search "climate change" --per-page 5
 # Get server information
 dartfx-dataverse info dataverse.harvard.edu
 
+# Inspect repository statistics & tabular file counts
+dartfx-dataverse stats --country NL
+
+# Incrementally harvest tabular data metadata (DDI, Croissant, Native, Schema.org)
+dartfx-dataverse harvest ./harvested_data --server dataverse.harvard.edu --tabular --format ddi --limit 10
+
 # Get dataset metadata (JSON)
 dartfx-dataverse dataset doi:10.5683/SP3/FNS9EF -H borealisdata.ca
 
@@ -372,7 +378,6 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 ## Links
 
-- **Documentation**: https://dataverse-toolkit.readthedocs.io/
 - **Source Code**: https://github.com/DataArtifex/dataverse-toolkit
 - **Issue Tracker**: https://github.com/DataArtifex/dataverse-toolkit/issues
 - **PyPI**: https://pypi.org/project/dartfx-dataverse/
@@ -394,7 +399,7 @@ If you use this package in your research, please cite:
 @software{dartfx_dataverse,
   author = {Heus, Pascal},
   title = {dartfx-dataverse: A Python toolkit for Dataverse repositories},
-  year = {2024},
+  year = {2026},
   url = {https://github.com/DataArtifex/dataverse-toolkit}
 }
 ```

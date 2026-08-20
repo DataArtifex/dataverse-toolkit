@@ -19,11 +19,12 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
+  "pydataverse>=0.3.3",
   "pydantic>=2.10.0",
   "requests>=2.32.0",
   "requests-cache>=1.0.0",
   "typer>=0.24.0",
-  "rich>=13.0.0",
+  "rich>=14.0.0",
 ]
 
 [project.scripts]
@@ -88,14 +89,14 @@ serve = "python -m http.server --directory docs/build/html"
 allow-direct-references = true
 
 [tool.coverage.run]
-source_pkgs = ["dataverse", "tests"]
+source_pkgs = ["dartfx.dataverse", "tests"]
 branch = true
 parallel = true
 omit = ["src/dartfx/dataverse/__about__.py"]
 
 [tool.coverage.paths]
 source = ["src/dartfx/dataverse", "*/dataverse-toolkit/src/dartfx/dataverse"]
-tests = ["tests", "*/dartfx/dataverse/tests"]
+tests = ["tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]

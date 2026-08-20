@@ -122,6 +122,7 @@ Table of Contents
    installation
    quickstart
    usage
+   harvester
    examples
 
 .. toctree::

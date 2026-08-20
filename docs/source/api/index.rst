@@ -40,6 +40,7 @@ Complete API
    search
    models
    exceptions
+   harvester
 
 Module Contents
 ---------------

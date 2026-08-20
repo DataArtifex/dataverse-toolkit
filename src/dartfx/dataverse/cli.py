@@ -14,6 +14,7 @@ from dartfx.dataverse.dataverse import (
     ServerInstallation,
     fetch_dataverse_installations,
 )
+from dartfx.dataverse.harvester import harvest as _harvest_cmd
 
 app = typer.Typer(
     name="dartfx-dataverse",
@@ -264,6 +265,66 @@ def metadatablocks(
         table.add_row(block.get("name", "N/A"), block.get("displayName", "N/A"))
 
     console.print(table)
+
+
+# ---------------------------------------------------------------------------
+# Harvester & Sync Commands
+# ---------------------------------------------------------------------------
+app.command(
+    name="harvest",
+    help="Harvest and incrementally sync Dataverse metadata records into local storage.",
+)(_harvest_cmd)
+
+
+@app.command(name="stats")
+def stats(
+    server: Annotated[
+        str,
+        typer.Option(
+            "--server",
+            "-s",
+            help="Target Dataverse server hostname (e.g. dataverse.nl, dataverse.harvard.edu) or ALL.",
+        ),
+    ] = "ALL",
+    country: Annotated[
+        str | None,
+        typer.Option(
+            "--country",
+            "-c",
+            help="Filter servers by 2-letter ISO code (e.g. NL, US, FR, DE, CA, GB) via ISO crosswalk.",
+        ),
+    ] = None,
+    query: Annotated[
+        str | None,
+        typer.Option(
+            "--query",
+            "-q",
+            help="Filter datasets by keyword search query (e.g. climate, archaeology).",
+        ),
+    ] = None,
+    api_token: Annotated[
+        str | None,
+        typer.Option(
+            "--api-token",
+            "--key",
+            "-k",
+            envvar="DATAVERSE_API_KEY",
+            help="Dataverse API Token (or set DATAVERSE_API_KEY env var) for repositories requiring authentication.",
+        ),
+    ] = None,
+) -> None:
+    """Display live dataset, total file, and tabular data file counts for Dataverse servers."""
+    from dartfx.dataverse.harvester import harvest as run_harvest
+
+    run_harvest(
+        output_dir=None,
+        server=server,
+        country=country,
+        query=query,
+        metadata_format=None,
+        show_stats=True,
+        api_token=api_token,
+    )
 
 
 if __name__ == "__main__":

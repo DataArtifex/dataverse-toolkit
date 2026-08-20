@@ -1,5 +1,6 @@
 import csv
 import json
+import os
 import sys
 from enum import StrEnum
 from typing import Annotated, Literal
@@ -30,9 +31,10 @@ class OutputFormat(StrEnum):
     CSV = "csv"
 
 
-def get_server(hostname: str, api_key: str | None = None) -> DataverseServer:
+def get_server(hostname: str | None = None, api_key: str | None = None) -> DataverseServer:
     """Helper to create a DataverseServer instance."""
-    installation = ServerInstallation(hostname=hostname)
+    resolved_host = hostname or os.environ.get("DATAVERSE_SERVER") or "dataverse.harvard.edu"
+    installation = ServerInstallation(hostname=resolved_host)
     return DataverseServer(server=installation, api_key=api_key)
 
 
@@ -85,12 +87,27 @@ def installations(
 
 @app.command()
 def info(
-    hostname: Annotated[str, typer.Argument(help="Dataverse server hostname")],
-    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    hostname: Annotated[
+        str | None,
+        typer.Argument(
+            help="Dataverse server hostname",
+            envvar="DATAVERSE_SERVER",
+        ),
+    ] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option(
+            "--api-key",
+            "-k",
+            envvar=["DARTFX_DATAVERSE_API_KEY", "DATAVERSE_API_KEY"],
+            help="API Key",
+        ),
+    ] = None,
 ) -> None:
+    resolved_host = hostname or os.environ.get("DATAVERSE_SERVER") or "dataverse.harvard.edu"
     """Get information about a specific Dataverse server."""
     server = get_server(hostname, api_key)
-    with console.status(f"[bold green]Fetching info from {hostname}..."):
+    with console.status(f"[bold green]Fetching info from {resolved_host}..."):
         try:
             version_info = server.get_info_version()
             server_info = server.get_info_server()
@@ -131,7 +148,13 @@ def info(
 def search(
     query: Annotated[str, typer.Argument(help="Search query")],
     hostname: Annotated[
-        str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
+        str,
+        typer.Option(
+            "--hostname",
+            "-H",
+            envvar="DATAVERSE_SERVER",
+            help="Dataverse server hostname",
+        ),
     ] = "dataverse.harvard.edu",
     type: Annotated[
         Literal["dataverse", "dataset", "file"] | None,
@@ -147,7 +170,10 @@ def search(
         Literal["asc", "desc"] | None, typer.Option("--order", "-o", help="Sort order (asc, desc)")
     ] = None,
     format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
-    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option("--api-key", "-k", envvar=["DARTFX_DATAVERSE_API_KEY", "DATAVERSE_API_KEY"], help="API Key"),
+    ] = None,
 ) -> None:
     """Search for dataverses, datasets, and files."""
     server = get_server(hostname, api_key)
@@ -204,12 +230,21 @@ def search(
 def dataset(
     identifier: Annotated[str, typer.Argument(help="Dataset persistent identifier (e.g., DOI)")],
     hostname: Annotated[
-        str, typer.Option("--hostname", "-H", help="Dataverse server hostname")
+        str,
+        typer.Option(
+            "--hostname",
+            "-H",
+            envvar="DATAVERSE_SERVER",
+            help="Dataverse server hostname",
+        ),
     ] = "dataverse.harvard.edu",
     export: Annotated[
         str | None, typer.Option("--export", "-e", help="Export format name (e.g., ddi, oai_dc, schema.org)")
     ] = None,
-    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option("--api-key", "-k", envvar=["DARTFX_DATAVERSE_API_KEY", "DATAVERSE_API_KEY"], help="API Key"),
+    ] = None,
 ) -> None:
     """Get metadata or a specific export format for a dataset."""
     server = get_server(hostname, api_key)
@@ -230,10 +265,25 @@ def dataset(
 
 @app.command()
 def metadatablocks(
-    hostname: Annotated[str, typer.Argument(help="Dataverse server hostname")],
+    hostname: Annotated[
+        str | None,
+        typer.Argument(
+            help="Dataverse server hostname",
+            envvar="DATAVERSE_SERVER",
+        ),
+    ] = None,
     format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
-    api_key: Annotated[str | None, typer.Option("--api-key", "-k", envvar="DATAVERSE_API_KEY", help="API Key")] = None,
+    api_key: Annotated[
+        str | None,
+        typer.Option(
+            "--api-key",
+            "-k",
+            envvar=["DARTFX_DATAVERSE_API_KEY", "DATAVERSE_API_KEY"],
+            help="API Key",
+        ),
+    ] = None,
 ) -> None:
+    resolved_host = hostname or os.environ.get("DATAVERSE_SERVER") or "dataverse.harvard.edu"
     """List metadata blocks for a specific Dataverse server."""
     server = get_server(hostname, api_key)
     with console.status(f"[bold green]Fetching metadata blocks from {hostname}..."):
@@ -257,7 +307,7 @@ def metadatablocks(
             )
         return
 
-    table = Table(title=f"Metadata Blocks for {hostname}")
+    table = Table(title=f"Metadata Blocks for {resolved_host}")
     table.add_column("Name", style="cyan")
     table.add_column("Display Name", style="magenta")
 
@@ -283,6 +333,7 @@ def stats(
         typer.Option(
             "--server",
             "-s",
+            envvar="DATAVERSE_SERVER",
             help="Target Dataverse server hostname (e.g. dataverse.nl, dataverse.harvard.edu) or ALL.",
         ),
     ] = "ALL",
@@ -308,7 +359,7 @@ def stats(
             "--api-token",
             "--key",
             "-k",
-            envvar="DATAVERSE_API_KEY",
+            envvar=["DARTFX_DATAVERSE_API_KEY", "DATAVERSE_API_KEY"],
             help="Dataverse API Token (or set DATAVERSE_API_KEY env var) for repositories requiring authentication.",
         ),
     ] = None,

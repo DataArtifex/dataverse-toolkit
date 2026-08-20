@@ -33,3 +33,9 @@ def test_strip_https_prefix() -> None:
     server = DataverseServer("https://dataverse.harvard.edu", lookup_installation=False)
     print(server.installation)
     assert server.installation.hostname == "dataverse.harvard.edu"
+
+
+def test_default_server_from_env(monkeypatch) -> None:
+    monkeypatch.setenv("DATAVERSE_SERVER", "dataverse.nl")
+    server = DataverseServer()
+    assert server.installation.hostname == "dataverse.nl"

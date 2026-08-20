@@ -1,6 +1,7 @@
 import inspect
 import json
 import logging
+import os
 from typing import Any, Literal
 
 import requests
@@ -170,7 +171,7 @@ class DataverseServer(BaseModel):
 
     def __init__(
         self,
-        server: str | ServerInstallation,  # hostname or ServerInstallation
+        server: str | ServerInstallation | None = None,  # hostname or ServerInstallation
         api_key: str | None = None,
         on_api_error: Literal["raise", "none"] = "raise",
         on_api_success_return: Literal["json", "text", "response"] = "json",
@@ -178,6 +179,14 @@ class DataverseServer(BaseModel):
         lookup_installation: bool = True,
         **kwargs: Any,
     ) -> None:
+        if server is None:
+            server = (
+                os.environ.get("DATAVERSE_SERVER") or os.environ.get("DATAVERSE_HOSTNAME") or "dataverse.harvard.edu"
+            )
+
+        if api_key is None:
+            api_key = os.environ.get("DARTFX_DATAVERSE_API_KEY") or os.environ.get("DATAVERSE_API_KEY")
+
         # server
         if isinstance(server, str):
             # convert hostname to a ServerInstallation

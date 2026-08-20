@@ -81,3 +81,44 @@ def test_server_harvester_manifest(tmp_path):
     # Reload and verify
     reloaded = ServerHarvester("test.dataverse.org", tmp_path)
     assert "doi:10.1/test::croissant" in reloaded.manifest["records"]
+
+
+def test_token_resolution_with_repository_env(tmp_path, monkeypatch):
+    test_host = "dataverse.unc.edu"
+    monkeypatch.setenv("DARTFX_DATAVERSE_REPOSITORY", str(tmp_path))
+    save_server_token(test_host, "saved-token-999", repo_root=tmp_path)
+    # resolve without passing repo_root explicitly
+    assert resolve_server_token(test_host) == "saved-token-999"
+
+
+def test_fetch_server_stats_caching(tmp_path):
+    import json
+
+    from dartfx.dataverse.harvester import fetch_server_stats
+
+    # Create dummy cache file
+    server = "cached.dataverse.org"
+    server_dir = tmp_path / server
+    server_dir.mkdir(parents=True)
+    cache_file = server_dir / ".stats_cache.json"
+    with open(cache_file, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "server": server,
+                "cached_at": "2026-08-20T00:00:00Z",
+                "query": "*",
+                "datasets": 100,
+                "files": 500,
+                "tabular_files": 50,
+                "is_dataverse": True,
+                "version": "6.10",
+                "error": None,
+            },
+            f,
+        )
+
+    # Fetch with repo_root pointing to tmp_path
+    res = fetch_server_stats(server, repo_root=tmp_path, cache_ttl_hours=100.0)
+    assert res.get("cached") is True
+    assert res.get("datasets") == 100
+    assert res.get("version") == "6.10"

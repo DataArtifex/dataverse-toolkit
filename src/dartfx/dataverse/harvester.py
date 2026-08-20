@@ -148,7 +148,12 @@ def resolve_server_token(
     clean_host = host.replace("https://", "").replace("http://", "").strip("/")
 
     # 1. Check server-specific directory (.api_token)
-    search_dirs = [repo_root] if repo_root else []
+    search_dirs = []
+    if repo_root:
+        search_dirs.append(repo_root)
+    env_repo = os.environ.get("DARTFX_DATAVERSE_REPOSITORY")
+    if env_repo:
+        search_dirs.append(Path(env_repo))
     search_dirs.append(Path.cwd())
     for d in search_dirs:
         if d:
@@ -533,12 +538,41 @@ def fetch_server_stats(
     query: str | None = None,
     api_token: str | None = None,
     timeout: int = 15,
+    repo_root: Path | None = None,
+    refresh_cache: bool = False,
+    cache_ttl_hours: float = 24.0,
 ) -> dict[str, int | bool | str | None]:
     """Retrieve counts of datasets, total files, and tabular data files from a Dataverse server."""
+    clean_host = host.replace("https://", "").replace("http://", "").strip("/")
     base_url = f"https://{host}" if not host.startswith("http") else host
     solr_query = query if query else "*"
     encoded_query = urllib.parse.quote(solr_query)
-    headers = get_request_headers(host=host, api_token=api_token)
+    headers = get_request_headers(host=host, api_token=api_token, repo_root=repo_root)
+
+    target_repo = repo_root
+    if not target_repo:
+        env_repo = os.environ.get("DARTFX_DATAVERSE_REPOSITORY")
+        if env_repo:
+            target_repo = Path(env_repo)
+        else:
+            target_repo = Path.cwd() / ".cache"
+
+    cache_file = (target_repo / clean_host / ".stats_cache.json") if target_repo else None
+
+    # Check 24h local cache
+    if cache_file and cache_file.exists() and not refresh_cache:
+        try:
+            with open(cache_file, encoding="utf-8") as f:
+                cdata = json.load(f)
+                cached_at_str = cdata.get("cached_at")
+                if cached_at_str and cdata.get("query") == solr_query:
+                    dt = datetime.fromisoformat(cached_at_str)
+                    age_hours = (datetime.now(UTC) - dt).total_seconds() / 3600.0
+                    if age_hours < cache_ttl_hours and (cdata.get("is_dataverse") or cdata.get("requires_token")):
+                        cdata["cached"] = True
+                        return cdata
+        except Exception:
+            pass
 
     stats: dict[str, int | bool | str | None] = {
         "datasets": 0,
@@ -562,6 +596,14 @@ def fetch_server_stats(
                 if isinstance(data, dict) and data.get("status") == "OK" and "data" in data:
                     stats["is_dataverse"] = True
                     stats["datasets"] = data.get("data", {}).get("total_count", 0)
+                    try:
+                        r_ver = requests.get(f"{base_url}/api/info/version", headers=headers, timeout=min(timeout, 5))
+                        if r_ver.status_code == 200:
+                            vdata = r_ver.json()
+                            if isinstance(vdata, dict) and vdata.get("status") == "OK":
+                                stats["version"] = vdata.get("data", {}).get("version")
+                    except Exception:
+                        pass
                 else:
                     stats["error"] = "Not a Dataverse server (invalid API response)"
                     return stats
@@ -653,6 +695,18 @@ def fetch_server_stats(
             stats["tabular_files"] = r_tab.json().get("data", {}).get("total_count", 0)
     except Exception:
         pass
+
+    if cache_file and (stats.get("is_dataverse") or stats.get("requires_token")):
+        try:
+            cache_file.parent.mkdir(parents=True, exist_ok=True)
+            save_payload = dict(stats)
+            save_payload["server"] = clean_host
+            save_payload["query"] = solr_query
+            save_payload["cached_at"] = datetime.now(UTC).isoformat()
+            with open(cache_file, "w", encoding="utf-8") as f:
+                json.dump(save_payload, f, indent=2)
+        except Exception:
+            pass
 
     return stats
 
@@ -1367,6 +1421,7 @@ def harvest(
         typer.Option(
             "--server",
             "-s",
+            envvar="DATAVERSE_SERVER",
             help="Target Dataverse server hostname (e.g. dataverse.nl, dataverse.harvard.edu) or ALL.",
         ),
     ] = "ALL",
@@ -1515,6 +1570,7 @@ def harvest(
         )
         table.add_column("Hostname", style="cyan")
         table.add_column("Country", style="green")
+        table.add_column("Version", style="dim magenta", justify="center")
         table.add_column("Datasets", style="bold yellow", justify="right")
         table.add_column("Total Files", style="white", justify="right")
         table.add_column("Tabular Files", style="bold green", justify="right")
@@ -1537,29 +1593,40 @@ def harvest(
                 progress.update(task, description=f"[bold yellow]Querying {host}...[/bold yellow]")
                 if api_token and fetch_target:
                     save_server_token(host, api_token, None)
-                counts = fetch_server_stats(host, query=query, api_token=api_token)
+                counts = fetch_server_stats(
+                    host,
+                    query=query,
+                    api_token=api_token,
+                    repo_root=output_dir,
+                    refresh_cache=refresh_catalog,
+                    cache_ttl_hours=float(cache_ttl),
+                )
                 is_dv = counts.get("is_dataverse", False)
                 err = counts.get("error")
 
                 url = f"https://{host}" if not host.startswith("http") else host
                 clickable_host = f"[link={url}]{host}[/link]"
 
+                ver_val = f"v{counts['version']}" if counts.get("version") else "-"
+                country_val = inst.get("country", "") or "Global"
+
                 if counts.get("requires_token") and not counts.get("datasets"):
-                    ver_str = f" v{counts['version']}" if counts.get("version") else ""
                     table.add_row(
                         clickable_host,
-                        inst.get("country", "") or "Global",
+                        country_val,
+                        ver_val,
                         "-",
                         "-",
                         "-",
                         "-",
-                        f"[bold yellow]Online{ver_str} (Requires API Token: -k <token>)[/bold yellow]",
+                        "[bold yellow]Requires Token (-k)[/bold yellow]",
                     )
                 elif not is_dv:
                     err_msg = str(err) if err else "Not a Dataverse server"
                     table.add_row(
                         clickable_host,
-                        inst.get("country", "") or "Unknown",
+                        country_val,
+                        ver_val,
                         "-",
                         "-",
                         "-",
@@ -1578,12 +1645,15 @@ def harvest(
                     pct_str = f"{(tab_count / files_count * 100):.1f}%" if files_count > 0 else "0.0%"
                     table.add_row(
                         clickable_host,
-                        inst.get("country", "") or "Global",
+                        country_val,
+                        ver_val,
                         f"{ds_count:,}",
                         f"{files_count:,}",
                         f"{tab_count:,}",
                         pct_str,
-                        "[bold green]Online[/bold green]",
+                        "[bold green]Online[/bold green] [dim](cached)[/dim]"
+                        if counts.get("cached")
+                        else "[bold green]Online[/bold green]",
                     )
                 progress.advance(task)
 
@@ -1630,7 +1700,15 @@ def harvest(
         raise typer.Exit(code=0)
 
     if not output_dir:
-        console.print("[bold red]Error: Missing required argument 'OUTPUT_DIR'.[/bold red]")
+        env_repo = os.environ.get("DARTFX_DATAVERSE_REPOSITORY")
+        if env_repo:
+            output_dir = Path(env_repo)
+
+    if not output_dir:
+        console.print(
+            "[bold red]Error: Missing required argument 'OUTPUT_DIR' "
+            "(or set DARTFX_DATAVERSE_REPOSITORY env var).[/bold red]"
+        )
         console.print(
             "[yellow]Usage: uv run python utils/harvester.py <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
         )

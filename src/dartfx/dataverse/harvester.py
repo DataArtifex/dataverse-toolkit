@@ -1566,15 +1566,17 @@ def harvest(
             raise typer.Exit(code=1)
 
         table = Table(
-            title=f"Dataverse Server Statistics ({len(installations)} server(s))", header_style="bold magenta"
+            title=f"Dataverse Server Statistics ({len(installations)} server(s))",
+            header_style="bold magenta",
+            expand=False,
         )
-        table.add_column("Hostname", style="cyan")
-        table.add_column("Country", style="green")
-        table.add_column("Version", style="dim magenta", justify="center")
-        table.add_column("Datasets", style="bold yellow", justify="right")
-        table.add_column("Total Files", style="white", justify="right")
-        table.add_column("Tabular Files", style="bold green", justify="right")
-        table.add_column("Tabular %", style="dim cyan", justify="right")
+        table.add_column("Hostname", style="cyan", no_wrap=True)
+        table.add_column("Country", style="green", no_wrap=True)
+        table.add_column("Version", style="dim magenta", justify="center", no_wrap=True)
+        table.add_column("Datasets", style="bold yellow", justify="right", no_wrap=True)
+        table.add_column("Files", style="white", justify="right", no_wrap=True)
+        table.add_column("Tabular", style="bold green", justify="right", no_wrap=True)
+        table.add_column("Tabular %", style="dim cyan", justify="right", no_wrap=True)
         table.add_column("Status / Note", style="italic")
 
         suggestions_to_show = []
@@ -1607,7 +1609,8 @@ def harvest(
                 url = f"https://{host}" if not host.startswith("http") else host
                 clickable_host = f"[link={url}]{host}[/link]"
 
-                ver_val = f"v{counts['version']}" if counts.get("version") else "-"
+                ver_raw = str(counts["version"]).strip() if counts.get("version") else ""
+                ver_val = f"v{ver_raw.split()[0]}" if ver_raw else "-"
                 country_val = inst.get("country", "") or "Global"
 
                 if counts.get("requires_token") and not counts.get("datasets"):
@@ -1680,9 +1683,9 @@ def harvest(
             raise typer.Exit(code=1)
 
         table = Table(title=f"Global Dataverse Servers ({len(installations)} found)", header_style="bold magenta")
-        table.add_column("Hostname", style="cyan")
+        table.add_column("Hostname", style="cyan", no_wrap=True)
         table.add_column("Institution / Name", style="white")
-        table.add_column("Country", style="green")
+        table.add_column("Country", style="green", no_wrap=True)
         table.add_column("Country Code", style="yellow", justify="center")
 
         for inst in installations:

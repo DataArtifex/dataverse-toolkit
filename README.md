@@ -290,17 +290,21 @@ server = DataverseServer(
 
 ## Project Status & Roadmap
 
-### Current Version: 0.1.0 (Development)
+### Current Version: 0.2.0 (Active Release)
 
 This is an early development release. The core functionality is working, but APIs may change.
 
 ### Roadmap
 
-#### v0.2.0 (Planned)
-- [ ] Pydantic models for search results and datasets
-- [ ] Enhanced error messages and debugging
-- [ ] Batch operation support
-- [ ] Progress indicators for long-running operations
+#### Completed Features (v0.2.0)
+- [x] First-class Metadata Harvester & Sync subsystem (`dartfx-dataverse harvest`)
+- [x] Repository statistics table with 24h caching (`dartfx-dataverse stats`)
+- [x] Support for multi-format exports (`croissant`, `native`, `ddi`, `schema.org`, `datacite`)
+- [x] Local storage root management via `DARTFX_DATAVERSE_REPOSITORY`
+- [x] Automatic `.env` loading using `python-dotenv`
+- [x] Fast timestamp checks and SHA-256 hash manifest verification
+- [x] Single-notice error classification and auto-skipping for unsupported format exporters
+- [x] Default tabular filtering and configurable record limits
 
 #### Completed Features (v0.1.x)
 - [x] Dataset metadata retrieval (DDI, Dublin Core, DataCite)

@@ -6,6 +6,7 @@ from enum import StrEnum
 from typing import Annotated, Literal
 
 import typer
+from dotenv import find_dotenv, load_dotenv
 from rich.console import Console
 from rich.table import Table
 
@@ -16,6 +17,8 @@ from dartfx.dataverse.dataverse import (
     fetch_dataverse_installations,
 )
 from dartfx.dataverse.harvester import harvest as _harvest_cmd
+
+load_dotenv(find_dotenv(usecwd=True))
 
 app = typer.Typer(
     name="dartfx-dataverse",

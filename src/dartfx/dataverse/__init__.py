@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: 2024-present kulnor <pascal@codata.org>
 #
 # SPDX-License-Identifier: MIT
+from dotenv import find_dotenv, load_dotenv
+
 from .dataverse import (
     DataverseApiError,
     DataverseServer,
@@ -15,6 +17,9 @@ from .harvester import (
     resolve_server_token,
     save_server_token,
 )
+
+# Auto-load environment variables from .env file
+load_dotenv(find_dotenv(usecwd=True))
 
 __all__ = [
     "DataverseApiError",

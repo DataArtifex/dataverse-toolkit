@@ -39,3 +39,11 @@ def test_default_server_from_env(monkeypatch) -> None:
     monkeypatch.setenv("DATAVERSE_SERVER", "dataverse.nl")
     server = DataverseServer()
     assert server.installation.hostname == "dataverse.nl"
+
+
+def test_dotenv_loaded():
+    from dotenv import find_dotenv
+
+    # find_dotenv should find root .env if it exists
+    env_file = find_dotenv(usecwd=True)
+    assert env_file is not None

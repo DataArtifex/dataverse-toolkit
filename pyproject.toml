@@ -21,6 +21,7 @@ classifiers = [
 dependencies = [
   "pydataverse>=0.3.3",
   "pydantic>=2.10.0",
+  "python-dotenv>=1.0.0",
   "requests>=2.32.0",
   "requests-cache>=1.0.0",
   "typer>=0.24.0",

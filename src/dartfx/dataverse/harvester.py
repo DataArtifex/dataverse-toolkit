@@ -20,6 +20,7 @@ from typing import Annotated, Any
 
 import requests
 import typer
+from dotenv import find_dotenv, load_dotenv
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import (
@@ -51,6 +52,8 @@ app = typer.Typer(
     help="Harvest and incrementally sync Dataverse Croissant ML records into local storage.",
     add_completion=False,
 )
+
+load_dotenv(find_dotenv(usecwd=True))
 
 console = Console()
 
@@ -455,6 +458,23 @@ def normalize_doi(doi_str: str) -> str:
     return raw
 
 
+def is_format_unsupported_error(err_msg: str | None) -> bool:
+    """Determine if an error indicates that a metadata format exporter is completely unavailable."""
+    if not err_msg:
+        return False
+    msg_low = err_msg.lower()
+    return any(
+        k in msg_low
+        for k in (
+            "not supported",
+            "module not found",
+            "exporter not found",
+            "unsupported format",
+            "http 404",
+        )
+    )
+
+
 def is_non_recoverable_error(err_msg: str | None) -> bool:
     """Determine if an error is non-recoverable (format validation failure, 404, 400, 422, unsupported format)."""
     if not err_msg:
@@ -722,10 +742,11 @@ def fetch_active_datasets(
     cache_ttl_hours: float = 24.0,
     per_page: int = 100,
     verbose: bool = False,
-    tabular_only: bool = False,
+    tabular_only: bool = True,
     api_token: str | None = None,
 ) -> dict[str, dict]:
     """Search for active datasets using Search API or DOI target with local 24h catalog caching."""
+    effective_limit = None if limit == 0 else limit
     base_url = f"https://{host}" if not host.startswith("http") else host
     headers = get_request_headers(host=host, api_token=api_token, repo_root=server_dir.parent if server_dir else None)
 
@@ -764,7 +785,7 @@ def fetch_active_datasets(
                         result_datasets = {}
                         for pid, d_info in cached_datasets.items():
                             result_datasets[pid] = d_info
-                            if limit and len(result_datasets) >= limit:
+                            if effective_limit and len(result_datasets) >= effective_limit:
                                 break
 
                         msg = (
@@ -816,8 +837,8 @@ def fetch_active_datasets(
             if start == 0:
                 target_type_str = "tabular files" if tabular_only else "datasets"
                 match_info = f"Found {total_count:,} total matching {target_type_str} on {host}"
-                if limit:
-                    match_info += f" (harvesting up to limit of {limit:,} datasets)"
+                if effective_limit:
+                    match_info += f" (harvesting up to limit of {effective_limit:,} datasets)"
                 console.print(f"  [dim cyan]• {match_info}[/dim cyan]")
                 file_logger.log(f"[API] {match_info}")
 
@@ -841,14 +862,14 @@ def fetch_active_datasets(
                         "updated_at": updated_at,
                         "published_at": item.get("published_at"),
                     }
-                    if limit and len(active_datasets) >= limit:
-                        msg = f"[API] Reached record limit ({limit})"
+                    if effective_limit and len(active_datasets) >= effective_limit:
+                        msg = f"[API] Reached record limit ({effective_limit})"
                         if verbose:
                             console.print(f"[dim]  {msg}[/dim]")
                         file_logger.log(msg)
                         break
 
-            if limit and len(active_datasets) >= limit:
+            if effective_limit and len(active_datasets) >= effective_limit:
                 break
 
             start += per_page
@@ -887,7 +908,7 @@ def fetch_active_datasets(
                 "query": query,
                 "since_date": since_date,
                 "target_doi": target_doi,
-                "limit": limit,
+                "limit": effective_limit,
                 "tabular_only": tabular_only,
                 "count": len(active_datasets),
                 "datasets": active_datasets,
@@ -949,27 +970,28 @@ def fetch_metadata_record(
     if fmt == "croissant":
         if verbose:
             console.print(f"[dim]  [API] Fetching Croissant ML record for PID: {pid}[/dim]")
+        url = f"{base_host}/api/datasets/export?exporter=croissant&persistentId={urllib.parse.quote(pid)}"
         try:
-            if Croissant is None:
-                err_msg = "pyDataverse Croissant module not found. Install with: pip install git+https://github.com/Dans-labs/pyDataverse@development"
-                if verbose:
-                    console.print(f"[bold red]  [API] {err_msg}[/bold red]")
-                return None, ".croissant.json", err_msg
-            croissant = Croissant(doi=pid, host=base_host)
-            rec = croissant.get_record()
-            if rec and "error" not in rec:
-                return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
-            elif rec and "error" in rec:
-                err_msg = f"Croissant export error: {rec.get('error')}"
-                if verbose:
-                    console.print(f"[bold red]  [API] {err_msg} for {pid}[/bold red]")
-                return None, ".croissant.json", err_msg
-        except Exception as e:
-            err_msg = f"Croissant exception: {e}"
-            if verbose:
-                console.print(f"[bold red]  [API] {err_msg} for {pid}[/bold red]")
+            r = requests.get(url, headers=headers, timeout=20)
+            if r.status_code == 200:
+                return r.content, ".croissant.json", None
+            elif r.status_code in (400, 404) and Croissant is not None:
+                croissant = Croissant(doi=pid, host=base_host)
+                rec = croissant.get_record()
+                if rec and "error" not in rec:
+                    return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
+            err_msg = f"Croissant export not supported on server (HTTP {r.status_code})"
             return None, ".croissant.json", err_msg
-        return None, ".croissant.json", "Croissant empty response"
+        except Exception as e:
+            if Croissant is not None:
+                try:
+                    croissant = Croissant(doi=pid, host=base_host)
+                    rec = croissant.get_record()
+                    if rec and "error" not in rec:
+                        return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
+                except Exception:
+                    pass
+            return None, ".croissant.json", f"Croissant export error: {e}"
 
     elif fmt == "native":
         url = f"{base_host}/api/datasets/:persistentId/?persistentId={urllib.parse.quote(pid)}"
@@ -1135,11 +1157,12 @@ class ServerHarvester:
         cache_ttl_hours: float = 24.0,
         retry_errors: bool = False,
         force_verify: bool = False,
-        tabular_only: bool = False,
+        tabular_only: bool = True,
         api_token: str | None = None,
         progress_callback=None,
     ) -> dict[str, list[Any]]:
         """Perform intelligent incremental sync (Additions, Updates, Deletions)."""
+        effective_limit = None if limit == 0 else limit
         stats: dict[str, list[Any]] = {"added": [], "updated": [], "deleted": [], "unchanged": [], "errors": []}
         target_formats = normalize_formats(metadata_formats)
 
@@ -1150,7 +1173,7 @@ class ServerHarvester:
             self.host,
             query=query,
             since_date=since_date,
-            limit=limit,
+            limit=effective_limit,
             target_doi=target_doi,
             server_dir=self.server_dir,
             refresh_catalog=refresh_catalog,
@@ -1217,9 +1240,12 @@ class ServerHarvester:
         # Determine Additions and Updates across all requested formats:
         total_items = len(active_datasets) * len(target_formats)
         current_item = 0
+        unsupported_formats: set[str] = set()
 
         for pid, meta in active_datasets.items():
             for fmt in target_formats:
+                if fmt in unsupported_formats:
+                    continue
                 current_item += 1
                 if progress_callback:
                     progress_callback(current_item, total_items, pid, fmt, meta)
@@ -1352,29 +1378,49 @@ class ServerHarvester:
                             console.print(f"  {symbol} {rec_key} -> {rel_path}")
                         file_logger.log(msg, level=action_label)
                     else:
-                        error_item = {
-                            "key": rec_key,
-                            "pid": pid,
-                            "name": meta.get("name"),
-                            "format": fmt,
-                            "reason": last_err_msg or "Empty metadata response",
-                        }
-                        stats["errors"].append(error_item)
-                        msg = f"ERROR: {rec_key} ({error_item['reason']})"
-                        if verbose:
-                            console.print(f"  [bold red][!] ERROR:[/bold red] {rec_key} ({error_item['reason']})")
-                        file_logger.log(msg, level="ERROR")
-
-                        if is_non_recoverable_error(last_err_msg) and not dry_run:
-                            if "errors" not in self.manifest:
-                                self.manifest["errors"] = {}
-                            self.manifest["errors"][rec_key] = {
-                                "global_id": pid,
+                        if is_format_unsupported_error(last_err_msg) and fmt not in unsupported_formats:
+                            unsupported_formats.add(fmt)
+                            error_item = {
+                                "key": f"{self.host}::{fmt}",
+                                "pid": f"{self.host} (all datasets)",
+                                "name": "-",
                                 "format": fmt,
-                                "failed_at": datetime.now(UTC).isoformat(),
-                                "reason": last_err_msg,
-                                "non_recoverable": True,
+                                "reason": (
+                                    f"Format '{fmt}' not supported on server ({last_err_msg}) "
+                                    "- skipped remaining datasets."
+                                ),
                             }
+                            stats["errors"].append(error_item)
+                            msg = (
+                                f"Format '{fmt}' is not supported on {self.host} ({last_err_msg}) "
+                                "- skipping remaining records."
+                            )
+                            console.print(f"  [bold yellow][!] {msg}[/bold yellow]")
+                            file_logger.log(msg, level="WARNING")
+                        elif fmt not in unsupported_formats:
+                            error_item = {
+                                "key": rec_key,
+                                "pid": pid,
+                                "name": meta.get("name"),
+                                "format": fmt,
+                                "reason": last_err_msg or "Empty metadata response",
+                            }
+                            stats["errors"].append(error_item)
+                            msg = f"ERROR: {rec_key} ({error_item['reason']})"
+                            if verbose:
+                                console.print(f"  [bold red][!] ERROR:[/bold red] {rec_key} ({error_item['reason']})")
+                            file_logger.log(msg, level="ERROR")
+
+                            if is_non_recoverable_error(last_err_msg) and not dry_run:
+                                if "errors" not in self.manifest:
+                                    self.manifest["errors"] = {}
+                                self.manifest["errors"][rec_key] = {
+                                    "global_id": pid,
+                                    "format": fmt,
+                                    "failed_at": datetime.now(UTC).isoformat(),
+                                    "reason": last_err_msg,
+                                    "non_recoverable": True,
+                                }
                 except Exception as e:
                     error_item = {
                         "key": rec_key,
@@ -1467,13 +1513,13 @@ def harvest(
         ),
     ] = None,
     limit: Annotated[
-        int | None,
+        int,
         typer.Option(
             "--limit",
             "-n",
-            help="Maximum number of dataset records to harvest per server (useful for testing).",
+            help="Maximum number of dataset records to harvest per server (default: 10, set to 0 for no limit).",
         ),
-    ] = None,
+    ] = 10,
     dry_run: Annotated[
         bool,
         typer.Option(
@@ -1520,15 +1566,23 @@ def harvest(
             help="Force downloading metadata and verifying SHA-256 for all records, bypassing fast timestamp check.",
         ),
     ] = False,
+    all_datasets: Annotated[
+        bool,
+        typer.Option(
+            "--all-datasets",
+            "--all",
+            "-a",
+            help="Harvest all datasets (by default, only datasets containing tabular data files are harvested).",
+        ),
+    ] = False,
     tabular_only: Annotated[
         bool,
         typer.Option(
             "--tabular",
-            "--tabular-only",
             "-t",
-            help="Harvest only datasets containing rectangular/tabular data files with variables.",
+            help="Harvest only datasets containing rectangular/tabular data files with variables (default behavior).",
         ),
-    ] = False,
+    ] = True,
     list_servers: Annotated[
         bool,
         typer.Option(
@@ -1743,8 +1797,10 @@ def harvest(
     file_logger.log(f"Metadata Formats: {', '.join(parsed_formats)}")
     file_logger.log(f"Since Date Filter: {since if since else '(All Time)'}")
     file_logger.log(f"Search Query Filter: {query if query else '(None)'}")
-    file_logger.log(f"Tabular Data Only Filter: {tabular_only}")
-    file_logger.log(f"Record Limit: {limit if limit else '(Unlimited)'}")
+    effective_tabular = False if all_datasets else tabular_only
+    file_logger.log(f"Tabular Data Only Filter: {effective_tabular}")
+    effective_limit = None if limit == 0 else limit
+    file_logger.log(f"Record Limit: {effective_limit if effective_limit is not None else '(Unlimited)'}")
     file_logger.log(f"Catalog Cache: {'Refreshed (forced)' if refresh_catalog else f'Enabled ({cache_ttl}h TTL)'}")
     file_logger.log(
         f"Incremental Verification: {'Full SHA-256 Download' if force_verify else 'Fast Search API Timestamp Match'}"
@@ -1774,8 +1830,10 @@ def harvest(
     config_table.add_row("Metadata Formats", ", ".join(parsed_formats))
     config_table.add_row("Since Date Filter", since if since else "(All Time)")
     config_table.add_row("Search Query Filter", query if query else "(None)")
-    config_table.add_row("Tabular Data Only Filter", str(tabular_only))
-    config_table.add_row("Record Limit / Server", str(limit) if limit else "(Unlimited)")
+    config_table.add_row("Tabular Data Only Filter", str(effective_tabular))
+    config_table.add_row(
+        "Record Limit / Server", str(effective_limit) if effective_limit is not None else "(Unlimited)"
+    )
     config_table.add_row("Catalog Cache", "Refreshed (forced)" if refresh_catalog else f"Enabled ({cache_ttl}h TTL)")
     config_table.add_row(
         "Incremental Check", "Full SHA-256 Download Verification" if force_verify else "Fast Timestamp Match"
@@ -1846,7 +1904,7 @@ def harvest(
                     query=query,
                     since_date=since,
                     dry_run=dry_run,
-                    limit=limit,
+                    limit=effective_limit,
                     metadata_formats=parsed_formats,
                     verbose=verbose,
                     target_doi=doi,

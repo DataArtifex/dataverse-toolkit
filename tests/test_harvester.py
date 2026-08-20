@@ -122,3 +122,34 @@ def test_fetch_server_stats_caching(tmp_path):
     assert res.get("cached") is True
     assert res.get("datasets") == 100
     assert res.get("version") == "6.10"
+
+
+def test_limit_normalization():
+    from dartfx.dataverse.harvester import fetch_active_datasets
+
+    # Test caching behavior with limit=0 (unlimited)
+    res_0 = fetch_active_datasets("mock.host", limit=0, cache_ttl_hours=0.0)
+    assert isinstance(res_0, dict)
+
+    res_100 = fetch_active_datasets("mock.host", limit=100, cache_ttl_hours=0.0)
+    assert isinstance(res_100, dict)
+
+
+def test_is_format_unsupported_error():
+    from dartfx.dataverse.harvester import is_format_unsupported_error
+
+    assert is_format_unsupported_error("Croissant export not supported on server (HTTP 404)") is True
+    assert is_format_unsupported_error("pyDataverse Croissant module not found") is True
+    assert is_format_unsupported_error("Unsupported format") is True
+    assert is_format_unsupported_error("Connection timeout") is False
+    assert is_format_unsupported_error(None) is False
+
+
+def test_tabular_default():
+    # Test that default tabular_only is True
+    import inspect
+
+    from dartfx.dataverse.harvester import fetch_active_datasets
+
+    sig = inspect.signature(fetch_active_datasets)
+    assert sig.parameters["tabular_only"].default is True

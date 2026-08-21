@@ -10,11 +10,10 @@ Built with **Typer** for command-line handling and **Rich** for modern, color-co
 
 ### Prerequisites & Installation
 
-Ensure dependencies are installed in your virtual environment (using `uv`):
+Ensure the project environment is synced (using `uv`):
 
 ```bash
-uv venv
-uv pip install -r requirements.txt
+uv sync
 ```
 
 ### CLI Command Syntax

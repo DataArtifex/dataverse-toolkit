@@ -322,7 +322,7 @@ Example Bug Report:
 
    ## Environment
    - Python: 3.12.0
-   - dartfx-dataverse: 0.1.0
+   - dartfx-dataverse: 0.2.0
    - OS: macOS 14.0
 
 Feature Requests

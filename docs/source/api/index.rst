@@ -13,6 +13,7 @@ The package is organized into the following main components:
 * :doc:`search` - Search functionality and parameters
 * :doc:`models` - Data models and validation
 * :doc:`exceptions` - Error handling and exceptions
+* :doc:`harvester` - Harvester metadata synchronization
 
 Quick Links
 -----------

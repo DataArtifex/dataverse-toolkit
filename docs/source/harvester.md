@@ -1,4 +1,4 @@
-# Harvester CLI Utility (`utils/harvester.py`)
+# Harvester CLI Utility (`dartfx-dataverse harvest`)
 
 The **Harvester CLI** is an intelligent, incremental metadata synchronization tool designed to discover, harvest, profile, and sync **Croissant ML records** across global Dataverse repositories into a structured local directory layout.
 

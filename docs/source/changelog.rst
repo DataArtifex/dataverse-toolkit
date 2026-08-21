@@ -6,111 +6,81 @@ All notable changes to this project will be documented in this file.
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_,
 and this project adheres to `Semantic Versioning <https://semver.org/spec/v2.0.0.html>`_.
 
-[Unreleased]
-------------
+[0.2.0] - 2026-08-20
+--------------------
 
 Added
 ~~~~~
 
-* Comprehensive Sphinx documentation
-* Detailed API reference
-* Usage examples and quickstart guide
-* Contributing guidelines
+* **First-Class Metadata Harvester & Sync Subsystem** (``dartfx-dataverse harvest``):
+  * Added ``harvest`` command for incremental, hash-verified downloading of datasets and multiple metadata formats (``croissant``, ``native``, ``ddi``, ``schema.org``, ``datacite``).
+  * Added ``stats`` command with live and 24-hour cached global repository statistics (datasets, total files, tabular files, tabular %, server version).
+  * Fast timestamp matching and SHA-256 integrity verification via ``.manifest.json``.
+  * Local catalog and statistics 24-hour caching (``.catalog_cache.json`` and ``.stats_cache.json``) with ``--refresh-catalog`` (``-r``) and ``--cache-ttl`` options.
+  * Per-server API token resolution via ``.api_token``, ``.dataverse_tokens.json``, and environment variables.
+  * Support for multi-format harvesting (``--format all`` or comma-separated lists).
+  * Native Croissant endpoint prioritization with automatic graceful fallback.
+  * Single-notice reporting and auto-skipping for unsupported format exporters on remote servers.
+
+* **Environment & Configuration Management**:
+  * Added ``DARTFX_DATAVERSE_REPOSITORY`` environment variable to define local root storage repository directory.
+  * Standardized remote server host resolution via ``DATAVERSE_SERVER_DEFAULT``.
+  * Added automatic ``.env`` discovery and loading using ``python-dotenv``.
+
+* **Harvesting Usability Enhancements**:
+  * Set default harvesting record limit to 10 datasets per server (pass ``--limit 0`` for unlimited).
+  * Enabled tabular dataset filtering by default (pass ``--all-types`` to harvest all datasets).
+  * Added ``Version`` column to ``stats`` table with compact semantic version formatting.
+  * Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
+
+* **Documentation & Tests**:
+  * Comprehensive user guide for Harvester in Sphinx documentation (``harvester.md``).
+  * Added API documentation reference for ``dartfx.dataverse.harvester`` in Sphinx.
+  * Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, and limit normalization.
+
+[0.1.0] - 2026-03-11
+--------------------
+
+Initial release of ``dartfx-dataverse`` toolkit.
+
+Added
+~~~~~
+
+* ``DataverseServer`` class for API interactions.
+* ``ServerInstallation`` model for Dataverse installations.
+* ``SearchParameters`` model for advanced search API.
+* Support for worldwide Dataverse installations discovery.
+* ``requests-cache`` integration for improved performance.
+* Sphinx documentation with detailed guides and API reference.
+* Strict Pydantic V2 integration for all core models.
+* Convenience ``search_simple`` and ``get_dataset_export`` methods.
+* Typer-based Command Line Interface (``dartfx-dataverse``) with Table, JSON, and CSV support.
 
 Changed
 ~~~~~~~
 
-* Updated minimum Python version to 3.12
-* Enhanced project metadata and classifiers
-* Improved pyproject.toml configuration with Ruff and mypy settings
+* Refactored ``DataverseServer`` to inherit from ``DataverseBase``.
+* Improved type safety across the entire package.
+* Updated Mypy configuration for strict type checking.
 
-[0.1.0] - 2024-XX-XX
---------------------
-
-Initial development release.
-
-Added
+Fixed
 ~~~~~
 
-* ``DataverseServer`` class for server connections
-* ``ServerInstallation`` model for server metadata
-* ``SearchParameters`` model for search queries
-* ``DataverseApiError`` exception for error handling
-* ``fetch_dataverse_installations()`` function to retrieve known installations
-* Basic search functionality:
-
-  * Simple text search
-  * Advanced search with parameters
-  * Faceted search
-  * Geographic search
-  * Filter queries
-
-* Server information retrieval:
-
-  * Get server version and metadata
-  * Get metadata blocks
-
-* Request caching with ``requests-cache``
-* Pydantic models for data validation
-* Configurable error handling modes
-* SSL verification control
-* Custom user agent support
-
-Dependencies
-~~~~~~~~~~~~
-
-* pydantic >= 2.0.0
-* requests >= 2.31.0
-* requests-cache >= 1.0.0
-
-Development
-~~~~~~~~~~~
-
-* pytest for testing
-* mypy for type checking
-* ruff for linting and formatting
-* Hatch for project management
-* Sphinx for documentation
-
-[0.0.1] - 2024-XX-XX
---------------------
-
-Pre-release version for initial development.
-
-.. note::
-   This project is in early development. Features and APIs may change.
+* Module collision issues in Mypy checks.
+* Invalid method references in documentation.
 
 Planned Features
 ----------------
 
 The following features are planned for future releases:
 
-v0.2.0
-~~~~~~
+v0.3.0+
+~~~~~~~
 
-* Pydantic models for search results
-* Enhanced error messages and debugging
-* Batch operation support
-* Progress indicators for long-running operations
-
-v0.3.0
-~~~~~~
-
-* Dataset metadata retrieval (DDI, Dublin Core)
 * File metadata retrieval
-* Support for additional metadata formats:
-
-  * Croissant
-  * schema.org
-  * DataCite
-
-v0.4.0
-~~~~~~
-
-* Dataset download capabilities
-* File download with progress tracking
-* Batch download support
-* Resume interrupted downloads
+* Dataset and file download capabilities with progress tracking
+* Batch download and resume support
+* Pydantic models for search results and datasets
 
 v1.0.0
 ~~~~~~
@@ -120,23 +90,6 @@ v1.0.0
 * Full documentation
 * Performance optimizations
 * Comprehensive examples
-
-Migration Notes
----------------
-
-Upgrading to 0.1.0
-~~~~~~~~~~~~~~~~~~
-
-This is the first release, no migration needed.
-
-Future Breaking Changes
-~~~~~~~~~~~~~~~~~~~~~~~
-
-The following breaking changes are planned:
-
-* v0.2.0: Search result format may change when Pydantic models are added
-* v0.3.0: Some method signatures may change to support new features
-* v1.0.0: API will be stabilized, no breaking changes after this point
 
 Version Support
 ---------------

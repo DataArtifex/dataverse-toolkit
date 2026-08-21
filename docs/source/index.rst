@@ -134,6 +134,7 @@ Table of Contents
    api/search
    api/models
    api/exceptions
+   api/harvester
 
 .. toctree::
    :maxdepth: 1
@@ -145,14 +146,29 @@ Table of Contents
 Roadmap
 -------
 
-Planned features for future releases:
+Completed Features (v0.2.0)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* **v0.2.0 (Planned)**: Pydantic models for search results and datasets
-* **v0.2.0 (Planned)**: Batch operations support and progress indicators
-* **v0.1.x (Completed)**: Dataset metadata retrieval (DDI, Dublin Core, DataCite)
-* **v0.1.x (Completed)**: Server information and metadata block listing
-* **v0.1.x (Completed)**: Search API wrapper with caching
-* **Future**: Dataset and file download capabilities (v0.3.0+)
+* **Metadata Harvester & Sync**: CLI command (``dartfx-dataverse harvest``) for incremental, hash-verified synchronization of Croissant ML and standard metadata formats.
+* **Global Server Statistics**: Live and 24h cached repository metrics (``dartfx-dataverse stats``).
+* **Multi-Format Export Support**: Native JSON, Croissant, DDI Codebook XML, schema.org, and DataCite.
+* **Persistent Cache & Token Resolution**: 24h catalog/stats caching and flexible per-server token management.
+
+Completed Features (v0.1.x)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* Dataset metadata retrieval (DDI, Dublin Core, DataCite)
+* Server information and metadata block listing
+* Search API wrapper with request caching
+* CLI interface for installation discovery and searching
+
+Planned Features (v0.3.0+)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* File metadata retrieval
+* Dataset and file download capabilities with progress tracking
+* Batch download and resume support
+* Pydantic models for search results and datasets
 
 Contributing
 ------------

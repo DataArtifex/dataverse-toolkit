@@ -43,6 +43,14 @@ except ImportError:
     except ImportError:
         Croissant = None
 
+try:
+    from .__about__ import __version__
+except ImportError:
+    try:
+        from dartfx.dataverse.__about__ import __version__
+    except ImportError:
+        __version__ = "0.2.0"
+
 os.environ["PYTHONWARNINGS"] = "ignore"
 warnings.filterwarnings("ignore")
 
@@ -123,7 +131,7 @@ def get_format_extension(fmt: str) -> str:
 
 
 DEFAULT_REQUEST_HEADERS: dict[str, str] = {
-    "User-Agent": "dartfx-dataverse/0.1.0 (Research Harvester; +https://github.com/DataArtifex/dataverse-toolkit)",
+    "User-Agent": f"dartfx-dataverse/{__version__} (Research Harvester; +https://github.com/DataArtifex/dataverse-toolkit)",
     "Accept": "application/json, text/plain, */*",
 }
 
@@ -1767,7 +1775,7 @@ def harvest(
             "(or set DARTFX_DATAVERSE_REPOSITORY env var).[/bold red]"
         )
         console.print(
-            "[yellow]Usage: uv run python utils/harvester.py <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
+            "[yellow]Usage: uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
         )
         raise typer.Exit(code=1)
 
@@ -1775,7 +1783,7 @@ def harvest(
     if not parsed_formats:
         console.print("[bold red]Error: Missing required option '--format' / '-f'.[/bold red]")
         console.print(
-            "[yellow]Usage: uv run python utils/harvester.py <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
+            "[yellow]Usage: uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
         )
         console.print("[yellow]Available formats: croissant, native, ddi, schema.org, datacite, or 'all'[/yellow]")
         raise typer.Exit(code=1)

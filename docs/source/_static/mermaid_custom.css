@@ -1,0 +1,64 @@
+/* Mermaid Diagram Styling for Sphinx RTD Theme */
+.mermaid-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    border: 1px solid #e1e4e5;
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.mermaid-diagram svg {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   Sphinx RTD Theme Table Formatting & Responsive Text Wrapping Fixes
+   ========================================================================== */
+
+/* Override RTD theme default nowrap on table cells to enable natural multi-line wrapping */
+.wy-table-responsive table td,
+.wy-table-responsive table th,
+.rst-content table.docutils td,
+.rst-content table.docutils th {
+    white-space: normal !important;
+    word-break: normal;
+    overflow-wrap: break-word;
+    vertical-align: top;
+    line-height: 1.5;
+}
+
+/* Ensure table container fits within content boundaries */
+.wy-table-responsive {
+    overflow: visible !important;
+    margin-bottom: 24px;
+}
+
+.rst-content table.docutils {
+    width: 100% !important;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+.rst-content table.docutils th {
+    background-color: #f3f6f6;
+    color: #333333;
+    font-weight: bold;
+    padding: 10px 12px;
+}
+
+.rst-content table.docutils td {
+    padding: 10px 12px;
+}
+
+/* Ensure inline code snippets within table cells wrap cleanly */
+.rst-content table.docutils td code,
+.wy-table-responsive table td code {
+    white-space: normal !important;
+    word-break: break-word;
+}

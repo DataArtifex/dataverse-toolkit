@@ -14,7 +14,7 @@
 
 **A Python toolkit for interacting with Dataverse repositories**
 
-> ⚠️ **Early Development**: This project is in its early development stages. While functional, the API may change and some features are still being implemented. We welcome your feedback and contributions!
+> ⚠️ **Early Development**: This project is in its early development stages. Expect the unexpected and breaking changes. Feedback and contributions are much appreciated!
 
 ## Overview
 
@@ -292,7 +292,7 @@ server = DataverseServer(
 
 ### Current Version: 0.2.0 (Active Release)
 
-This is an early development release. The core functionality is working, but APIs may change.
+This is an early development release. Expect the unexpected and breaking changes. Feedback and contributions are much appreciated.
 
 ### Roadmap
 

@@ -90,6 +90,13 @@ exclude_patterns: list[str] = []
 
 html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
+html_js_files = [
+    "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js",
+    "mermaid_init.js",
+]
+html_css_files = [
+    "mermaid_custom.css",
+]
 html_theme_options = {
     "canonical_url": "",
     "analytics_id": "",

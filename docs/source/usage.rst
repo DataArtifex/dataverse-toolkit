@@ -520,7 +520,10 @@ Control the response format:
 Command Line Interface
 ----------------------
 
-The toolkit includes a command-line interface ``dartfx-dataverse`` for quick discovery and interaction.
+The toolkit includes a full-featured command-line interface ``dartfx-dataverse`` for discovery, search, dataset export, repository statistics, and bulk metadata harvesting.
+
+.. tip::
+   For full command reference, parameter options, JSON/CSV streaming examples, and environment configuration, see the comprehensive :doc:`cli` guide and :doc:`harvester` guide.
 
 Installations
 ~~~~~~~~~~~~~

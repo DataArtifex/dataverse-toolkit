@@ -16,8 +16,8 @@ dartfx-dataverse Documentation
 **A Python toolkit for interacting with Dataverse repositories**
 
 .. warning::
-   This project is in its early development stages. Stability is not guaranteed,
-   and documentation is limited. We welcome your feedback and contributions.
+   This project is in its early development stages. Expect the unexpected and breaking changes.
+   Feedback and contributions are much appreciated.
 
 Overview
 --------
@@ -122,6 +122,7 @@ Table of Contents
    installation
    quickstart
    usage
+   cli
    harvester
    examples
 

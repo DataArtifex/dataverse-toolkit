@@ -151,9 +151,9 @@ flowchart TD
 
     Deletions["<b>5. Deletion Sync Check</b><br/>Compare manifest PIDs vs active PIDs + OAI-PMH tombstones<br/><i>(Remove deleted files & update manifest)</i>"] --> Processing
 
-    Processing["<b>6. Addition & Update Processing</b><br/>For each active dataset PID:<br/>- Check if new -> <b>Addition (+)</b><br/>- Fetch Croissant ML Record<br/>- SHA256 checksum comparison -> <b>Update (Δ)</b>"] --> Save
+    Processing["<b>6. Addition & Update Processing</b><br/>For each active dataset PID:<br/>• If new &rarr; <b>Addition (+)</b><br/>• Fetch metadata record(s)<br/>• SHA-256 diff &rarr; <b>Update (Δ)</b>"] --> Save
 
-    Save["<b>7. Persistence & Summary Report</b><br/>Save Croissant JSON-LD files & update <code>.manifest.json</code><br/>Render Rich Summary Table"]
+    Save["<b>7. Persistence & Summary Report</b><br/>Save metadata files & update <code>.manifest.json</code><br/>Render Rich Summary Table"]
 ```
 
 ---

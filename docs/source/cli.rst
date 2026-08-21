@@ -53,6 +53,8 @@ Available Commands
      - Inspect live/cached counts of datasets, files, and tabular rectangular data files.
    * - ``harvest``
      - Incrementally synchronize and hash-verify metadata across global repositories.
+   * - ``errors``
+     - Analyze and report counts per harvest error type across repository manifests.
 
 ---
 
@@ -369,3 +371,75 @@ Key Features
 * **Repository Caching**: 24-hour catalog caching (``.catalog_cache.json``) for rapid incremental runs.
 
 For the full architectural workflow, directory layout specifications, and advanced sync options, refer to the dedicated :doc:`harvester` guide.
+
+---
+
+8. ``errors`` - Harvest Error Analysis & Counts by Type
+-------------------------------------------------------
+
+Scans repository storage directories for ``.manifest.json`` files and aggregates all recorded harvest failures into a categorized summary report.
+
+Syntax
+~~~~~~
+
+.. code-block:: bash
+
+   dartfx-dataverse errors [REPO_DIR] [OPTIONS]
+
+Arguments & Options
+~~~~~~~~~~~~~~~~~~~
+
+* ``REPO_DIR`` *(positional, optional)*: Local storage repository root directory (or specific server subdirectory). Defaults to ``DARTFX_DATAVERSE_REPOSITORY`` env var or current directory.
+* ``--server``, ``-s`` *(string)*: Filter error report by server hostname or ``ALL`` (default: ``ALL``).
+* ``--by-format`` *(flag)*: Breakdown error counts into a matrix by metadata format (Croissant, Native, DDI, Schema.org, DataCite).
+* ``--by-server`` *(flag)*: Breakdown error counts by server repository hostname.
+* ``--details``, ``-d`` *(flag)*: Display individual failed dataset records, PIDs, formats, categories, and error reasons.
+* ``--format``, ``-f`` *(string)*: Output format: ``table`` (default), ``json``, or ``csv``.
+
+Error Categories Detected
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+* **Croissant Validation: Missing Checksum (md5/sha256)**: Upstream files omitting required cryptographic hashes.
+* **Croissant Validation: Missing Mandatory Field**: Datasets missing mandatory MLCommons Croissant properties.
+* **Exporter Not Supported on Server**: Requested metadata exporter unavailable on remote server.
+* **HTTP 401: Authentication Required (API Token)**: Repositories configured with token restrictions.
+* **HTTP 403: Forbidden / Bot Protection (WAF)**: Cloudflare challenge or security gateway intercept.
+* **HTTP 404: Dataset / Exporter Not Found**: Inactive, deleted, or deaccessioned dataset.
+* **HTTP 422: Unprocessable Entity**: Remote exporter failure.
+* **HTTP 5xx: Server / Upstream Error**: Remote Dataverse server internal error.
+* **Network: Request Timeout / Connection Failure**: Network transport errors.
+* **Parse Error: Malformed XML / JSON**: Payload syntax errors.
+
+Examples
+~~~~~~~~
+
+**View summary count per error type across the local repository:**
+
+.. code-block:: bash
+
+   dartfx-dataverse errors ./my_data
+
+**View error counts broken down by metadata format:**
+
+.. code-block:: bash
+
+   dartfx-dataverse errors ./my_data --by-format
+
+**View error counts broken down by server repository:**
+
+.. code-block:: bash
+
+   dartfx-dataverse errors ./my_data --by-server
+
+**List detailed failed records with dataset PIDs and reasons:**
+
+.. code-block:: bash
+
+   dartfx-dataverse errors ./my_data --details
+
+**Export error statistics to JSON or CSV:**
+
+.. code-block:: bash
+
+   dartfx-dataverse errors ./my_data --format json > harvest_errors.json
+   dartfx-dataverse errors ./my_data --format csv > harvest_errors.csv

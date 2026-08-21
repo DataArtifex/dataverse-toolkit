@@ -310,3 +310,41 @@ When querying or harvesting global Dataverse servers, you may encounter differen
 #### 3. Legacy Directory Hostnames (HTTP 404)
 * **Examples**: `dataverse.acg.maine.edu/dvn`.
 * **Cause**: Older versions of the global installations registry contain paths pointing to decommissioned DVN 3.x installations. The CLI flags these as `HTTP 404 (Inactive / Not Found)`.
+
+---
+
+### Analyzing Harvest Errors (`dartfx-dataverse errors`)
+
+The harvester records all non-recoverable errors (such as Croissant schema validation failures, missing hash checksums, and unsupported exporter endpoints) directly in each server's `.manifest.json`.
+
+You can inspect, categorize, and count all harvest failures across your repository using the `dartfx-dataverse errors` utility:
+
+```bash
+# 1. Summary count per error category
+uv run dartfx-dataverse errors ./my_data
+
+# 2. Breakdown matrix by metadata format (Croissant, Native, DDI, Schema.org)
+uv run dartfx-dataverse errors ./my_data --by-format
+
+# 3. Breakdown counts by server repository
+uv run dartfx-dataverse errors ./my_data --by-server
+
+# 4. View individual failed record details (PID, format, reason)
+uv run dartfx-dataverse errors ./my_data --details
+
+# 5. Export failure metrics for downstream pipelines
+uv run dartfx-dataverse errors ./my_data --format json > errors_report.json
+uv run dartfx-dataverse errors ./my_data --format csv > errors_report.csv
+```
+
+#### Common Harvest Error Types
+
+| Error Category | Typical Cause & Interpretation | Recommended Action |
+| :--- | :--- | :--- |
+| **`Croissant Validation: Missing Checksum`** | Dataset includes data files without MD5/SHA-256 hashes registered in Dataverse. MLCommons Croissant requires cryptographic hashes on FileObjects. | Expected on legacy Dataverse datasets; native/DDI formats still harvest successfully. |
+| **`Croissant Validation: Schema Incompatibility`** | Dataset metadata violates strict Croissant schema specifications. | Recorded as non-recoverable; skipped on subsequent syncs unless `--retry-errors` is passed. |
+| **`Exporter Not Supported on Server`** | The remote Dataverse installation does not have the requested metadata exporter plugin installed or enabled. | Use alternative supported formats (e.g. `native`, `ddi`, `schema.org`, or check available formats via `dartfx-dataverse info <HOST>`). |
+| **`HTTP 401: Authentication Required`** | The repository requires an API token (`:SearchApiRequiresToken = true`). | Pass API token via `-k` or set `DATAVERSE_API_TOKEN_<SERVER>` env var. |
+| **`HTTP 403: Forbidden / Bot Protection (WAF)`** | Campus Cloudflare or AWS WAF interstitial intercepted automated requests. | Repository cannot be harvested automatically without custom network whitelisting. |
+| **`HTTP 404: Dataset / Exporter Not Found`** | Dataset has been deaccessioned, deleted, or export endpoint returned 404. | Handled automatically and recorded in `.manifest.json`. |
+| **`HTTP 5xx: Server / Upstream Error`** | Remote Dataverse server encountered an internal 500 error generating the export. | Flagged as recoverable; re-attempted on subsequent runs. |

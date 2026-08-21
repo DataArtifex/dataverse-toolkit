@@ -502,6 +502,314 @@ def is_non_recoverable_error(err_msg: str | None) -> bool:
     return False
 
 
+def classify_harvest_error(reason: str | None) -> str:
+    """
+    Categorize an error message string into a standardized, descriptive error category.
+    """
+    if not reason:
+        return "Unknown Error"
+    r_low = reason.lower()
+
+    if "croissant" in r_low or "mlcroissant" in r_low:
+        if any(k in r_low for k in ["md5", "sha256", "fileobject"]):
+            return "Croissant Validation: Missing Checksum (md5/sha256)"
+        if "mandatory" in r_low or "required" in r_low:
+            return "Croissant Validation: Missing Mandatory Field"
+        return "Croissant Validation: Schema Incompatibility"
+
+    if any(k in r_low for k in ["not supported", "exporter not found", "module not found", "unsupported format"]):
+        return "Exporter Not Supported on Server"
+
+    if "401" in r_low or "searchapirequirestoken" in r_low or "unauthorized" in r_low:
+        return "HTTP 401: Authentication Required (API Token)"
+
+    if "403" in r_low or "forbidden" in r_low or "cloudflare" in r_low or "waf" in r_low or "bot protection" in r_low:
+        return "HTTP 403: Forbidden / Bot Protection (WAF)"
+
+    if "404" in r_low or "not found" in r_low:
+        return "HTTP 404: Dataset / Exporter Not Found"
+
+    if "422" in r_low or "unprocessable" in r_low:
+        return "HTTP 422: Unprocessable Entity"
+
+    if any(
+        k in r_low
+        for k in [
+            "500",
+            "502",
+            "503",
+            "504",
+            "internal server error",
+            "bad gateway",
+            "service unavailable",
+            "gateway timeout",
+        ]
+    ):
+        return "HTTP 5xx: Server / Upstream Error"
+
+    if any(k in r_low for k in ["timeout", "timed out", "connecttimeout", "readtimeout"]):
+        return "Network: Request Timeout"
+
+    if any(
+        k in r_low
+        for k in [
+            "connection refused",
+            "connection error",
+            "max retries exceeded",
+            "newconnectionerror",
+            "failed to establish a new connection",
+        ]
+    ):
+        return "Network: Connection Failure"
+
+    if any(
+        k in r_low
+        for k in [
+            "parseerror",
+            "jsondecodeerror",
+            "syntaxerror",
+            "xml.etree",
+            "invalid xml",
+            "invalid json",
+        ]
+    ):
+        return "Parse Error: Malformed XML / JSON"
+
+    if "ssl" in r_low or "certificate" in r_low:
+        return "Network: SSL / TLS Certificate Error"
+
+    return "Other Error"
+
+
+def analyze_harvest_errors(
+    repo_dir: Path | str | None = None,
+    server: str | None = None,
+) -> dict[str, Any]:
+    """
+    Scan repository storage directories for .manifest.json files and aggregate error statistics.
+
+    Args:
+        repo_dir: Path to the harvested repository root directory or a specific server directory.
+                  If None, checks DARTFX_DATAVERSE_REPOSITORY env var or current directory.
+        server: Optional server hostname filter (or 'ALL').
+
+    Returns:
+        Structured dictionary containing:
+        - total_errors: Total number of failed record attempts
+        - total_datasets: Number of distinct datasets affected
+        - servers_with_errors: Number of server repositories with recorded errors
+        - by_type: dict mapping error type to count
+        - by_format: dict mapping metadata format to count
+        - by_server: dict mapping server hostname to count
+        - matrix: dict mapping error type to {format: count}
+        - records: list of individual error dicts with details
+    """
+    if repo_dir is None:
+        env_dir = os.environ.get("DARTFX_DATAVERSE_REPOSITORY")
+        base_path = Path(env_dir).resolve() if env_dir else Path.cwd()
+    else:
+        base_path = Path(repo_dir).resolve()
+
+    manifest_files: list[Path] = []
+    if base_path.is_file() and base_path.name == ".manifest.json":
+        manifest_files = [base_path]
+    elif base_path.is_dir():
+        if (base_path / ".manifest.json").exists():
+            manifest_files = [base_path / ".manifest.json"]
+        else:
+            manifest_files = sorted(base_path.glob("*/.manifest.json"))
+            if not manifest_files:
+                manifest_files = sorted(base_path.rglob(".manifest.json"))
+
+    by_type: dict[str, int] = {}
+    by_format: dict[str, int] = {}
+    by_server: dict[str, int] = {}
+    matrix: dict[str, dict[str, int]] = {}
+    records: list[dict[str, Any]] = []
+    affected_pids: set[str] = set()
+    servers_found: set[str] = set()
+
+    for m_path in manifest_files:
+        try:
+            with open(m_path, encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:
+            continue
+
+        srv_name = data.get("server") or m_path.parent.name
+        if server and server.upper() != "ALL" and srv_name.lower() != server.lower():
+            continue
+
+        errors_dict = data.get("errors", {})
+        if not errors_dict:
+            continue
+
+        servers_found.add(srv_name)
+        for key, err_info in errors_dict.items():
+            pid = err_info.get("global_id") or key.split("::")[0]
+            fmt = err_info.get("format") or (key.split("::")[1] if "::" in key else "-")
+            reason = err_info.get("reason", "")
+            failed_at = err_info.get("failed_at", "")
+            non_rec = err_info.get("non_recoverable", False)
+
+            err_type = classify_harvest_error(reason)
+
+            by_type[err_type] = by_type.get(err_type, 0) + 1
+            by_format[fmt] = by_format.get(fmt, 0) + 1
+            by_server[srv_name] = by_server.get(srv_name, 0) + 1
+
+            if err_type not in matrix:
+                matrix[err_type] = {}
+            matrix[err_type][fmt] = matrix[err_type].get(fmt, 0) + 1
+
+            affected_pids.add(pid)
+            records.append(
+                {
+                    "server": srv_name,
+                    "key": key,
+                    "pid": pid,
+                    "format": fmt,
+                    "error_type": err_type,
+                    "reason": reason,
+                    "failed_at": failed_at,
+                    "non_recoverable": non_rec,
+                }
+            )
+
+    sorted_by_type = dict(sorted(by_type.items(), key=lambda item: item[1], reverse=True))
+    sorted_by_format = dict(sorted(by_format.items(), key=lambda item: item[1], reverse=True))
+    sorted_by_server = dict(sorted(by_server.items(), key=lambda item: item[1], reverse=True))
+
+    return {
+        "total_errors": len(records),
+        "total_datasets": len(affected_pids),
+        "servers_with_errors": len(servers_found),
+        "by_type": sorted_by_type,
+        "by_format": sorted_by_format,
+        "by_server": sorted_by_server,
+        "matrix": matrix,
+        "records": records,
+    }
+
+
+def render_harvest_errors(
+    analysis: dict[str, Any],
+    by_format: bool = False,
+    by_server: bool = False,
+    details: bool = False,
+    console_out: Console | None = None,
+) -> None:
+    """Render Rich visual reports of harvest errors."""
+    out = console_out or console
+    total = analysis.get("total_errors", 0)
+
+    if total == 0:
+        out.print(
+            Panel(
+                "[bold green]✓ No harvest errors recorded in repository manifests![/bold green]",
+                border_style="green",
+            )
+        )
+        return
+
+    # Summary Panel
+    out.print(
+        Panel(
+            f"[bold]Total Recorded Errors:[/] [bold red]{total}[/] | "
+            f"[bold]Affected Datasets:[/] [cyan]{analysis.get('total_datasets', 0)}[/] | "
+            f"[bold]Servers with Errors:[/] [magenta]{analysis.get('servers_with_errors', 0)}[/]",
+            title="[bold red]Harvest Error Analysis Summary[/bold red]",
+            border_style="red",
+        )
+    )
+
+    if by_format:
+        # Error Type by Format Matrix Table
+        all_fmts = sorted(analysis.get("by_format", {}).keys())
+        matrix_table = Table(
+            title="Harvest Errors: Breakdown by Error Type & Format",
+            header_style="bold magenta",
+            show_header=True,
+        )
+        matrix_table.add_column("Error Category / Type", style="cyan", no_wrap=False)
+        for fmt_name in all_fmts:
+            matrix_table.add_column(fmt_name.capitalize(), justify="right", style="yellow")
+        matrix_table.add_column("Total", justify="right", style="bold red")
+
+        matrix = analysis.get("matrix", {})
+        for err_type, count in analysis.get("by_type", {}).items():
+            row_cells = [err_type]
+            for fmt_name in all_fmts:
+                c = matrix.get(err_type, {}).get(fmt_name, 0)
+                row_cells.append(str(c) if c > 0 else "[dim]-[/dim]")
+            row_cells.append(str(count))
+            matrix_table.add_row(*row_cells)
+
+        out.print(matrix_table)
+
+    elif by_server:
+        # Breakdown by Server Table
+        srv_table = Table(
+            title="Harvest Errors: Breakdown by Server",
+            header_style="bold cyan",
+            show_header=True,
+        )
+        srv_table.add_column("Server Hostname", style="cyan")
+        srv_table.add_column("Error Count", justify="right", style="bold red")
+        srv_table.add_column("% of Total", justify="right", style="yellow")
+
+        for srv, count in analysis.get("by_server", {}).items():
+            pct = f"{(count / total) * 100:.1f}%" if total > 0 else "0%"
+            srv_table.add_row(srv, str(count), pct)
+
+        out.print(srv_table)
+
+    else:
+        # Standard Error Type Count Table
+        type_table = Table(
+            title="Harvest Errors: Count per Error Type",
+            header_style="bold red",
+            show_header=True,
+        )
+        type_table.add_column("Error Category / Type", style="cyan", no_wrap=False)
+        type_table.add_column("Count", justify="right", style="bold red")
+        type_table.add_column("% of Total", justify="right", style="yellow")
+
+        for err_type, count in analysis.get("by_type", {}).items():
+            pct = f"{(count / total) * 100:.1f}%" if total > 0 else "0%"
+            type_table.add_row(err_type, str(count), pct)
+
+        out.print(type_table)
+
+    if details:
+        # Detailed Records Table
+        records = analysis.get("records", [])
+        rec_table = Table(
+            title=f"Detailed Error Records ({len(records)} Items)",
+            header_style="bold yellow",
+            show_header=True,
+        )
+        rec_table.add_column("Server", style="dim")
+        rec_table.add_column("Dataset PID", style="cyan")
+        rec_table.add_column("Format", style="yellow", justify="center")
+        rec_table.add_column("Error Category", style="magenta")
+        rec_table.add_column("Reason / Snippet", style="red", no_wrap=False)
+
+        for rec in records:
+            reason = rec.get("reason", "")
+            if len(reason) > 90:
+                reason = reason[:87] + "..."
+            rec_table.add_row(
+                rec.get("server", "-"),
+                rec.get("pid", "-"),
+                rec.get("format", "-"),
+                rec.get("error_type", "-"),
+                reason,
+            )
+
+        out.print(rec_table)
+
+
 def find_registry_suggestions(target: str, raw_installations: list[dict]) -> list[dict[str, str]]:
     """Find close matches or substring suggestions in the installations registry."""
     clean = target.lower().replace("https://", "").replace("http://", "").strip("/")
@@ -2004,13 +2312,39 @@ def harvest(
         f"Total Errors (!): {overall_stats['errors']}"
     )
 
-    # Print detailed error log table if errors occurred
+    # Print error reports if errors occurred
     if all_errors:
         console.print(f"\n[bold red]==== Harvesting Errors Report ({len(all_errors)} Failed) ====[/bold red]\n")
-        err_table = Table(show_header=True, header_style="bold red")
+
+        # 1. Error Type Breakdown Summary Table
+        type_counts: dict[str, int] = {}
+        for err in all_errors:
+            reason_str = err.get("reason", "") if isinstance(err, dict) else str(err)
+            etype = classify_harvest_error(reason_str)
+            type_counts[etype] = type_counts.get(etype, 0) + 1
+
+        sum_err_table = Table(
+            title="Harvest Errors: Summary by Error Type",
+            header_style="bold red",
+            show_header=True,
+        )
+        sum_err_table.add_column("Error Category / Type", style="cyan", no_wrap=False)
+        sum_err_table.add_column("Count", justify="right", style="bold red")
+        sum_err_table.add_column("% of Total", justify="right", style="yellow")
+
+        for etype, count in sorted(type_counts.items(), key=lambda x: x[1], reverse=True):
+            pct = f"{(count / len(all_errors)) * 100:.1f}%"
+            sum_err_table.add_row(etype, str(count), pct)
+
+        console.print(sum_err_table)
+        console.print()
+
+        # 2. Detailed Error Table
+        err_table = Table(title="Failed Records Details", show_header=True, header_style="bold yellow")
         err_table.add_column("Dataset PID / Record", style="cyan")
         err_table.add_column("Format", style="yellow", justify="center")
-        err_table.add_column("Error Reason / Details", style="bold red")
+        err_table.add_column("Error Category", style="magenta")
+        err_table.add_column("Error Reason / Details", style="bold red", no_wrap=False)
 
         file_logger.log(f"==== Harvesting Errors Report ({len(all_errors)} Failed) ====")
 
@@ -2024,13 +2358,112 @@ def harvest(
                 fmt_display = "-"
                 reason_display = "Error occurred"
 
-            err_table.add_row(pid_display, fmt_display, reason_display)
-            file_logger.log(f"PID: {pid_display} | Format: {fmt_display} | Reason: {reason_display}", level="ERROR")
+            cat_display = classify_harvest_error(reason_display)
+            err_table.add_row(pid_display, fmt_display, cat_display, reason_display)
+            file_logger.log(
+                f"PID: {pid_display} | Format: {fmt_display} | Category: {cat_display} | Reason: {reason_display}",
+                level="ERROR",
+            )
 
         console.print(err_table)
         console.print()
 
     file_logger.log("Harvesting process completed.")
+
+
+@app.command(name="errors")
+def harvest_errors_command(
+    repo_dir: Annotated[
+        Path | None,
+        typer.Argument(
+            help="Repository root directory or server directory (defaults to DARTFX_DATAVERSE_REPOSITORY or ./).",
+        ),
+    ] = None,
+    server: Annotated[
+        str,
+        typer.Option(
+            "--server",
+            "-s",
+            envvar="DATAVERSE_SERVER",
+            help="Filter error report by target server hostname (or ALL).",
+        ),
+    ] = "ALL",
+    format: Annotated[
+        str,
+        typer.Option(
+            "--format",
+            "-f",
+            help="Output format: table (default), json, or csv.",
+        ),
+    ] = "table",
+    by_format: Annotated[
+        bool,
+        typer.Option(
+            "--by-format",
+            help="Breakdown error counts in a matrix by metadata format.",
+        ),
+    ] = False,
+    by_server: Annotated[
+        bool,
+        typer.Option(
+            "--by-server",
+            help="Breakdown error counts by server repository.",
+        ),
+    ] = False,
+    details: Annotated[
+        bool,
+        typer.Option(
+            "--details",
+            "-d",
+            help="Show individual failed dataset PIDs and reasons.",
+        ),
+    ] = False,
+) -> None:
+    """Analyze and report counts per harvest error type from repository manifests."""
+    analysis = analyze_harvest_errors(repo_dir=repo_dir, server=server)
+
+    fmt_lower = format.strip().lower()
+    if fmt_lower == "json":
+        console.print_json(json.dumps(analysis, indent=2))
+        return
+
+    if fmt_lower == "csv":
+        import csv
+        import sys
+
+        writer = csv.writer(sys.stdout)
+        if details:
+            writer.writerow(["server", "pid", "format", "error_type", "failed_at", "reason"])
+            for rec in analysis.get("records", []):
+                writer.writerow(
+                    [
+                        rec.get("server", ""),
+                        rec.get("pid", ""),
+                        rec.get("format", ""),
+                        rec.get("error_type", ""),
+                        rec.get("failed_at", ""),
+                        rec.get("reason", ""),
+                    ]
+                )
+        elif by_server:
+            writer.writerow(["server", "error_count", "percentage"])
+            tot = analysis.get("total_errors", 1)
+            for srv, cnt in analysis.get("by_server", {}).items():
+                writer.writerow([srv, cnt, f"{(cnt / tot) * 100:.1f}%"])
+        else:
+            writer.writerow(["error_type", "count", "percentage"])
+            tot = analysis.get("total_errors", 1)
+            for etype, cnt in analysis.get("by_type", {}).items():
+                writer.writerow([etype, cnt, f"{(cnt / tot) * 100:.1f}%"])
+        return
+
+    render_harvest_errors(
+        analysis=analysis,
+        by_format=by_format,
+        by_server=by_server,
+        details=details,
+        console_out=console,
+    )
 
 
 if __name__ == "__main__":

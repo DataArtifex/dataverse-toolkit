@@ -15,6 +15,8 @@ Added
 * **First-Class Metadata Harvester & Sync Subsystem** (``dartfx-dataverse harvest``):
   * Added ``harvest`` command for incremental, hash-verified downloading of datasets and multiple metadata formats (``croissant``, ``native``, ``ddi``, ``schema.org``, ``datacite``).
   * Added ``stats`` command with live and 24-hour cached global repository statistics (datasets, total files, tabular files, tabular %, server version).
+  * Added ``errors`` command to inspect, categorize, and report counts per harvest error type across repository manifests (``--by-format``, ``--by-server``, ``--details``, JSON/CSV export).
+  * Added granular error classification engine (``classify_harvest_error``, ``analyze_harvest_errors``, ``render_harvest_errors``).
   * Fast timestamp matching and SHA-256 integrity verification via ``.manifest.json``.
   * Local catalog and statistics 24-hour caching (``.catalog_cache.json`` and ``.stats_cache.json``) with ``--refresh-catalog`` (``-r``) and ``--cache-ttl`` options.
   * Per-server API token resolution via ``.api_token``, ``.dataverse_tokens.json``, and environment variables.

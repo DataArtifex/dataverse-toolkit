@@ -12,6 +12,8 @@ from .dataverse import (
 )
 from .harvester import (
     ServerHarvester,
+    analyze_harvest_errors,
+    classify_harvest_error,
     fetch_active_datasets,
     fetch_server_stats,
     resolve_server_token,
@@ -32,4 +34,6 @@ __all__ = [
     "fetch_server_stats",
     "resolve_server_token",
     "save_server_token",
+    "classify_harvest_error",
+    "analyze_harvest_errors",
 ]

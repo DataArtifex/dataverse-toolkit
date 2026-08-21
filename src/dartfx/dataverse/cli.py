@@ -381,5 +381,98 @@ def stats(
     )
 
 
+@app.command(name="errors")
+def errors(
+    repo_dir: Annotated[
+        str | None,
+        typer.Argument(
+            help="Path to repository storage root directory (defaults to DARTFX_DATAVERSE_REPOSITORY or ./).",
+        ),
+    ] = None,
+    server: Annotated[
+        str,
+        typer.Option(
+            "--server",
+            "-s",
+            envvar="DATAVERSE_SERVER",
+            help="Filter error report by target server hostname (or ALL).",
+        ),
+    ] = "ALL",
+    format: Annotated[
+        OutputFormat,
+        typer.Option(
+            "--format",
+            "-f",
+            help="Output format: table (default), json, or csv.",
+        ),
+    ] = OutputFormat.TABLE,
+    by_format: Annotated[
+        bool,
+        typer.Option(
+            "--by-format",
+            help="Breakdown error counts in a matrix by metadata format.",
+        ),
+    ] = False,
+    by_server: Annotated[
+        bool,
+        typer.Option(
+            "--by-server",
+            help="Breakdown error counts by server repository.",
+        ),
+    ] = False,
+    details: Annotated[
+        bool,
+        typer.Option(
+            "--details",
+            "-d",
+            help="Show individual failed dataset PIDs and reasons.",
+        ),
+    ] = False,
+) -> None:
+    """Analyze and report counts per harvest error type from repository manifests."""
+    from dartfx.dataverse.harvester import analyze_harvest_errors, render_harvest_errors
+
+    analysis = analyze_harvest_errors(repo_dir=repo_dir, server=server)
+
+    if format == OutputFormat.JSON:
+        console.print_json(json.dumps(analysis, indent=2))
+        return
+
+    if format == OutputFormat.CSV:
+        writer = csv.writer(sys.stdout)
+        if details:
+            writer.writerow(["server", "pid", "format", "error_type", "failed_at", "reason"])
+            for rec in analysis.get("records", []):
+                writer.writerow(
+                    [
+                        rec.get("server", ""),
+                        rec.get("pid", ""),
+                        rec.get("format", ""),
+                        rec.get("error_type", ""),
+                        rec.get("failed_at", ""),
+                        rec.get("reason", ""),
+                    ]
+                )
+        elif by_server:
+            writer.writerow(["server", "error_count", "percentage"])
+            tot = analysis.get("total_errors", 1)
+            for srv, cnt in analysis.get("by_server", {}).items():
+                writer.writerow([srv, cnt, f"{(cnt / tot) * 100:.1f}%"])
+        else:
+            writer.writerow(["error_type", "count", "percentage"])
+            tot = analysis.get("total_errors", 1)
+            for etype, cnt in analysis.get("by_type", {}).items():
+                writer.writerow([etype, cnt, f"{(cnt / tot) * 100:.1f}%"])
+        return
+
+    render_harvest_errors(
+        analysis=analysis,
+        by_format=by_format,
+        by_server=by_server,
+        details=details,
+        console_out=console,
+    )
+
+
 if __name__ == "__main__":
     app()

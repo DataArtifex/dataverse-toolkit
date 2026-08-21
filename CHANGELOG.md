@@ -8,13 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2026-08-20
 
 ### Added
-- **First-Class Metadata Harvester & Sync Subsystem** ():
-  - Added  command for incremental, hash-verified downloading of datasets and multiple metadata formats (, , , , ).
-  - Added  command with live and 24-hour cached global repository statistics (datasets, total files, tabular files, tabular %, server version).
-  - Fast timestamp matching and SHA-256 integrity verification via .
-  - Local catalog and statistics 24-hour caching ( and ) with  () and  options.
-  - Per-server API token resolution via  and .
-  - Support for multi-format harvesting ( or comma-separated lists).
+- **First-Class Metadata Harvester & Sync Subsystem** (`dartfx-dataverse harvest`):
+  - Added `harvest` command for incremental, hash-verified downloading of datasets and multiple metadata formats (`croissant`, `native`, `ddi`, `schema.org`, `datacite`).
+  - Added `stats` command with live and 24-hour cached global repository statistics (datasets, total files, tabular files, tabular %, server version).
+  - Added `errors` command to inspect, categorize, and report counts per harvest error type across repository manifests (`--by-format`, `--by-server`, `--details`, JSON/CSV export).
+  - Added granular error classification engine (`classify_harvest_error`, `analyze_harvest_errors`, `render_harvest_errors`).
+  - Fast timestamp matching and SHA-256 integrity verification via `.manifest.json`.
+  - Local catalog and statistics 24-hour caching (`.catalog_cache.json` and `.stats_cache.json`) with `--refresh-catalog` (`-r`) and `--cache-ttl` options.
+  - Per-server API token resolution via `.api_token` and `.dataverse_tokens.json`.
+  - Support for multi-format harvesting (`--format all` or comma-separated lists).
   - Native Croissant endpoint prioritization with automatic graceful fallback.
   - Single-notice reporting and auto-skipping for unsupported format exporters on remote servers.
 - **Environment & Configuration Management**:

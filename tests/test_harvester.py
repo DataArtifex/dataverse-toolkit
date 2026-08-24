@@ -93,6 +93,7 @@ def test_token_resolution_with_repository_env(tmp_path, monkeypatch):
 
 def test_fetch_server_stats_caching(tmp_path):
     import json
+    from datetime import UTC, datetime
 
     from dartfx.dataverse.harvester import fetch_server_stats
 
@@ -105,7 +106,7 @@ def test_fetch_server_stats_caching(tmp_path):
         json.dump(
             {
                 "server": server,
-                "cached_at": "2026-08-20T00:00:00Z",
+                "cached_at": datetime.now(UTC).isoformat(),
                 "query": "*",
                 "datasets": 100,
                 "files": 500,

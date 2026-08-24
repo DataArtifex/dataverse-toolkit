@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **First-Class Metadata Harvester & Sync Subsystem** (`dartfx-dataverse harvest`):
+  - Fixed deletion logic to protect previously harvested datasets when running with `--limit`, `--query`, `--since`, or `--doi` filters (only prune deletions during full, unconstrained server syncs).
+  - Enhanced Sync Summary Report table and completion panel to explicitly report **Datasets** processed alongside **Files Added / Updated / Unchanged / Deleted**.
   - Added `harvest` command for incremental, hash-verified downloading of datasets and multiple metadata formats (`croissant`, `native`, `ddi`, `schema.org`, `datacite`).
   - Added `stats` command with live and 24-hour cached global repository statistics (datasets, total files, tabular files, tabular %, server version).
   - Added `errors` command to inspect, categorize, and report counts per harvest error type across repository manifests (`--by-format`, `--by-server`, `--details`, JSON/CSV export).

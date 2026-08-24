@@ -346,3 +346,89 @@ def test_cli_errors_command(tmp_path):
     res_det = runner.invoke(app, ["errors", str(tmp_path), "--details"])
     assert res_det.exit_code == 0
     assert "doi:10.1/A" in res_det.stdout
+
+
+def test_sync_stats_datasets_tracking(tmp_path, monkeypatch):
+    from unittest.mock import MagicMock
+
+    import dartfx.dataverse.harvester as h
+
+    harvester = ServerHarvester("mock.server.org", tmp_path)
+
+    # Mock fetch_active_datasets to return 2 active datasets
+    monkeypatch.setattr(
+        h,
+        "fetch_active_datasets",
+        MagicMock(
+            return_value={
+                "doi:10.1/dataset1": {"name": "Dataset 1", "updated_at": "2026-01-01T00:00:00Z"},
+                "doi:10.1/dataset2": {"name": "Dataset 2", "updated_at": "2026-01-01T00:00:00Z"},
+            }
+        ),
+    )
+    # Mock fetch_metadata_record to return dummy bytes
+    monkeypatch.setattr(
+        h,
+        "fetch_metadata_record",
+        MagicMock(return_value=(b'{"data": 123}', ".json", None)),
+    )
+
+    stats = harvester.sync(
+        metadata_formats="native",
+        dry_run=True,
+    )
+    assert "datasets" in stats
+    assert len(stats["datasets"]) == 2
+    assert "doi:10.1/dataset1" in stats["datasets"]
+    assert len(stats["added"]) == 2
+
+
+def test_sync_limit_does_not_delete_existing_files(tmp_path, monkeypatch):
+    from unittest.mock import MagicMock
+
+    import dartfx.dataverse.harvester as h
+
+    harvester = ServerHarvester("mock.server.org", tmp_path)
+
+    # Pre-populate manifest with 3 datasets
+    harvester.manifest["records"] = {
+        "doi:10.1/ds1::native": {"global_id": "doi:10.1/ds1", "path": "doi_10.1_ds1/metadata/native.json"},
+        "doi:10.1/ds2::native": {"global_id": "doi:10.1/ds2", "path": "doi_10.1_ds2/metadata/native.json"},
+        "doi:10.1/ds3::native": {"global_id": "doi:10.1/ds3", "path": "doi_10.1_ds3/metadata/native.json"},
+    }
+    # Create fake files on disk
+    rel_paths = [
+        "doi_10.1_ds1/metadata/native.json",
+        "doi_10.1_ds2/metadata/native.json",
+        "doi_10.1_ds3/metadata/native.json",
+    ]
+    for rel_p in rel_paths:
+        p = harvester.server_dir / rel_p
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("{}")
+    harvester._save_manifest()
+
+    # Case 1: Sync with limit=1 returning only ds1. ds2 and ds3 must NOT be deleted!
+    monkeypatch.setattr(
+        h,
+        "fetch_active_datasets",
+        MagicMock(return_value={"doi:10.1/ds1": {"name": "DS 1", "updated_at": "2026-01-01T00:00:00Z"}}),
+    )
+    monkeypatch.setattr(
+        h,
+        "fetch_metadata_record",
+        MagicMock(return_value=(b"{}", ".json", None)),
+    )
+
+    stats_limited = harvester.sync(metadata_formats="native", limit=1)
+    assert len(stats_limited["deleted"]) == 0
+    assert (harvester.server_dir / "doi_10.1_ds2/metadata/native.json").exists()
+    assert (harvester.server_dir / "doi_10.1_ds3/metadata/native.json").exists()
+    assert "doi:10.1/ds2::native" in harvester.manifest["records"]
+
+    # Case 2: Full sync without limit (limit=0 / None) where ds2 and ds3 are genuinely gone from server
+    stats_full = harvester.sync(metadata_formats="native", limit=0)
+    assert len(stats_full["deleted"]) == 2
+    assert not (harvester.server_dir / "doi_10.1_ds2/metadata/native.json").exists()
+    assert not (harvester.server_dir / "doi_10.1_ds3/metadata/native.json").exists()
+    assert "doi:10.1/ds2::native" not in harvester.manifest["records"]

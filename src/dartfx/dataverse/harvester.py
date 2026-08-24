@@ -1479,7 +1479,14 @@ class ServerHarvester:
     ) -> dict[str, list[Any]]:
         """Perform intelligent incremental sync (Additions, Updates, Deletions)."""
         effective_limit = None if limit == 0 else limit
-        stats: dict[str, list[Any]] = {"added": [], "updated": [], "deleted": [], "unchanged": [], "errors": []}
+        stats: dict[str, list[Any]] = {
+            "datasets": [],
+            "added": [],
+            "updated": [],
+            "deleted": [],
+            "unchanged": [],
+            "errors": [],
+        }
         target_formats = normalize_formats(metadata_formats)
 
         if verbose:
@@ -1498,6 +1505,7 @@ class ServerHarvester:
             tabular_only=tabular_only,
             api_token=api_token,
         )
+        stats["datasets"] = list(active_datasets.keys())
         if not active_datasets and not target_doi:
             server_check = fetch_server_stats(self.host, api_token=api_token)
             if not server_check.get("is_dataverse"):
@@ -1519,8 +1527,15 @@ class ServerHarvester:
         existing_keys = set(manifest_records.keys())
         current_active_pids = set(active_datasets.keys())
 
-        # Determine Deletions (only if not targeting a single specific DOI):
-        if not target_doi:
+        # Determine Deletions:
+        # Only detect and prune deleted datasets when performing a complete, unconstrained sync of the server
+        # (i.e. no target DOI, no limit / unlimited, no search query filter, and no since_date filter).
+        # When a limit or filter is active, omitted datasets are simply outside the harvest window and
+        # MUST NOT be deleted.
+        can_prune_deletions = (
+            not target_doi and effective_limit is None and not query and not since_date and bool(active_datasets)
+        )
+        if can_prune_deletions:
             for key in list(existing_keys):
                 rec_info = manifest_records.get(key, {})
                 pid = rec_info.get("global_id") or key.split("::")[0]
@@ -2169,7 +2184,7 @@ def harvest(
 
     console.print(f"[bold green]Found {len(installations)} Dataverse server(s) matching criteria.[/bold green]\n")
 
-    overall_stats = {"added": 0, "updated": 0, "deleted": 0, "unchanged": 0, "errors": 0}
+    overall_stats = {"datasets": 0, "added": 0, "updated": 0, "deleted": 0, "unchanged": 0, "errors": 0}
     summary_rows = []
     all_errors = []
 
@@ -2234,6 +2249,7 @@ def harvest(
                 )
             except Exception as e:
                 stats = {
+                    "datasets": [],
                     "added": [],
                     "updated": [],
                     "deleted": [],
@@ -2241,12 +2257,14 @@ def harvest(
                     "errors": [{"key": host, "pid": host, "format": "-", "reason": str(e)}],
                 }
 
+            num_datasets = len(stats.get("datasets", []))
             num_added = len(stats["added"])
             num_updated = len(stats["updated"])
             num_unchanged = len(stats.get("unchanged", []))
             num_deleted = len(stats["deleted"])
             num_errors = len(stats["errors"])
 
+            overall_stats["datasets"] += num_datasets
             overall_stats["added"] += num_added
             overall_stats["updated"] += num_updated
             overall_stats["unchanged"] += num_unchanged
@@ -2255,7 +2273,9 @@ def harvest(
 
             all_errors.extend(stats.get("errors", []))
 
-            summary_rows.append((host, inst["country"], num_added, num_updated, num_unchanged, num_deleted, num_errors))
+            summary_rows.append(
+                (host, inst["country"], num_datasets, num_added, num_updated, num_unchanged, num_deleted, num_errors)
+            )
             total_cnt = int(progress.tasks[dataset_task].total or 1)
             progress.update(dataset_task, completed=max(1, total_cnt), visible=False)
             progress.advance(server_task)
@@ -2265,19 +2285,21 @@ def harvest(
     results_table = Table(show_header=True, header_style="bold magenta")
     results_table.add_column("Dataverse Server", style="cyan")
     results_table.add_column("Country", style="dim")
-    results_table.add_column("Added (+)", style="green", justify="right")
-    results_table.add_column("Updated (Δ)", style="yellow", justify="right")
-    results_table.add_column("Unchanged (=)", style="dim cyan", justify="right")
-    results_table.add_column("Deleted (-)", style="red", justify="right")
+    results_table.add_column("Datasets", style="bold yellow", justify="right")
+    results_table.add_column("Files Added (+)", style="green", justify="right")
+    results_table.add_column("Files Updated (Δ)", style="yellow", justify="right")
+    results_table.add_column("Files Unchanged (=)", style="dim cyan", justify="right")
+    results_table.add_column("Files Deleted (-)", style="red", justify="right")
     results_table.add_column("Errors (!)", style="bold red", justify="right")
 
     file_logger.log("================ Sync Summary Report ================")
-    for host, country_name, added, updated, unchanged, deleted, errors in summary_rows:
+    for host, country_name, datasets_cnt, added, updated, unchanged, deleted, errors in summary_rows:
         url = f"https://{host}" if not host.startswith("http") else host
         clickable_host = f"[link={url}]{host}[/link]"
         results_table.add_row(
             clickable_host,
             country_name or "Global",
+            str(datasets_cnt),
             str(added),
             str(updated),
             str(unchanged),
@@ -2285,17 +2307,18 @@ def harvest(
             str(errors),
         )
         file_logger.log(
-            f"Server: {host} ({country_name or 'Global'}) | Added: {added} | "
-            f"Updated: {updated} | Unchanged: {unchanged} | Deleted: {deleted} | Errors: {errors}"
+            f"Server: {host} ({country_name or 'Global'}) | Datasets: {datasets_cnt} | Files Added: {added} | "
+            f"Files Updated: {updated} | Files Unchanged: {unchanged} | Files Deleted: {deleted} | Errors: {errors}"
         )
 
     console.print(results_table)
 
     summary_panel_text = (
-        f"[bold green]Total Added (+): {overall_stats['added']}[/bold green]  |  "
-        f"[bold yellow]Total Updated (Δ): {overall_stats['updated']}[/bold yellow]  |  "
-        f"[dim cyan]Total Unchanged (=): {overall_stats['unchanged']}[/dim cyan]  |  "
-        f"[bold red]Total Deleted (-): {overall_stats['deleted']}[/bold red]  |  "
+        f"[bold cyan]Datasets Processed: {overall_stats['datasets']}[/bold cyan]\n"
+        f"[bold green]Files Added (+): {overall_stats['added']}[/bold green]  |  "
+        f"[bold yellow]Files Updated (Δ): {overall_stats['updated']}[/bold yellow]  |  "
+        f"[dim cyan]Files Unchanged (=): {overall_stats['unchanged']}[/dim cyan]  |  "
+        f"[bold red]Files Deleted (-): {overall_stats['deleted']}[/bold red]  |  "
         f"[bold red]Total Errors (!): {overall_stats['errors']}[/bold red]"
     )
 
@@ -2307,9 +2330,9 @@ def harvest(
         )
     )
     file_logger.log(
-        f"Total Added (+): {overall_stats['added']} | Total Updated (Δ): {overall_stats['updated']} | "
-        f"Total Unchanged (=): {overall_stats['unchanged']} | Total Deleted (-): {overall_stats['deleted']} | "
-        f"Total Errors (!): {overall_stats['errors']}"
+        f"Datasets Processed: {overall_stats['datasets']} | Total Added (+): {overall_stats['added']} | "
+        f"Total Updated (Δ): {overall_stats['updated']} | Total Unchanged (=): {overall_stats['unchanged']} | "
+        f"Total Deleted (-): {overall_stats['deleted']} | Total Errors (!): {overall_stats['errors']}"
     )
 
     # Print error reports if errors occurred

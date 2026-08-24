@@ -30,8 +30,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added column to table with compact semantic version formatting.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
-  - Comprehensive user guide for Harvester in Sphinx documentation ().
-  - Added API documentation reference for in Sphinx.
+  - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).
+  - Added documentation explaining multi-tabular dataset export behavior, dataset-level packaging granularity, and cross-standard representation (Croissant, DDI, Schema.org, Native JSON, DataCite).
+  - Added API documentation reference for `harvester` in Sphinx.
   - Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, and limit normalization (30 tests passing).
 
 ## [0.1.0] - 2026-03-11

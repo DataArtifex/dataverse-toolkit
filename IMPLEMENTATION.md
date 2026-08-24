@@ -17,6 +17,7 @@ The toolkit is designed to be a high-level, type-safe wrapper around the Dataver
 4.  **`fetch_dataverse_installations`**: A utility function that retrieves the worldwide list of Dataverse installations from the IQSS repository.
 5.  **`ServerHarvester` / Metadata Harvester**: A resilient bulk metadata synchronization subsystem.
     - Multi-format harvesting (`croissant`, `native`, `ddi`, `schema.org`, `datacite`).
+    - **Dataset-Level Export Granularity**: Exports are fetched per-dataset from Dataverse endpoints (`/api/datasets/export`). Multi-tabular datasets yield exactly one export document per format with standard-specific inner representations (e.g. multiple `RecordSet` items in Croissant, `<fileDscr>` + `<dataDscr>` variables in DDI).
     - Fast timestamp checking and SHA-256 integrity verification via `.manifest.json`.
     - 24-hour catalog (`.catalog_cache.json`) and server statistics (`.stats_cache.json`) caching.
     - Automated API token discovery and resolution (`.api_token`, `.dataverse_tokens.json`, environment variables).

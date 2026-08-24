@@ -242,6 +242,121 @@ Each server subdirectory maintains a `.manifest.json` metadata index:
 
 ---
 
+### Multi-Tabular Dataset Exports & Metadata Standards
+
+When a Dataverse dataset contains multiple tabular files (such as multiple `.csv`, `.tab`, `.sav`, `.dta`, or `.rdata` files), questions often arise about export packaging and schema depth:
+
+#### 1. Dataset-Level Export Granularity (One Document per Dataset)
+
+The Dataverse Metadata Export API (`/api/datasets/export?exporter=<exporter>&persistentId=<pid>`) operates strictly at the **dataset level**, not per individual data file.
+
+Regardless of whether a dataset contains 1 or 50 tabular files, Dataverse generates **exactly one export document per dataset** for each requested metadata format. The harvester preserves this structure:
+
+```text
+harvested_records/<server>/<sanitized_pid>/metadata/
+├── croissant.json     # Exactly 1 Croissant JSON-LD file for the entire dataset
+├── ddi-c.xml          # Exactly 1 DDI Codebook XML file for the entire dataset
+├── schema.json        # Exactly 1 Schema.org JSON-LD file for the entire dataset
+└── dataverse.json     # Exactly 1 Dataverse Native JSON file for the entire dataset
+```
+
+#### 2. Cross-Standard Comparison Matrix
+
+While the file packaging is always 1 document per dataset, **the way multiple tabular files and column-level schemas are represented inside that document depends on the standard**:
+
+| Standard / Exporter | Output File | Multi-File Representation | Variable / Column Schema Depth | Primary Use Case |
+| :--- | :--- | :--- | :--- | :--- |
+| **Croissant** (`croissant`) | `.croissant.json` | Multiple `cr:FileObject` entries in `distribution` | **Full Column Schema**: Multiple `cr:RecordSet` entries, each containing `cr:Field` definitions with data types and descriptions. | Machine Learning pipelines, Hugging Face, automated training data loaders. |
+| **DDI Codebook 2.5** (`ddi`) | `.ddi-c.xml` | Multiple `<fileDscr>` tags | **Full Variable Dictionary**: Shared `<dataDscr>` with individual `<var>` tags linked to files via `files="f<id>"` attribute + summary stats & categories. | Social sciences, statistical analysis, codebook generation, variable search. |
+| **Dataverse Native** (`native`) | `.dataverse.json` | Array in `datasetVersion.files` | **Full Technical Metadata**: Complete file metadata, tabular tags, UNF checksums, and variable dictionaries. | Full repository backup, data migration, and exact Dataverse metadata reproduction. |
+| **Schema.org** (`schema.org`) | `.schema.json` | Array of `DataDownload` objects in `distribution` | **Minimal / None**: Lists download URLs, MIME types, and file sizes; does not provide column-level variable definitions. | Google Dataset Search, search engine indexation, general web discovery. |
+| **DataCite** (`datacite`) | `.datacite.xml` | Single dataset citation record | **None**: Bibliographic and citation metadata only (authors, title, publisher, DOI). | DOI registration, citation indexing, academic attribution. |
+
+#### 3. Structural Examples
+
+##### Croissant ML (`.croissant.json`)
+Croissant represents each tabular file in `distribution` and maps each table to a distinct `RecordSet`:
+```json
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "cr": "http://mlcroissant.org/"
+  },
+  "@type": "Dataset",
+  "name": "Multi-Table Study",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "file_101",
+      "name": "respondents.csv",
+      "contentUrl": "https://dataverse.example.org/api/access/datafile/101"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "file_102",
+      "name": "measurements.csv",
+      "contentUrl": "https://dataverse.example.org/api/access/datafile/102"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "recordset_respondents",
+      "name": "respondents",
+      "field": [
+        { "@type": "cr:Field", "name": "participant_id", "dataType": "sc:Integer" },
+        { "@type": "cr:Field", "name": "group", "dataType": "sc:Text" }
+      ]
+    },
+    {
+      "@type": "cr:RecordSet",
+      "@id": "recordset_measurements",
+      "name": "measurements",
+      "field": [
+        { "@type": "cr:Field", "name": "participant_id", "dataType": "sc:Integer" },
+        { "@type": "cr:Field", "name": "score", "dataType": "sc:Float" }
+      ]
+    }
+  ]
+}
+```
+
+##### DDI Codebook 2.5 (`.ddi-c.xml`)
+DDI Codebook defines each tabular file under `<fileDscr>` and aggregates all variables across files under `<dataDscr>`, linking each variable back to its specific file via `files="f<id>"`:
+```xml
+<codeBook xmlns="ddi:codebook:2_5" version="2.5">
+  <stdyDscr>
+    <citation><titlStmt><titl>Multi-Table Study</titl></titlStmt></citation>
+  </stdyDscr>
+
+  <!-- File descriptions for each tabular file -->
+  <fileDscr ID="f101">
+    <fileTxt><fileName>respondents.tab</fileName></fileTxt>
+  </fileDscr>
+  <fileDscr ID="f102">
+    <fileTxt><fileName>measurements.tab</fileName></fileTxt>
+  </fileDscr>
+
+  <!-- Variable definitions for all files with file linkage -->
+  <dataDscr>
+    <var ID="v1" files="f101" name="participant_id">
+      <labl>Participant Identification Number</labl>
+      <varFormat type="numeric"/>
+    </var>
+    <var ID="v2" files="f101" name="group">
+      <labl>Study Group Assignment</labl>
+    </var>
+    <var ID="v3" files="f102" name="score">
+      <labl>Test Score</labl>
+      <sumStat type="mean">74.2</sumStat>
+    </var>
+  </dataDscr>
+</codeBook>
+```
+
+---
+
 ### Understanding Metadata Validation & Errors
 
 #### Croissant ML Validation Exceptions (`['md5', 'sha256']` missing)

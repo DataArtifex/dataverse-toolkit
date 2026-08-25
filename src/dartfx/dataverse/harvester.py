@@ -103,6 +103,27 @@ def sanitize_pid(identifier: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_\-\.]", "_", identifier)
 
 
+def format_version(version: str | int | float | None) -> str:
+    """Format a Dataverse version string into a clean semantic version (e.g. 'v1.3.1', 'v5.14').
+
+    Strips git hashes, commit IDs, build metadata, or extra trailing tokens to prevent widening UI columns.
+    """
+    if not version:
+        return "-"
+    ver_str = str(version).strip()
+    if not ver_str or ver_str == "-":
+        return "-"
+    # Match semantic version numbers like 1.3.1, 5.14, 6.0, 5.11.1
+    # Handles strings like 'v1.3.1-bfb997c0ad8df94ef43fbd7d1af65be0020899', '5.14 build 892', 'v6.2'
+    match = re.search(r"v?(\d+(?:\.\d+)+)", ver_str, re.IGNORECASE)
+    if match:
+        return f"v{match.group(1)}"
+    match_single = re.search(r"v?(\d+)", ver_str, re.IGNORECASE)
+    if match_single:
+        return f"v{match_single.group(1)}"
+    return ver_str
+
+
 def get_dataset_metadata_path(server_dir: Path, pid: str, ext: str = ".croissant.json") -> tuple[Path, str]:
     """
     Get dataset directory and metadata file path inside a dedicated metadata/ folder.
@@ -1994,8 +2015,7 @@ def harvest(
                 url = f"https://{host}" if not host.startswith("http") else host
                 clickable_host = f"[link={url}]{host}[/link]"
 
-                ver_raw = str(counts["version"]).strip() if counts.get("version") else ""
-                ver_val = f"v{ver_raw.split()[0]}" if ver_raw else "-"
+                ver_val = format_version(counts.get("version"))
                 country_val = inst.get("country", "") or "Global"
 
                 if counts.get("requires_token") and not counts.get("datasets"):

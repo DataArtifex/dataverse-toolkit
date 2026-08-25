@@ -16,6 +16,7 @@ from .harvester import (
     classify_harvest_error,
     fetch_active_datasets,
     fetch_server_stats,
+    format_version,
     resolve_server_token,
     save_server_token,
 )
@@ -32,6 +33,7 @@ __all__ = [
     "ServerHarvester",
     "fetch_active_datasets",
     "fetch_server_stats",
+    "format_version",
     "resolve_server_token",
     "save_server_token",
     "classify_harvest_error",

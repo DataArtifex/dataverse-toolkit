@@ -432,3 +432,32 @@ def test_sync_limit_does_not_delete_existing_files(tmp_path, monkeypatch):
     assert not (harvester.server_dir / "doi_10.1_ds2/metadata/native.json").exists()
     assert not (harvester.server_dir / "doi_10.1_ds3/metadata/native.json").exists()
     assert "doi:10.1/ds2::native" not in harvester.manifest["records"]
+
+
+def test_format_version():
+    from dartfx.dataverse.harvester import format_version
+
+    # Long commit hash / build metadata versions
+    assert format_version("v1.3.1-bfb997c0ad8df94ef43fbd7d1af65be0020899") == "v1.3.1"
+    assert format_version("1.3.1-bfb997c0ad8df94ef43fbd7d1af65be0020899") == "v1.3.1"
+    assert format_version("v5.14-build123-abcdef") == "v5.14"
+    assert format_version("6.0.1+build.456.git") == "v6.0.1"
+
+    # Standard clean semver versions
+    assert format_version("5.14") == "v5.14"
+    assert format_version("v5.14") == "v5.14"
+    assert format_version("6.2.1") == "v6.2.1"
+    assert format_version("v6.2.1") == "v6.2.1"
+
+    # Versions with spaces / build strings
+    assert format_version("5.13 build 892-3498a") == "v5.13"
+
+    # Single digit versions
+    assert format_version("6") == "v6"
+    assert format_version("v6") == "v6"
+
+    # Empty / None / fallback cases
+    assert format_version(None) == "-"
+    assert format_version("") == "-"
+    assert format_version("   ") == "-"
+    assert format_version("-") == "-"

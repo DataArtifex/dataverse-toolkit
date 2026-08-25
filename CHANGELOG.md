@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Set default harvesting record limit to datasets per server (pass for unlimited).
   - Enabled tabular dataset filtering by default (pass to harvest all datasets).
   - Added column to table with compact semantic version formatting.
+  - Normalized long repository version strings with commit hashes and build metadata (e.g. `v1.3.1-bfb997c0ad...`) to clean semantic version format (`vN.N.N`) in `stats` table.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).

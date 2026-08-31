@@ -488,6 +488,87 @@ Build a simple command-line search interface:
    if __name__ == "__main__":
        search_interface()
 
+Example 11: Multi-Format Metadata Retrieval & Inspection
+---------------------------------------------------------
+
+Retrieve and compare multiple metadata serialization formats for a single dataset:
+
+.. code-block:: python
+
+   from dartfx.dataverse import DataverseServer, ServerInstallation
+
+   server = DataverseServer(
+       ServerInstallation(
+           name="Borealis",
+           hostname="borealisdata.ca"
+       )
+   )
+
+   doi = "doi:10.5683/SP3/FNS9EF"
+
+   # 1. Native JSON
+   native_data = server.get_dataset(doi)
+   print(f"Native Title: {native_data['data']['latestVersion']['metadataBlocks']['citation']['fields'][0]['value']}")
+
+   # 2. Croissant ML (JSON-LD)
+   try:
+       croissant_meta = server.get_dataset_export(doi, exporter="croissant")
+       print(f"Croissant Export Length: {len(croissant_meta)} chars")
+   except Exception as e:
+       print(f"Croissant exporter notice: {e}")
+
+   # 3. DDI Codebook 2.5 (XML)
+   ddi_xml = server.get_dataset_export(doi, exporter="ddi")
+   print(f"DDI XML Length: {len(ddi_xml)} chars")
+
+   # 4. Schema.org (JSON-LD)
+   schema_json = server.get_dataset_export(doi, exporter="schema.org")
+   print(f"Schema.org Export Length: {len(schema_json)} chars")
+
+   # 5. DataCite (XML)
+   datacite_xml = server.get_dataset_export(doi, exporter="datacite")
+   print(f"DataCite XML Length: {len(datacite_xml)} chars")
+
+Example 12: Programmatic Harvesting & Error Classification
+-----------------------------------------------------------
+
+Perform programmatic incremental harvesting across repositories and inspect error categories:
+
+.. code-block:: python
+
+   from pathlib import Path
+   from dartfx.dataverse import ServerHarvester, analyze_harvest_errors, fetch_server_stats
+
+   repo_path = Path("./harvested_output")
+   host = "dataverse.nl"
+
+   # 1. Check server stats first
+   stats = fetch_server_stats(host)
+   print(f"Server {host} has {stats['datasets']:,} datasets and {stats['tabular_files']:,} tabular files.")
+
+   # 2. Initialize and execute harvester
+   harvester = ServerHarvester(
+       server_dir=repo_path / host,
+       host=host,
+       verbose=True
+   )
+
+   summary = harvester.sync(
+       formats=["croissant", "native", "ddi"],
+       query="transportation",
+       limit=10,
+       tabular_only=True
+   )
+
+   print(f"Harvest complete: {summary['datasets_count']} datasets processed.")
+
+   # 3. Scan for any harvest errors recorded in .manifest.json
+   analysis = analyze_harvest_errors(repo_path)
+   if analysis["total_errors"] > 0:
+       print(f"\nRecorded Errors ({analysis['total_errors']}):")
+       for cat, count in analysis["by_category"].items():
+           print(f"  {cat}: {count}")
+
 More Examples
 -------------
 

@@ -178,20 +178,53 @@ You can work with multiple Dataverse installations simultaneously:
    print(f"Harvard: {harvard_results['data']['total_count']} results")
    print(f"Demo: {demo_results['data']['total_count']} results")
 
-Step 5: Retrieve Dataset Metadata
-----------------------------------
+Step 5: Retrieve Multi-Standard Dataset Metadata
+-------------------------------------------------
 
-Retrieve full metadata or specific exports for a dataset:
+Retrieve full native JSON metadata or standard export formats (Croissant, DDI, Schema.org, DataCite) using a dataset's Persistent Identifier (DOI):
 
 .. code-block:: python
 
-   # Get dataset metadata (JSON)
-   dataset = server.get_dataset("doi:10.5683/SP3/FNS9EF")
+   pid = "doi:10.5683/SP3/FNS9EF"
+
+   # 1. Native Dataverse JSON
+   dataset = server.get_dataset(pid)
    print(f"Title: {dataset['data']['latestVersion']['metadataBlocks']['citation']['fields'][0]['value']}")
 
-   # Get dataset in specific export format (e.g., DDI)
-   ddi_xml = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="ddi")
-   print(ddi_xml[:500])  # Print first 500 characters of XML
+   # 2. Croissant ML (JSON-LD) for ML pipelines
+   croissant_data = server.get_dataset_export(pid, exporter="croissant")
+
+   # 3. DDI Codebook 2.5 (XML) for variable documentation
+   ddi_xml = server.get_dataset_export(pid, exporter="ddi")
+
+   # 4. Schema.org (JSON-LD) for search indexing
+   schema_json = server.get_dataset_export(pid, exporter="schema.org")
+
+   # 5. DataCite (XML) for citation indexing
+   datacite_xml = server.get_dataset_export(pid, exporter="datacite")
+
+Step 6: Incremental Harvesting & Statistics
+--------------------------------------------
+
+You can use the harvester engine via CLI or Python:
+
+.. code-block:: bash
+
+   # Query global repository stats and tabular data file counts
+   dartfx-dataverse stats --country NL
+
+   # Incrementally sync multi-standard metadata (Croissant, Native, DDI, Schema.org, DataCite)
+   dartfx-dataverse harvest ./harvested_records --server dataverse.harvard.edu --format all --limit 10
+
+Or in Python:
+
+.. code-block:: python
+
+   from dartfx.dataverse import fetch_server_stats
+
+   stats = fetch_server_stats("dataverse.harvard.edu")
+   print(f"Datasets: {stats['datasets']:,} | Tabular Files: {stats['tabular_files']:,} ({stats['tabular_pct']}%)")
+
 
 Handling Errors
 ---------------

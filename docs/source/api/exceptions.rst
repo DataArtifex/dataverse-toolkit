@@ -14,28 +14,6 @@ The main exception class for API-related errors.
    :show-inheritance:
    :special-members: __init__, __str__
 
-   .. rubric:: Attributes
-
-   .. attribute:: message
-      :type: str
-
-      Human-readable error message describing what went wrong.
-
-   .. attribute:: url
-      :type: str
-
-      The URL that was being accessed when the error occurred.
-
-   .. attribute:: status_code
-      :type: int | None
-
-      HTTP status code from the response, if available.
-
-   .. attribute:: response
-      :type: requests.Response | None
-
-      The raw response object from the failed request, if available.
-
 Common HTTP Status Codes
 -------------------------
 

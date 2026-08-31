@@ -46,13 +46,13 @@ Available Commands
    * - ``search``
      - Search across datasets, dataverses, and files with filtering, sorting, and pagination.
    * - ``dataset``
-     - Retrieve native JSON metadata or standard export formats (DDI, Croissant, schema.org).
+     - Retrieve native JSON metadata or standard export formats (Croissant, Native JSON, DDI, Schema.org, DataCite).
    * - ``metadatablocks``
      - List registered metadata schema blocks (citation, geospatial, social science, etc.).
    * - ``stats``
      - Inspect live/cached counts of datasets, files, and tabular rectangular data files.
    * - ``harvest``
-     - Incrementally synchronize and hash-verify metadata across global repositories.
+     - Incrementally synchronize and hash-verify multi-standard metadata across global repositories.
    * - ``errors``
      - Analyze and report counts per harvest error type across repository manifests.
 

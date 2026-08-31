@@ -1,8 +1,8 @@
-# Harvester CLI Utility (`dartfx-dataverse harvest`)
+# Harvester Subsystem & CLI Utility (`dartfx-dataverse harvest`)
 
-The **Harvester CLI** is an intelligent, incremental metadata synchronization tool designed to discover, harvest, profile, and sync **Croissant ML records** across global Dataverse repositories into a structured local directory layout.
+The **Harvester Subsystem & CLI** is an intelligent, incremental metadata synchronization engine designed to discover, profile, harvest, and sync multi-standard metadata records (**Croissant ML JSON-LD**, **Native Dataverse JSON**, **DDI Codebook 2.5 XML**, **Schema.org JSON-LD**, and **DataCite XML**) across global Dataverse repositories into a structured local directory layout.
 
-Built with **Typer** for command-line handling and **Rich** for modern, color-coded terminal progress bars, tables, and execution reports.
+Built with **Typer** for command-line handling and **Rich** for modern, color-coded terminal progress bars, tables, and execution reports, with a complete programmatic Python API.
 
 ---
 
@@ -141,7 +141,7 @@ curl -s https://mcp.dataverse.org/overview | jq .
 
 ### Architectural Workflow
 
-```mermaid
+<div class="mermaid">
 flowchart TD
     Init["<b>1. CLI Invocation</b><br/>Parse arguments via Typer & render Rich Console UI"] --> Discovery
     Discovery["<b>2. Server Discovery</b><br/>Query global installations directory (or target specific server)"] --> Setup
@@ -154,7 +154,7 @@ flowchart TD
     Processing["<b>6. Addition & Update Processing</b><br/>For each active dataset PID:<br/>• If new &rarr; <b>Addition (+)</b><br/>• Fetch metadata record(s)<br/>• SHA-256 diff &rarr; <b>Update (Δ)</b>"] --> Save
 
     Save["<b>7. Persistence & Summary Report</b><br/>Save metadata files & update <code>.manifest.json</code><br/>Render Rich Summary Table"]
-```
+</div>
 
 ---
 
@@ -463,3 +463,85 @@ uv run dartfx-dataverse errors ./my_data --format csv > errors_report.csv
 | **`HTTP 403: Forbidden / Bot Protection (WAF)`** | Campus Cloudflare or AWS WAF interstitial intercepted automated requests. | Repository cannot be harvested automatically without custom network whitelisting. |
 | **`HTTP 404: Dataset / Exporter Not Found`** | Dataset has been deaccessioned, deleted, or export endpoint returned 404. | Handled automatically and recorded in `.manifest.json`. |
 | **`HTTP 5xx: Server / Upstream Error`** | Remote Dataverse server encountered an internal 500 error generating the export. | Flagged as recoverable; re-attempted on subsequent runs. |
+
+---
+
+## 🐍 Programmatic Python API
+
+In addition to the CLI, the harvester module exposes high-level Python classes and functions for embedding in data pipelines and automated workflows.
+
+### 1. Incremental Harvesting with `ServerHarvester`
+
+```python
+from pathlib import Path
+from dartfx.dataverse import ServerHarvester
+
+# Initialize harvester for a specific repository
+harvester = ServerHarvester(
+    server_dir=Path("./harvested_records/dataverse.harvard.edu"),
+    host="dataverse.harvard.edu",
+    api_token=None,  # Or pass explicit token string
+    verbose=True,
+    dry_run=False,
+    verify_sha256=False,
+    retry_errors=False
+)
+
+# Run incremental synchronization for multi-standard formats
+summary = harvester.sync(
+    formats=["croissant", "native", "ddi"],
+    since="2026-01-01",
+    query="climate change",
+    limit=50,
+    tabular_only=True
+)
+
+print(f"Datasets: {summary['datasets_count']}")
+print(f"Files Added: {summary['added']}, Updated: {summary['updated']}, Unchanged: {summary['unchanged']}")
+```
+
+### 2. Fetch Active Datasets Catalog with `fetch_active_datasets`
+
+```python
+from dartfx.dataverse import fetch_active_datasets
+
+# Query active dataset records with 24-hour local catalog caching
+datasets = fetch_active_datasets(
+    host="dataverse.nl",
+    query="quantum",
+    since="7d",
+    tabular_only=True,
+    limit=20,
+    refresh_catalog=False
+)
+
+for ds in datasets:
+    print(f"PID: {ds.get('global_id')} | Title: {ds.get('name')}")
+```
+
+### 3. Query Server Statistics with `fetch_server_stats`
+
+```python
+from dartfx.dataverse import fetch_server_stats
+
+# Retrieve live/cached repository metrics
+stats = fetch_server_stats("dataverse.harvard.edu")
+print(f"Server: {stats['host']} (v{stats['server_version']})")
+print(f"Total Datasets: {stats['datasets']}")
+print(f"Total Files: {stats['total_files']}")
+print(f"Tabular Files: {stats['tabular_files']} ({stats['tabular_pct']}%)")
+```
+
+### 4. Analyze Manifest Errors with `analyze_harvest_errors`
+
+```python
+from pathlib import Path
+from dartfx.dataverse import analyze_harvest_errors
+
+# Scan repository manifests and aggregate errors
+analysis = analyze_harvest_errors(Path("./harvested_records"))
+print(f"Total Failed Records: {analysis['total_errors']}")
+print("Counts by Category:")
+for category, count in analysis["by_category"].items():
+    print(f"  - {category}: {count}")
+```

@@ -250,13 +250,49 @@ Handle large result sets with pagination:
    for item in paginate_search(server, "climate"):
        print(item['name'])
 
-Dataset Metadata
-----------------
+Dataset Metadata & Export Formats
+---------------------------------
 
-Retrieve detailed metadata and exported formats for specific datasets using their persistent identifier (e.g., DOI).
+Retrieve detailed metadata and standard export formats for datasets using their Persistent Identifier (DOI or Handle).
 
-Getting Dataset Metadata (JSON)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Supported Metadata Formats & Standards
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 20 20 40
+
+   * - Exporter / Format
+     - Output Encoding
+     - Extension
+     - Primary Domain & Use Case
+   * - **Native JSON**
+     - JSON
+     - ``.dataverse.json``
+     - Full Dataverse dataset metadata blocks, file manifests, terms, and versions.
+   * - **Croissant ML** (``croissant``)
+     - JSON-LD (schema.org/cr)
+     - ``.croissant.json``
+     - Machine Learning pipelines, Hugging Face, PyTorch, automated training sets.
+   * - **DDI Codebook 2.5** (``ddi``)
+     - XML
+     - ``.ddi-c.xml``
+     - Social sciences, variable-level codebooks, statistical documentation.
+   * - **Schema.org** (``schema.org``)
+     - JSON-LD (schema.org)
+     - ``.schema.json``
+     - Search engines, Google Dataset Search, web schema indexing.
+   * - **DataCite** (``datacite``)
+     - XML
+     - ``.datacite.xml``
+     - DOI registration, persistent identifier tracking, academic citations.
+   * - **Dublin Core** (``oai_dc``)
+     - XML
+     - ``.xml``
+     - Cross-domain digital library metadata exchange.
+
+Getting Dataset Metadata (Native JSON)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``get_dataset`` method returns the full metadata for a dataset in JSON format:
 
@@ -265,38 +301,126 @@ The ``get_dataset`` method returns the full metadata for a dataset in JSON forma
    # Retrieve dataset by DOI
    dataset = server.get_dataset("doi:10.5683/SP3/FNS9EF")
 
-   # Accessing fields
+   # Accessing citation and metadata blocks
    version = dataset['data']['latestVersion']
    for block_name, block in version['metadataBlocks'].items():
        print(f"Block: {block_name}")
+       for field in block['fields']:
+           print(f"  - {field['typeName']}: {field['value']}")
 
-Getting Exported Formats
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Getting Standard Export Formats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dataverse supports several metadata export formats (e.g., DDI, OAI_ORE, DataCite, Dublin Core). Use the ``get_dataset_export`` method:
+Use the ``get_dataset_export`` method with the target exporter identifier:
 
 .. code-block:: python
 
-   # Get DDI (XML) export
-   ddi_content = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="ddi")
+   pid = "doi:10.5683/SP3/FNS9EF"
 
-   # Get Dublin Core (XML) export
-   dc_content = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="oai_dc")
+   # 1. Croissant ML (JSON-LD)
+   croissant_str = server.get_dataset_export(pid, exporter="croissant")
 
-   # Get Schema.org (JSON-LD) export
-   # Note: Some exporters return JSON strings
-   schema_json = server.get_dataset_export("doi:10.5683/SP3/FNS9EF", exporter="schema.org")
+   # 2. DDI Codebook 2.5 (XML)
+   ddi_xml = server.get_dataset_export(pid, exporter="ddi")
 
-Listing Available Exporters
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   # 3. Schema.org (JSON-LD)
+   schema_json = server.get_dataset_export(pid, exporter="schema.org")
 
-You can find out which export formats are supported by a specific server:
+   # 4. DataCite (XML)
+   datacite_xml = server.get_dataset_export(pid, exporter="datacite")
+
+   # 5. Dublin Core (XML)
+   dc_xml = server.get_dataset_export(pid, exporter="oai_dc")
+
+Listing Available Exporters on Server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can inspect the complete list of export formats supported and enabled on any given Dataverse server:
 
 .. code-block:: python
 
    formats = server.get_info_export_formats()
    for format_name, details in formats['data'].items():
        print(f"{format_name}: {details['displayName']} ({details['mediaType']})")
+
+Metadata Harvester Subsystem
+----------------------------
+
+The toolkit includes an incremental metadata harvester subsystem for bulk discovery, repository profiling, and synchronization.
+
+Incremental Server Synchronization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Use ``ServerHarvester`` to synchronize datasets across one or more metadata formats into a structured directory hierarchy:
+
+.. code-block:: python
+
+   from pathlib import Path
+   from dartfx.dataverse import ServerHarvester
+
+   harvester = ServerHarvester(
+       server_dir=Path("./harvested_data/dataverse.harvard.edu"),
+       host="dataverse.harvard.edu",
+       verbose=True,
+       dry_run=False
+   )
+
+   # Sync Croissant, Native JSON, and DDI metadata for rectangular tabular datasets
+   summary = harvester.sync(
+       formats=["croissant", "native", "ddi"],
+       query="climate",
+       limit=25,
+       tabular_only=True
+   )
+
+   print(f"Processed: {summary['datasets_count']} datasets")
+   print(f"Added: {summary['added']}, Updated: {summary['updated']}, Unchanged: {summary['unchanged']}")
+
+Repository Statistics & Profiling
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Query live or cached dataset counts, total file counts, and tabular rectangular data file counts:
+
+.. code-block:: python
+
+   from dartfx.dataverse import fetch_server_stats
+
+   stats = fetch_server_stats("dataverse.harvard.edu")
+   print(f"Host: {stats['host']} (Version: {stats['server_version']})")
+   print(f"Total Datasets: {stats['datasets']:,}")
+   print(f"Total Files: {stats['total_files']:,}")
+   print(f"Tabular Files: {stats['tabular_files']:,} ({stats['tabular_pct']}%)")
+
+Harvest Error Analysis
+~~~~~~~~~~~~~~~~~~~~~~
+
+Scan local harvest manifests to classify and aggregate error types across repositories:
+
+.. code-block:: python
+
+   from pathlib import Path
+   from dartfx.dataverse import analyze_harvest_errors
+
+   errors_report = analyze_harvest_errors(Path("./harvested_data"))
+   print(f"Total Failed Records: {errors_report['total_errors']}")
+   for category, count in errors_report['by_category'].items():
+       print(f"  {category}: {count}")
+
+Token Resolution & Management
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Manage and resolve per-server API tokens automatically:
+
+.. code-block:: python
+
+   from dartfx.dataverse import resolve_server_token, save_server_token
+
+   # Resolve token from env vars, .api_token files, or .dataverse_tokens.json
+   token = resolve_server_token("dataverse.unc.edu")
+
+   # Persist token for future runs
+   save_server_token("dataverse.unc.edu", "my-secret-token")
+
 
 Error Handling
 --------------

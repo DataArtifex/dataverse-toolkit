@@ -83,7 +83,8 @@ myst_enable_extensions = [
 ]
 
 templates_path: list[str] = ["_templates"]
-exclude_patterns: list[str] = []
+exclude_patterns: list[str] = ["modules.rst"]
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

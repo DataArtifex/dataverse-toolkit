@@ -464,3 +464,29 @@ def test_format_version():
     assert format_version("") == "-"
     assert format_version("   ") == "-"
     assert format_version("-") == "-"
+
+
+def test_non_existent_server_leaves_no_empty_directory(tmp_path, monkeypatch):
+    from unittest.mock import MagicMock
+
+    import dartfx.dataverse.harvester as h
+
+    # When ServerHarvester is instantiated, it should not create the directory yet
+    server_host = "non-existent-server-12345.org"
+    harvester = ServerHarvester(server_host, tmp_path)
+    assert not (tmp_path / server_host).exists()
+
+    # Mock fetch_active_datasets to return empty and fetch_server_stats to return not a dataverse server
+    monkeypatch.setattr(h, "fetch_active_datasets", MagicMock(return_value={}))
+    monkeypatch.setattr(
+        h,
+        "fetch_server_stats",
+        MagicMock(return_value={"is_dataverse": False, "error": "DNS lookup failed"}),
+    )
+
+    stats = harvester.sync(metadata_formats="croissant")
+    assert len(stats["errors"]) == 1
+    reason = stats["errors"][0]["reason"]
+    assert "Unreachable or not a valid Dataverse server" in reason or "DNS" in reason
+    # Verify no empty directory was left behind in repo root
+    assert not (tmp_path / server_host).exists()

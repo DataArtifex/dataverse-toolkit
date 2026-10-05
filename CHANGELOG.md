@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added live progress bar updates during the initial dataset catalog pagination phase (`Cataloging host: X datasets (Y/Z items indexed)`), providing real-time feedback during large catalog scans.
   - Ensured deterministic maximum timestamp aggregation across multi-file datasets and broadened non-recoverable error caching (HTTP 401/403/422/501, syntax/parse errors) to eliminate latency on consecutive sync runs.
   - Refined format unsupported detection to ensure individual dataset permissions (`HTTP 403 Forbidden` / restricted datasets) do not falsely trigger server-wide format skipping.
+  - Deferred local server directory creation and added empty directory cleanup to prevent creating orphan folders when harvesting non-existent or unreachable servers.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).

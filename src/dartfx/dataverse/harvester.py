@@ -252,15 +252,15 @@ def save_server_token(host: str, token: str, repo_root: Path | None = None) -> N
     except Exception:
         pass
 
-    # 2. Save to server-specific directory (.api_token)
+    # 2. Save to server-specific directory (.api_token) if server_dir exists
     if repo_root:
         server_dir = repo_root / clean_host
-        server_dir.mkdir(parents=True, exist_ok=True)
-        token_file = server_dir / ".api_token"
-        try:
-            token_file.write_text(clean_token + "\n", encoding="utf-8")
-        except Exception:
-            pass
+        if server_dir.exists():
+            token_file = server_dir / ".api_token"
+            try:
+                token_file.write_text(clean_token + "\n", encoding="utf-8")
+            except Exception:
+                pass
 
 
 def get_request_headers(
@@ -1391,7 +1391,6 @@ class ServerHarvester:
     def __init__(self, host: str, repo_root: Path):
         self.host = host.replace("https://", "").replace("http://", "").strip("/")
         self.server_dir = repo_root / self.host
-        self.server_dir.mkdir(parents=True, exist_ok=True)
         self.manifest_file = self.server_dir / ".manifest.json"
         self.manifest = self._load_manifest()
 
@@ -1481,6 +1480,11 @@ class ServerHarvester:
                 msg = f"Host '{self.host}' is unreachable or not a valid Dataverse server: {err_msg}"
                 console.print(f"  [bold red][!] {msg}[/bold red]")
                 file_logger.log(msg, level="ERROR")
+                if self.server_dir.exists() and not any(self.server_dir.iterdir()):
+                    try:
+                        self.server_dir.rmdir()
+                    except Exception:
+                        pass
                 return stats
 
         manifest_records = self.manifest.get("records", {})

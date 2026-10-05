@@ -3,7 +3,7 @@
 
 [![Development Status](https://img.shields.io/badge/status-early%20release-orange.svg)](https://github.com/DataArtifex/dataverse-toolkit)
 [![Documentation](https://img.shields.io/badge/docs-blue)](https://www.dataartifex.org/docs/dartfx-dataverse/)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DataArtifex/dataverse-toolkit)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask%20DeepWiki-AI%20Docs-5C54E5?logo=bookstack&logoColor=white)](https://deepwiki.com/DataArtifex/dataverse-toolkit)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Package Status](https://img.shields.io/badge/PyPI-not%20published-lightgrey)](https://github.com/DataArtifex/dataverse-toolkit)
 [![CI](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml/badge.svg)](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml)

@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added column to table with compact semantic version formatting.
   - Normalized long repository version strings with commit hashes and build metadata (e.g. `v1.3.1-bfb997c0ad...`) to clean semantic version format (`vN.N.N`) in `stats` table.
   - Added live progress bar updates during the initial dataset catalog pagination phase (`Cataloging host: X datasets (Y/Z items indexed)`), providing real-time feedback during large catalog scans.
+  - Ensured deterministic maximum timestamp aggregation across multi-file datasets and broadened non-recoverable error caching (HTTP 401/403/422/501, syntax/parse errors) to eliminate latency on consecutive sync runs.
   - Refined format unsupported detection to ensure individual dataset permissions (`HTTP 403 Forbidden` / restricted datasets) do not falsely trigger server-wide format skipping.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:

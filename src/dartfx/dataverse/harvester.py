@@ -365,19 +365,40 @@ def is_format_unsupported_error(err_msg: str | None) -> bool:
 
 
 def is_non_recoverable_error(err_msg: str | None) -> bool:
-    """Determine if an error is non-recoverable (format validation failure, 404, 400, 422, unsupported format)."""
+    """Determine if an error is non-recoverable (format validation failure, 404, 400, 401, 403, 422, 501)."""
     if not err_msg:
         return False
     msg_low = err_msg.lower()
 
     # Format validation errors (pyDataverse Croissant exceptions, XML/JSON parse errors)
     if any(
-        k in msg_low for k in ["croissant exception", "validation", "mandatory", "parseerror", "unsupported format"]
+        k in msg_low
+        for k in [
+            "croissant exception",
+            "validation",
+            "mandatory",
+            "parseerror",
+            "syntaxerror",
+            "unsupported format",
+            "empty metadata response",
+        ]
     ):
         return True
 
     # Deterministic HTTP response codes
-    if any(code in msg_low for code in ["http 404", "http 400", "http 422", "http 403"]):
+    if any(
+        code in msg_low
+        for code in [
+            "http 404",
+            "http 400",
+            "http 401",
+            "http 403",
+            "http 422",
+            "http 501",
+            "forbidden",
+            "unauthorized",
+        ]
+    ):
         return True
 
     return False
@@ -1068,13 +1089,22 @@ def fetch_active_datasets(
                     item_name = item.get("name")
                     updated_at = item.get("updated_at")
 
-                if global_id and global_id not in active_datasets:
-                    active_datasets[global_id] = {
-                        "global_id": global_id,
-                        "name": item_name,
-                        "updated_at": updated_at,
-                        "published_at": item.get("published_at"),
-                    }
+                if global_id:
+                    if global_id not in active_datasets:
+                        active_datasets[global_id] = {
+                            "global_id": global_id,
+                            "name": item_name,
+                            "updated_at": updated_at,
+                            "published_at": item.get("published_at"),
+                        }
+                    else:
+                        # For multi-file datasets, track the latest/maximum timestamp deterministically
+                        cur_ts = active_datasets[global_id].get("updated_at")
+                        if updated_at and (not cur_ts or updated_at > cur_ts):
+                            active_datasets[global_id]["updated_at"] = updated_at
+                        if item.get("published_at") and not active_datasets[global_id].get("published_at"):
+                            active_datasets[global_id]["published_at"] = item.get("published_at")
+
                     if effective_limit and len(active_datasets) >= effective_limit:
                         msg = f"[API] Reached record limit ({effective_limit})"
                         if verbose:
@@ -1196,7 +1226,9 @@ def fetch_metadata_record(
         try:
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
-                return r.content, ".croissant.json", None
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".croissant.json", None
+                return None, ".croissant.json", "Empty metadata response from server (0 bytes)"
             elif r.status_code in (400, 404, 501) and Croissant is not None:
                 try:
                     croissant = Croissant(doi=pid, host=base_host)
@@ -1234,7 +1266,9 @@ def fetch_metadata_record(
         try:
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
-                return r.content, ".dataverse.json", None
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".dataverse.json", None
+                return None, ".dataverse.json", "Empty metadata response from server (0 bytes)"
             else:
                 err_msg = f"HTTP {r.status_code}"
                 if verbose:
@@ -1253,7 +1287,9 @@ def fetch_metadata_record(
         try:
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
-                return r.content, ".ddi-c.xml", None
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".ddi-c.xml", None
+                return None, ".ddi-c.xml", "Empty metadata response from server (0 bytes)"
             else:
                 err_msg = f"HTTP {r.status_code}"
                 if verbose:
@@ -1272,7 +1308,9 @@ def fetch_metadata_record(
         try:
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
-                return r.content, ".schema.json", None
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".schema.json", None
+                return None, ".schema.json", "Empty metadata response from server (0 bytes)"
             else:
                 err_msg = f"HTTP {r.status_code}"
                 if verbose:
@@ -1291,7 +1329,9 @@ def fetch_metadata_record(
         try:
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
-                return r.content, ".datacite.xml", None
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".datacite.xml", None
+                return None, ".datacite.xml", "Empty metadata response from server (0 bytes)"
             else:
                 err_msg = f"HTTP {r.status_code}"
                 if verbose:
@@ -1564,7 +1604,7 @@ class ServerHarvester:
                     continue
 
                 # Fetch Metadata Record with retry for rate limits (HTTP 429 / 503)
-                max_retries = 3
+                max_retries = 2
                 content_bytes = None
                 last_err_msg = None
 
@@ -1574,14 +1614,16 @@ class ServerHarvester:
                     )
                     if content_bytes:
                         break
-                    # If error is non-recoverable (Croissant validation, 404, 400), abort retries immediately
+                    # If error is non-recoverable (Croissant validation, 404, 400, 403, empty response),
+                    # abort retries immediately
                     if is_non_recoverable_error(last_err_msg):
                         if verbose:
                             console.print(
                                 f"  [dim red]  [API] Non-recoverable error for {rec_key}; skipping retries.[/dim red]"
                             )
                         break
-                    time.sleep(2 * (attempt + 1))
+                    if attempt < max_retries - 1:
+                        time.sleep(1 * (attempt + 1))
 
                 try:
                     if content_bytes:

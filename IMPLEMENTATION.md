@@ -12,10 +12,15 @@ The toolkit is designed to be a high-level, type-safe wrapper around the Dataver
     - Inherits from `pydantic.BaseModel` for configuration management.
     - Manages `requests-cache` sessions for performance.
     - Provides convenience methods for common API calls (Search, Info, Metadata Blocks).
-2.  **`ServerInstallation`**: A Pydantic model representing a Dataverse installation with metadata (name, hostname, coordinates, etc.).
+2.  **`ServerInstallation`**: A Pydantic model representing a Dataverse installation with rich metadata (name, hostname, coordinates, launch year, ISO 3166-1 alpha-2 `country_code`, `about_url`, `dv_hub_id`, etc.) and helper properties (`clean_hostname`, `url`).
 3.  **`SearchParameters`**: A comprehensive Pydantic model for validating and managing Dataverse Search API parameters.
-4.  **`fetch_dataverse_installations`**: A utility function that retrieves the worldwide list of Dataverse installations from the IQSS repository.
+4.  **`fetch_dataverse_installations` & Registry Engine**: The centralized registry subsystem for discovering worldwide Dataverse instances.
+    - Multi-registry endpoint fallback with request timeouts.
+    - Built-in ISO 3166-1 Alpha-2 country crosswalk (`COUNTRY_TO_ISO2`, `get_iso2_code`, `matches_country`).
+    - Filtering by hostname, ISO country code, or country substring.
+    - Automatic fallback synthesis for unlisted/private Dataverse deployments.
 5.  **`ServerHarvester` / Metadata Harvester**: A resilient bulk metadata synchronization subsystem.
+    - Consumes the unified `fetch_dataverse_installations` registry engine.
     - Multi-format harvesting (`croissant`, `native`, `ddi`, `schema.org`, `datacite`).
     - **Dataset-Level Export Granularity**: Exports are fetched per-dataset from Dataverse endpoints (`/api/datasets/export`). Multi-tabular datasets yield exactly one export document per format with standard-specific inner representations (e.g. multiple `RecordSet` items in Croissant, `<fileDscr>` + `<dataDscr>` variables in DDI).
     - Fast timestamp checking and SHA-256 integrity verification via `.manifest.json`.

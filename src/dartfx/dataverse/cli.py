@@ -20,6 +20,23 @@ from dartfx.dataverse.harvester import harvest as _harvest_cmd
 
 load_dotenv(find_dotenv(usecwd=True))
 
+
+def _normalize_smart_dashes() -> None:
+    """Sanitize macOS smart dashes (en-dash, em-dash) in sys.argv to standard hyphens."""
+    normalized: list[str] = []
+    for arg in sys.argv:
+        if any(arg.startswith(prefix) for prefix in ("-–", "—", "–", "−")):
+            clean = arg.replace("-–", "--").replace("—", "--").replace("−", "-")
+            if clean.startswith("–"):
+                clean = "--" + clean[1:] if len(clean) > 2 else "-" + clean[1:]
+            normalized.append(clean)
+        else:
+            normalized.append(arg)
+    sys.argv[:] = normalized
+
+
+_normalize_smart_dashes()
+
 app = typer.Typer(
     name="dartfx-dataverse",
     help="CLI for discovering and interacting with Dataverse repositories.",
@@ -43,12 +60,27 @@ def get_server(hostname: str | None = None, api_key: str | None = None) -> Datav
 
 @app.command()
 def installations(
+    country: Annotated[
+        str | None,
+        typer.Option(
+            "--country",
+            "-c",
+            help="Filter installations by 2-letter ISO country code (e.g. NL, US, FR, DE, CA, GB) or country name.",
+        ),
+    ] = None,
+    server: Annotated[
+        str | None,
+        typer.Option(
+            "--server",
+            "-s",
+            help="Filter or search for a specific Dataverse server hostname.",
+        ),
+    ] = None,
     format: Annotated[OutputFormat, typer.Option("--format", "-f", help="Output format")] = OutputFormat.TABLE,
     limit: Annotated[int | None, typer.Option("--limit", "-l", help="Limit the number of results")] = None,
 ) -> None:
     """List worldwide Dataverse installations."""
-    with console.status("[bold green]Fetching installations..."):
-        all_installations = fetch_dataverse_installations()
+    all_installations = fetch_dataverse_installations(target_server=server, country=country)
 
     if limit:
         all_installations = all_installations[:limit]
@@ -58,30 +90,38 @@ def installations(
         return
 
     if format == OutputFormat.CSV:
-        writer = csv.DictWriter(sys.stdout, fieldnames=["name", "hostname", "country", "launch_year"])
+        writer = csv.DictWriter(
+            sys.stdout,
+            fieldnames=["name", "hostname", "country", "country_code", "launch_year"],
+        )
         writer.writeheader()
         for inst in all_installations:
             writer.writerow(
                 {
                     "name": inst.name or "",
-                    "hostname": inst.hostname or "",
+                    "hostname": inst.clean_hostname or "",
                     "country": inst.country or "",
+                    "country_code": inst.country_code or "",
                     "launch_year": inst.launch_year or "",
                 }
             )
         return
 
-    table = Table(title="Worldwide Dataverse Installations")
+    table = Table(title=f"Worldwide Dataverse Installations ({len(all_installations)} found)")
     table.add_column("Name", style="cyan")
     table.add_column("Hostname", style="magenta")
     table.add_column("Country", style="green")
-    table.add_column("Launch Year", style="yellow")
+    table.add_column("Code", style="yellow", justify="center")
+    table.add_column("Launch Year", style="yellow", justify="center")
 
     for inst in all_installations:
+        host = inst.clean_hostname or "N/A"
+        clickable_host = f"[link={inst.url}]{host}[/link]" if inst.url else host
         table.add_row(
             inst.name or "N/A",
-            inst.hostname or "N/A",
+            clickable_host,
             inst.country or "N/A",
+            inst.country_code or "-",
             inst.launch_year or "N/A",
         )
 
@@ -196,15 +236,23 @@ def search(
     items = results.get("data", {}).get("items", [])
 
     if format == OutputFormat.CSV:
-        writer = csv.DictWriter(sys.stdout, fieldnames=["type", "name", "identifier", "published_at"])
+        writer = csv.DictWriter(sys.stdout, fieldnames=["type", "name", "identifier", "published_at", "url"])
         writer.writeheader()
         for item in items:
+            url = item.get("url") or ""
+            if not url:
+                global_id = item.get("global_id")
+                if global_id and global_id.startswith("doi:"):
+                    url = f"https://doi.org/{global_id[4:]}"
+                elif global_id and global_id.startswith("hdl:"):
+                    url = f"https://hdl.handle.net/{global_id[4:]}"
             writer.writerow(
                 {
                     "type": item.get("type", ""),
                     "name": item.get("name") or item.get("title") or "",
                     "identifier": item.get("global_id") or item.get("identifier") or "",
                     "published_at": item.get("published_at") or "",
+                    "url": url,
                 }
             )
         return
@@ -223,8 +271,21 @@ def search(
         name = item.get("name") or item.get("title") or "N/A"
         identifier = item.get("global_id") or item.get("identifier") or "N/A"
         published = item.get("published_at") or "N/A"
+        url = item.get("url")
+        if not url:
+            global_id = item.get("global_id")
+            if global_id and global_id.startswith("doi:"):
+                url = f"https://doi.org/{global_id[4:]}"
+            elif global_id and global_id.startswith("hdl:"):
+                url = f"https://hdl.handle.net/{global_id[4:]}"
+            elif item.get("identifier") and item_type == "dataverse":
+                clean_host = server.installation.clean_hostname
+                url = f"https://{clean_host}/dataverse/{item.get('identifier')}"
 
-        table.add_row(item_type, name, identifier, published)
+        name_display = f"[link={url}]{name}[/link]" if url and name != "N/A" else name
+        identifier_display = f"[link={url}]{identifier}[/link]" if url and identifier != "N/A" else identifier
+
+        table.add_row(item_type, name_display, identifier_display, published)
 
     console.print(table)
 

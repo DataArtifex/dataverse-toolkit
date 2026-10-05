@@ -51,6 +51,11 @@ except ImportError:
     except ImportError:
         __version__ = "0.2.0"
 
+from .dataverse import (
+    ServerInstallation,
+    fetch_dataverse_installations,
+)
+
 os.environ["PYTHONWARNINGS"] = "ignore"
 warnings.filterwarnings("ignore")
 
@@ -92,10 +97,6 @@ class HarvesterFileLogger:
 
 
 file_logger = HarvesterFileLogger()
-
-DATAVERSES_DIRECTORY_URLS = [
-    "https://raw.githubusercontent.com/IQSS/dataverse-installations/refs/heads/main/data/data.json",
-]
 
 
 def sanitize_pid(identifier: str) -> str:
@@ -297,118 +298,10 @@ def parse_date_to_iso(date_str: str) -> str:
         return date_str
 
 
-# Raw Country Name to ISO 3166-1 Alpha-2 Code Crosswalk (Alphabetical)
-COUNTRY_TO_ISO2: dict[str, str] = {
-    "ARGENTINA": "AR",
-    "AUSTRALIA": "AU",
-    "AUSTRIA": "AT",
-    "BELGIUM": "BE",
-    "BRAZIL": "BR",
-    "CANADA": "CA",
-    "CHILE": "CL",
-    "CHINA": "CN",
-    "COLOMBIA": "CO",
-    "COSTA RICA": "CR",
-    "CZECH REPUBLIC": "CZ",
-    "CZECHIA": "CZ",
-    "DENMARK": "DK",
-    "DEUTSCHLAND": "DE",
-    "ESTONIA": "EE",
-    "FINLAND": "FI",
-    "FRANCE": "FR",
-    "GERMANY": "DE",
-    "GREAT BRITAIN": "GB",
-    "GREECE": "GR",
-    "HOLLAND": "NL",
-    "HUNGARY": "HU",
-    "INDIA": "IN",
-    "INDONESIA": "ID",
-    "IRELAND": "IE",
-    "ITALY": "IT",
-    "JAPAN": "JP",
-    "KENYA": "KE",
-    "KOREA": "KR",
-    "LATVIA": "LV",
-    "LEBANON": "LB",
-    "LITHUANIA": "LT",
-    "MALAYSIA": "MY",
-    "MEXICO": "MX",
-    "NETHERLANDS": "NL",
-    "NORWAY": "NO",
-    "PERU": "PE",
-    "POLAND": "PL",
-    "PORTUGAL": "PT",
-    "RUSSIA": "RU",
-    "SINGAPORE": "SG",
-    "SLOVAKIA": "SK",
-    "SOUTH AFRICA": "ZA",
-    "SOUTH KOREA": "KR",
-    "SPAIN": "ES",
-    "SWEDEN": "SE",
-    "SWITZERLAND": "CH",
-    "TURKEY": "TR",
-    "TÜRKIYE": "TR",
-    "UK": "GB",
-    "UNITED KINGDOM": "GB",
-    "UNITED STATES": "US",
-    "UNITED STATES OF AMERICA": "US",
-    "USA": "US",
-}
-
-
-def get_iso2_code(raw_country: str, existing_code: str = "") -> str:
-    """Resolve raw country string to 2-letter ISO 3166-1 Alpha-2 code."""
-    if existing_code and len(existing_code.strip()) == 2:
-        return existing_code.strip().upper()
-
-    clean_country = raw_country.strip().upper()
-    if clean_country in COUNTRY_TO_ISO2:
-        return COUNTRY_TO_ISO2[clean_country]
-
-    if len(clean_country) == 2:
-        return clean_country
-
-    return ""
-
-
-def matches_country(target_filter: str, raw_country: str, existing_code: str = "") -> bool:
-    """Check if user filter matches 2-letter ISO country code or raw country name."""
-    tf = target_filter.strip().upper()
-    server_iso2 = get_iso2_code(raw_country, existing_code)
-
-    # 1. If target filter is a 2-letter code, strictly match server ISO2 code only (do not substring match names)
-    if len(tf) == 2:
-        return tf == server_iso2
-
-    # 2. Compare target filter resolved ISO2 vs server ISO2
-    filter_iso2 = COUNTRY_TO_ISO2.get(tf)
-    if filter_iso2 and server_iso2 and filter_iso2 == server_iso2:
-        return True
-
-    # 3. Fallback substring matching on raw country string ONLY for filters longer than 2 characters
-    tf_low = target_filter.strip().lower()
-    if len(tf_low) > 2 and tf_low in raw_country.lower():
-        return True
-
-    return False
-
-
 def fetch_raw_installations() -> list[dict]:
     """Fetch raw installations list from remote registry endpoints."""
-    for url in DATAVERSES_DIRECTORY_URLS:
-        if not url:
-            continue
-        try:
-            resp = requests.get(url, timeout=10)
-            if resp.status_code == 200:
-                data = resp.json()
-                if "installations" in data:
-                    return data["installations"]
-                elif isinstance(data, list):
-                    return data
-        except Exception:
-            continue
-    return []
+    installations = fetch_dataverse_installations()
+    return [inst.model_dump(exclude_none=True) for inst in installations]
 
 
 def get_global_installations(
@@ -416,59 +309,20 @@ def get_global_installations(
 ) -> list[dict[str, str]]:
     """Fetch global Dataverse installations registry and apply server/country filters."""
     console.print("[bold blue]Fetching global Dataverse installations registry...[/bold blue]")
-    installations = fetch_raw_installations()
-
-    clean_target = (
-        target_server.replace("https://", "").replace("http://", "").strip("/")
-        if target_server and target_server.upper() != "ALL"
-        else None
+    installations = fetch_dataverse_installations(
+        target_server=target_server,
+        country=country_filter,
+        fallback_unlisted=True,
     )
-
-    filtered = []
-    for inst in installations:
-        if isinstance(inst, dict):
-            hostname = inst.get("hostname") or inst.get("host") or inst.get("url", "")
-            hostname = hostname.replace("https://", "").replace("http://", "").strip("/")
-            if not hostname:
-                continue
-
-            # If explicit target server specified, match hostname!
-            if clean_target and hostname.lower() != clean_target.lower():
-                continue
-
-            raw_country = (inst.get("country") or "").strip()
-            raw_code = (inst.get("country_code") or "").strip()
-            name = (inst.get("name") or "").strip()
-
-            iso2_code = get_iso2_code(raw_country, raw_code)
-
-            # Filter by country if specified using 2-letter ISO crosswalk
-            if country_filter:
-                if not matches_country(country_filter, raw_country, raw_code):
-                    continue
-
-            filtered.append(
-                {
-                    "hostname": hostname,
-                    "name": name,
-                    "country": raw_country or "Global",
-                    "country_code": iso2_code or "-",
-                }
-            )
-
-    # Fallback if target server was not found in registry
-    if clean_target and not filtered:
-        iso2 = get_iso2_code(country_filter or "")
-        filtered.append(
-            {
-                "hostname": clean_target,
-                "name": clean_target,
-                "country": country_filter or "Global",
-                "country_code": iso2 or "-",
-            }
-        )
-
-    return filtered
+    return [
+        {
+            "hostname": inst.clean_hostname,
+            "name": inst.name or inst.clean_hostname,
+            "country": inst.country or "Global",
+            "country_code": inst.country_code or "-",
+        }
+        for inst in installations
+    ]
 
 
 def normalize_doi(doi_str: str) -> str:
@@ -488,18 +342,24 @@ def normalize_doi(doi_str: str) -> str:
 
 
 def is_format_unsupported_error(err_msg: str | None) -> bool:
-    """Determine if an error indicates that a metadata format exporter is completely unavailable."""
+    """Determine if an error indicates that a metadata format exporter is completely unavailable on the server."""
     if not err_msg:
         return False
     msg_low = err_msg.lower()
+    # 403 Forbidden, 401 Unauthorized, or dataset-specific validation errors
+    # should NOT mark the format as globally unsupported on the server
+    if any(k in msg_low for k in ("403", "forbidden", "401", "unauthorized", "validation", "mandatory")):
+        return False
     return any(
         k in msg_low
         for k in (
+            "not supported on server",
             "not supported",
             "module not found",
             "exporter not found",
             "unsupported format",
             "http 404",
+            "http 501",
         )
     )
 
@@ -831,7 +691,9 @@ def render_harvest_errors(
         out.print(rec_table)
 
 
-def find_registry_suggestions(target: str, raw_installations: list[dict]) -> list[dict[str, str]]:
+def find_registry_suggestions(
+    target: str, raw_installations: list[dict] | list[ServerInstallation]
+) -> list[dict[str, str]]:
     """Find close matches or substring suggestions in the installations registry."""
     clean = target.lower().replace("https://", "").replace("http://", "").strip("/")
     suggestions = []
@@ -862,7 +724,13 @@ def find_registry_suggestions(target: str, raw_installations: list[dict]) -> lis
     root_name = parts[0] if parts else ""
 
     for inst in raw_installations:
-        if isinstance(inst, dict):
+        if isinstance(inst, ServerInstallation):
+            host = (inst.clean_hostname or "").lower()
+            name = (inst.name or "").lower()
+            country = inst.country or "Global"
+            disp_name = inst.name or ""
+            disp_host = inst.clean_hostname
+        elif isinstance(inst, dict):
             host = (
                 (inst.get("hostname") or inst.get("host") or inst.get("url", ""))
                 .lower()
@@ -871,22 +739,29 @@ def find_registry_suggestions(target: str, raw_installations: list[dict]) -> lis
                 .strip("/")
             )
             name = (inst.get("name") or "").lower()
-            if not host:
-                continue
-            matches = False
-            if root_name and (root_name in host or root_name in name):
-                matches = True
-            elif len(clean) >= 5 and (clean in host or host in clean):
-                matches = True
+            country = inst.get("country") or "Global"
+            disp_name = inst.get("name") or ""
+            disp_host = host
+        else:
+            continue
 
-            if matches:
-                entry = {
-                    "hostname": host,
-                    "name": inst.get("name", ""),
-                    "country": inst.get("country", "") or "Global",
-                }
-                if entry not in suggestions:
-                    suggestions.append(entry)
+        if not host:
+            continue
+
+        matches = False
+        if root_name and (root_name in host or root_name in name):
+            matches = True
+        elif len(clean) >= 5 and (clean in host or host in clean):
+            matches = True
+
+        if matches:
+            entry = {
+                "hostname": disp_host,
+                "name": disp_name,
+                "country": country,
+            }
+            if entry not in suggestions:
+                suggestions.append(entry)
     return suggestions
 
 
@@ -1081,6 +956,7 @@ def fetch_active_datasets(
     verbose: bool = False,
     tabular_only: bool = True,
     api_token: str | None = None,
+    catalog_progress_callback: Any | None = None,
 ) -> dict[str, dict]:
     """Search for active datasets using Search API or DOI target with local 24h catalog caching."""
     effective_limit = None if limit == 0 else limit
@@ -1206,6 +1082,15 @@ def fetch_active_datasets(
                         file_logger.log(msg)
                         break
 
+            target_total = min(total_count, effective_limit) if effective_limit else total_count
+            if catalog_progress_callback:
+                catalog_progress_callback(
+                    retrieved_count=len(active_datasets),
+                    total_count=target_total,
+                    server_total=total_count,
+                    start=start + len(items),
+                )
+
             if effective_limit and len(active_datasets) >= effective_limit:
                 break
 
@@ -1312,13 +1197,23 @@ def fetch_metadata_record(
             r = requests.get(url, headers=headers, timeout=20)
             if r.status_code == 200:
                 return r.content, ".croissant.json", None
-            elif r.status_code in (400, 404) and Croissant is not None:
-                croissant = Croissant(doi=pid, host=base_host)
-                rec = croissant.get_record()
-                if rec and "error" not in rec:
-                    return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
-            err_msg = f"Croissant export not supported on server (HTTP {r.status_code})"
-            return None, ".croissant.json", err_msg
+            elif r.status_code in (400, 404, 501) and Croissant is not None:
+                try:
+                    croissant = Croissant(doi=pid, host=base_host)
+                    rec = croissant.get_record()
+                    if rec and "error" not in rec:
+                        return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
+                    elif rec and "error" in rec:
+                        return None, ".croissant.json", f"Croissant exception: {rec['error']}"
+                except Exception as py_err:
+                    return None, ".croissant.json", f"Croissant exception: {py_err}"
+
+            if r.status_code == 403:
+                return None, ".croissant.json", "HTTP 403: Forbidden (dataset restricted or requires authentication)"
+            elif r.status_code in (404, 501):
+                return None, ".croissant.json", f"Format 'croissant' not supported on server (HTTP {r.status_code})"
+            else:
+                return None, ".croissant.json", f"HTTP {r.status_code}"
         except Exception as e:
             if Croissant is not None:
                 try:
@@ -1326,8 +1221,10 @@ def fetch_metadata_record(
                     rec = croissant.get_record()
                     if rec and "error" not in rec:
                         return json.dumps(rec, indent=2, ensure_ascii=False).encode("utf-8"), ".croissant.json", None
-                except Exception:
-                    pass
+                    elif rec and "error" in rec:
+                        return None, ".croissant.json", f"Croissant exception: {rec['error']}"
+                except Exception as py_err:
+                    return None, ".croissant.json", f"Croissant exception: {py_err}"
             return None, ".croissant.json", f"Croissant export error: {e}"
 
     elif fmt == "native":
@@ -1497,6 +1394,7 @@ class ServerHarvester:
         tabular_only: bool = True,
         api_token: str | None = None,
         progress_callback=None,
+        catalog_progress_callback=None,
     ) -> dict[str, list[Any]]:
         """Perform intelligent incremental sync (Additions, Updates, Deletions)."""
         effective_limit = None if limit == 0 else limit
@@ -1525,6 +1423,7 @@ class ServerHarvester:
             verbose=verbose,
             tabular_only=tabular_only,
             api_token=api_token,
+            catalog_progress_callback=catalog_progress_callback,
         )
         stats["datasets"] = list(active_datasets.keys())
         if not active_datasets and not target_doi:
@@ -2163,8 +2062,7 @@ def harvest(
 
     console.print(
         Panel.fit(
-            "[bold green]Dataverse Metadata Harvester & Sync CLI[/bold green]\n"
-            "[dim]Powered by Typer, Rich, pyDataverse & MCP[/dim]",
+            "[bold green]Dataverse Metadata Harvester & Sync CLI[/bold green]",
             border_style="cyan",
         )
     )
@@ -2227,6 +2125,40 @@ def harvest(
                 f"  [dim cyan]Querying dataset catalog on {host}...[/dim cyan]", total=1, visible=True
             )
 
+            def on_catalog_progress(
+                retrieved_count: int,
+                total_count: int,
+                server_total: int,
+                start: int,
+                task_id=dataset_task,
+                target_host=host,
+                is_tabular=tabular_only,
+            ):
+                if total_count > 0 or server_total > 0:
+                    if is_tabular:
+                        display_total = server_total
+                        display_done = min(start, server_total)
+                        desc = (
+                            f"  [cyan]Cataloging {target_host}: {retrieved_count:,} datasets "
+                            f"({display_done:,}/{display_total:,} items indexed)[/cyan]"
+                        )
+                        progress.update(
+                            task_id,
+                            total=display_total,
+                            completed=display_done,
+                            description=desc,
+                            visible=True,
+                        )
+                    else:
+                        desc = f"  [cyan]Cataloging {target_host}: {retrieved_count:,}/{total_count:,} datasets[/cyan]"
+                        progress.update(
+                            task_id,
+                            total=total_count,
+                            completed=retrieved_count,
+                            description=desc,
+                            visible=True,
+                        )
+
             def on_progress(
                 current: int,
                 total: int,
@@ -2266,6 +2198,7 @@ def harvest(
                     tabular_only=tabular_only,
                     api_token=api_token,
                     progress_callback=on_progress,
+                    catalog_progress_callback=on_catalog_progress,
                 )
             except Exception as e:
                 stats = {

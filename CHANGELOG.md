@@ -22,6 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Support for multi-format harvesting (`--format all` or comma-separated lists).
   - Native Croissant endpoint prioritization with automatic graceful fallback.
   - Single-notice reporting and auto-skipping for unsupported format exporters on remote servers.
+- **Reconciliation & Unification of Server Installations & Harvester Registry**:
+  - Reconciled `ServerInstallation` model and Harvester registry into a unified, type-safe architecture.
+  - Enhanced `ServerInstallation` model with ISO 3166-1 Alpha-2 `country_code` auto-derivation, `about_url`, `dv_hub_id`, and `clean_hostname`/`url` helper properties.
+  - Centralized and expanded ISO country crosswalk (`COUNTRY_TO_ISO2`, `get_iso2_code`, `matches_country`) to cover all worldwide installations and standard ISO 3166-1 Alpha-2 codes (e.g. Slovenia `SI`, Botswana `BW`, Croatia `HR`, Hong Kong `HK`, Taiwan `TW`, Ukraine `UA`, Iceland `IS`, Ecuador `EC`, Luxembourg `LU`, Uruguay `UY`).
+  - Upgraded `fetch_dataverse_installations` with timeout resilience, country filtering, hostname targeting, and fallback synthesis for unlisted/private servers.
+  - Refactored `harvester.py`'s `get_global_installations` and `fetch_raw_installations` to delegate directly to the unified `fetch_dataverse_installations` engine.
+  - Enhanced `dartfx-dataverse installations` and `dartfx-dataverse search` CLI commands with active clickable hyperlink URLs in terminal tables (`Name/Title` and `Identifier`), and included the `url` column in CSV exports.
 - **Environment & Configuration Management**:
   - Added environment variable to define the local root storage repository directory for harvested datasets and cache.
   - Standardized remote server host resolution via .
@@ -31,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enabled tabular dataset filtering by default (pass to harvest all datasets).
   - Added column to table with compact semantic version formatting.
   - Normalized long repository version strings with commit hashes and build metadata (e.g. `v1.3.1-bfb997c0ad...`) to clean semantic version format (`vN.N.N`) in `stats` table.
+  - Added live progress bar updates during the initial dataset catalog pagination phase (`Cataloging host: X datasets (Y/Z items indexed)`), providing real-time feedback during large catalog scans.
+  - Refined format unsupported detection to ensure individual dataset permissions (`HTTP 403 Forbidden` / restricted datasets) do not falsely trigger server-wide format skipping.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).

@@ -10,12 +10,268 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .__about__ import __version__
 
+# Raw Country Name to ISO 3166-1 Alpha-2 Code Crosswalk (Alphabetical)
+COUNTRY_TO_ISO2: dict[str, str] = {
+    "AFGHANISTAN": "AF",
+    "ALBANIA": "AL",
+    "ALGERIA": "DZ",
+    "ANDORRA": "AD",
+    "ANGOLA": "AO",
+    "ARGENTINA": "AR",
+    "ARMENIA": "AM",
+    "AUSTRALIA": "AU",
+    "AUSTRIA": "AT",
+    "AZERBAIJAN": "AZ",
+    "BAHAMAS": "BS",
+    "BAHRAIN": "BH",
+    "BANGLADESH": "BD",
+    "BARBADOS": "BB",
+    "BELARUS": "BY",
+    "BELGIUM": "BE",
+    "BELIZE": "BZ",
+    "BENIN": "BJ",
+    "BHUTAN": "BT",
+    "BOLIVIA": "BO",
+    "BOSNIA AND HERZEGOVINA": "BA",
+    "BOTSWANA": "BW",
+    "BRAZIL": "BR",
+    "BRUNEI": "BN",
+    "BULGARIA": "BG",
+    "BURKINA FASO": "BF",
+    "BURUNDI": "BI",
+    "CABO VERDE": "CV",
+    "CAMBODIA": "KH",
+    "CAMEROON": "CM",
+    "CANADA": "CA",
+    "CAPE VERDE": "CV",
+    "CENTRAL AFRICAN REPUBLIC": "CF",
+    "CHAD": "TD",
+    "CHILE": "CL",
+    "CHINA": "CN",
+    "COLOMBIA": "CO",
+    "COMOROS": "KM",
+    "CONGO": "CG",
+    "COSTA RICA": "CR",
+    "CROATIA": "HR",
+    "CUBA": "CU",
+    "CYPRUS": "CY",
+    "CZECH REPUBLIC": "CZ",
+    "CZECHIA": "CZ",
+    "DEMOCRATIC REPUBLIC OF THE CONGO": "CD",
+    "DENMARK": "DK",
+    "DEUTSCHLAND": "DE",
+    "DJIBOUTI": "DJ",
+    "DOMINICA": "DM",
+    "DOMINICAN REPUBLIC": "DO",
+    "ECUADOR": "EC",
+    "EGYPT": "EG",
+    "EL SALVADOR": "SV",
+    "EQUATORIAL GUINEA": "GQ",
+    "ERITREA": "ER",
+    "ESTONIA": "EE",
+    "ESWATINI": "SZ",
+    "ETHIOPIA": "ET",
+    "FIJI": "FJ",
+    "FINLAND": "FI",
+    "FRANCE": "FR",
+    "GABON": "GA",
+    "GAMBIA": "GM",
+    "GEORGIA": "GE",
+    "GERMANY": "DE",
+    "GHANA": "GH",
+    "GREAT BRITAIN": "GB",
+    "GREECE": "GR",
+    "GRENADA": "GD",
+    "GUATEMALA": "GT",
+    "GUINEA": "GN",
+    "GUINEA-BISSAU": "GW",
+    "GUYANA": "GY",
+    "HAITI": "HT",
+    "HOLLAND": "NL",
+    "HONDURAS": "HN",
+    "HONG KONG": "HK",
+    "HUNGARY": "HU",
+    "ICELAND": "IS",
+    "INDIA": "IN",
+    "INDONESIA": "ID",
+    "IRAN": "IR",
+    "IRAQ": "IQ",
+    "IRELAND": "IE",
+    "ISRAEL": "IL",
+    "ITALY": "IT",
+    "IVORY COAST": "CI",
+    "JAMAICA": "JM",
+    "JAPAN": "JP",
+    "JORDAN": "JO",
+    "KAZAKHSTAN": "KZ",
+    "KENYA": "KE",
+    "KIRIBATI": "KI",
+    "KOREA": "KR",
+    "KUWAIT": "KW",
+    "KYRGYZSTAN": "KG",
+    "LAOS": "LA",
+    "LATVIA": "LV",
+    "LEBANON": "LB",
+    "LESOTHO": "LS",
+    "LIBERIA": "LR",
+    "LIBYA": "LY",
+    "LIECHTENSTEIN": "LI",
+    "LITHUANIA": "LT",
+    "LUXEMBOURG": "LU",
+    "MADAGASCAR": "MG",
+    "MALAWI": "MW",
+    "MALAYSIA": "MY",
+    "MALDIVES": "MV",
+    "MALI": "ML",
+    "MALTA": "MT",
+    "MARSHALL ISLANDS": "MH",
+    "MAURITANIA": "MR",
+    "MAURITIUS": "MU",
+    "MEXICO": "MX",
+    "MICRONESIA": "FM",
+    "MOLDOVA": "MD",
+    "MONACO": "MC",
+    "MONGOLIA": "MN",
+    "MONTENEGRO": "ME",
+    "MOROCCO": "MA",
+    "MOZAMBIQUE": "MZ",
+    "MYANMAR": "MM",
+    "NAMIBIA": "NA",
+    "NAURU": "NR",
+    "NEPAL": "NP",
+    "NETHERLANDS": "NL",
+    "NEW ZEALAND": "NZ",
+    "NICARAGUA": "NI",
+    "NIGER": "NE",
+    "NIGERIA": "NG",
+    "NORTH KOREA": "KP",
+    "NORTH MACEDONIA": "MK",
+    "NORWAY": "NO",
+    "OMAN": "OM",
+    "PAKISTAN": "PK",
+    "PALAU": "PW",
+    "PALESTINE": "PS",
+    "PANAMA": "PA",
+    "PAPUA NEW GUINEA": "PG",
+    "PARAGUAY": "PY",
+    "PERU": "PE",
+    "PHILIPPINES": "PH",
+    "POLAND": "PL",
+    "PORTUGAL": "PT",
+    "QATAR": "QA",
+    "ROMANIA": "RO",
+    "RUSSIA": "RU",
+    "RUSSIAN FEDERATION": "RU",
+    "RWANDA": "RW",
+    "SAINT KITTS AND NEVIS": "KN",
+    "SAINT LUCIA": "LC",
+    "SAINT VINCENT AND THE GRENADINES": "VC",
+    "SAMOA": "WS",
+    "SAN MARINO": "SM",
+    "SAO TOME AND PRINCIPE": "ST",
+    "SAUDI ARABIA": "SA",
+    "SENEGAL": "SN",
+    "SERBIA": "RS",
+    "SEYCHELLES": "SC",
+    "SIERRA LEONE": "SL",
+    "SINGAPORE": "SG",
+    "SLOVAKIA": "SK",
+    "SLOVENIA": "SI",
+    "SOLOMON ISLANDS": "SB",
+    "SOMALIA": "SO",
+    "SOUTH AFRICA": "ZA",
+    "SOUTH KOREA": "KR",
+    "SOUTH SUDAN": "SS",
+    "SPAIN": "ES",
+    "SRI LANKA": "LK",
+    "SUDAN": "SD",
+    "SURINAME": "SR",
+    "SWEDEN": "SE",
+    "SWITZERLAND": "CH",
+    "SYRIA": "SY",
+    "TAIWAN": "TW",
+    "TAIWAN (ROC)": "TW",
+    "TAJIKISTAN": "TJ",
+    "TANZANIA": "TZ",
+    "THAILAND": "TH",
+    "TIMOR-LESTE": "TL",
+    "TOGO": "TG",
+    "TONGA": "TO",
+    "TRINIDAD AND TOBAGO": "TT",
+    "TUNISIA": "TN",
+    "TURKEY": "TR",
+    "TURKMENISTAN": "TM",
+    "TUVALU": "TV",
+    "TÜRKIYE": "TR",
+    "UGANDA": "UG",
+    "UK": "GB",
+    "UKRAINE": "UA",
+    "UNITED ARAB EMIRATES": "AE",
+    "UNITED KINGDOM": "GB",
+    "UNITED STATES": "US",
+    "UNITED STATES OF AMERICA": "US",
+    "URUGUAY": "UY",
+    "USA": "US",
+    "UZBEKISTAN": "UZ",
+    "VANUATU": "VU",
+    "VATICAN CITY": "VA",
+    "VENEZUELA": "VE",
+    "VIETNAM": "VN",
+    "YEMEN": "YE",
+    "ZAMBIA": "ZM",
+    "ZIMBABWE": "ZW",
+}
+
+
+def get_iso2_code(raw_country: str, existing_code: str = "") -> str:
+    """Resolve raw country string to 2-letter ISO 3166-1 Alpha-2 code."""
+    if existing_code and len(existing_code.strip()) == 2:
+        return existing_code.strip().upper()
+
+    clean_country = raw_country.strip().upper()
+    if clean_country in COUNTRY_TO_ISO2:
+        return COUNTRY_TO_ISO2[clean_country]
+
+    if len(clean_country) == 2:
+        return clean_country
+
+    return ""
+
+
+def matches_country(target_filter: str, raw_country: str, existing_code: str = "") -> bool:
+    """Check if user filter matches 2-letter ISO country code or raw country name."""
+    tf = target_filter.strip().upper()
+    server_iso2 = get_iso2_code(raw_country, existing_code)
+
+    # 1. If target filter is a 2-letter code, strictly match server ISO2 code only (do not substring match names)
+    if len(tf) == 2:
+        return tf == server_iso2
+
+    # 2. Compare target filter resolved ISO2 vs server ISO2
+    filter_iso2 = COUNTRY_TO_ISO2.get(tf)
+    if filter_iso2 and server_iso2 and filter_iso2 == server_iso2:
+        return True
+
+    # 3. Fallback substring matching on raw country string ONLY for filters longer than 2 characters
+    tf_low = target_filter.strip().lower()
+    if len(tf_low) > 2 and tf_low in raw_country.lower():
+        return True
+
+    return False
+
+
+DATAVERSES_DIRECTORY_URLS: list[str] = [
+    "https://raw.githubusercontent.com/IQSS/dataverse-installations/refs/heads/main/data/data.json",
+]
+
 
 class ServerInstallation(BaseModel):
     """Represents a dataverse installation.
     Based on the content of the data.json file in the dataverse-installations
     repository at https://github.com/IQSS/dataverse-installations
     """
+
+    model_config = ConfigDict(extra="ignore")
 
     name: str | None = None
     description: str | None = None
@@ -25,6 +281,7 @@ class ServerInstallation(BaseModel):
     metrics: bool | None = False
     launch_year: str | None = None
     country: str | None = None
+    country_code: str | None = None
     continent: str | None = None
     harvesting_sets: list[str] | None = None
     core_trust_seals: list[str] | None = None
@@ -32,17 +289,99 @@ class ServerInstallation(BaseModel):
     doi_authority: str | None = None
     board: str | None = None
     contact_email: str | None = None
+    about_url: str | None = None
+    dv_hub_id: str | None = None
+
+    def model_post_init(self, __context: Any) -> None:
+        """Derive country_code and clean hostname if not provided."""
+        if not self.country_code and self.country:
+            self.country_code = get_iso2_code(self.country)
+        if self.hostname:
+            self.hostname = self.hostname.replace("https://", "").replace("http://", "").strip("/")
+
+    @property
+    def clean_hostname(self) -> str:
+        """Return cleaned hostname without protocol or trailing slash."""
+        if not self.hostname:
+            return ""
+        return self.hostname.replace("https://", "").replace("http://", "").strip("/")
+
+    @property
+    def url(self) -> str:
+        """Return HTTPS URL for the installation."""
+        if not self.hostname:
+            return ""
+        return f"https://{self.clean_hostname}"
 
 
-def fetch_dataverse_installations() -> list[ServerInstallation]:
-    """Returns a list of dataverse installations from the main branch of the dataverse-installations GitHub repo"""
-    url = "https://raw.githubusercontent.com/IQSS/dataverse-installations/refs/heads/main/data/data.json"
-    response = requests.get(url)
-    response.raise_for_status()
-    data = response.json()
-    servers = []
-    for item in data.get("installations"):
-        servers.append(ServerInstallation(**item))
+def fetch_dataverse_installations(
+    target_server: str | None = None,
+    country: str | None = None,
+    timeout: float = 10.0,
+    urls: list[str] | None = None,
+    fallback_unlisted: bool = False,
+) -> list[ServerInstallation]:
+    """Returns a list of dataverse installations from remote registry endpoints.
+
+    Supports optional filtering by server hostname or country (ISO-2 code or country name).
+    If fallback_unlisted is True and a specific target_server is requested but not found in the
+    registry, a fallback ServerInstallation is synthesized to support private/unlisted servers.
+    """
+    directory_urls = urls or DATAVERSES_DIRECTORY_URLS
+    raw_list: list[dict[str, Any]] = []
+
+    for url in directory_urls:
+        if not url:
+            continue
+        try:
+            resp = requests.get(url, timeout=timeout)
+            if resp.status_code == 200:
+                data = resp.json()
+                if isinstance(data, dict) and "installations" in data:
+                    raw_list = data["installations"]
+                    break
+                elif isinstance(data, list):
+                    raw_list = data
+                    break
+        except Exception:
+            continue
+
+    clean_target = (
+        target_server.replace("https://", "").replace("http://", "").strip("/")
+        if target_server and target_server.upper() != "ALL"
+        else None
+    )
+
+    servers: list[ServerInstallation] = []
+    for item in raw_list:
+        if not isinstance(item, dict):
+            continue
+        inst = ServerInstallation(**item)
+        if not inst.hostname:
+            continue
+
+        # Target server filter
+        if clean_target and inst.clean_hostname.lower() != clean_target.lower():
+            continue
+
+        # Country filter
+        if country:
+            if not matches_country(country, inst.country or "", inst.country_code or ""):
+                continue
+
+        servers.append(inst)
+
+    # Fallback if specific target server was not found in registry
+    if clean_target and not servers and fallback_unlisted:
+        servers.append(
+            ServerInstallation(
+                hostname=clean_target,
+                name=clean_target,
+                country="Target Server",
+                country_code="-",
+            )
+        )
+
     return servers
 
 
@@ -190,12 +529,15 @@ class DataverseServer(BaseModel):
         # server
         if isinstance(server, str):
             # convert hostname to a ServerInstallation
-            clean_host = server.replace("https://", "").replace("http://", "")
+            clean_host = server.replace("https://", "").replace("http://", "").strip("/")
             server_inst = ServerInstallation(hostname=clean_host)
             if lookup_installation:
-                for inst in fetch_dataverse_installations():
-                    if inst.hostname == server_inst.hostname:
+                for inst in fetch_dataverse_installations(target_server=clean_host, fallback_unlisted=False):
+                    if inst.clean_hostname.lower() == clean_host.lower() or (
+                        inst.hostname and inst.hostname.lower() == clean_host.lower()
+                    ):
                         server_inst = inst
+                        break
         else:
             server_inst = server
 

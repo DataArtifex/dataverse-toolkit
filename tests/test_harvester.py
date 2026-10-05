@@ -142,6 +142,9 @@ def test_is_format_unsupported_error():
     assert is_format_unsupported_error("Croissant export not supported on server (HTTP 404)") is True
     assert is_format_unsupported_error("pyDataverse Croissant module not found") is True
     assert is_format_unsupported_error("Unsupported format") is True
+    assert is_format_unsupported_error("HTTP 403: Forbidden (dataset restricted)") is False
+    assert is_format_unsupported_error("HTTP 401: Unauthorized") is False
+    assert is_format_unsupported_error("Croissant validation: missing field") is False
     assert is_format_unsupported_error("Connection timeout") is False
     assert is_format_unsupported_error(None) is False
 

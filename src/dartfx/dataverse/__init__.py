@@ -4,11 +4,15 @@
 from dotenv import find_dotenv, load_dotenv
 
 from .dataverse import (
+    COUNTRY_TO_ISO2,
+    DATAVERSES_DIRECTORY_URLS,
     DataverseApiError,
     DataverseServer,
     SearchParameters,
     ServerInstallation,
     fetch_dataverse_installations,
+    get_iso2_code,
+    matches_country,
 )
 from .harvester import (
     ServerHarvester,
@@ -25,11 +29,15 @@ from .harvester import (
 load_dotenv(find_dotenv(usecwd=True))
 
 __all__ = [
+    "COUNTRY_TO_ISO2",
+    "DATAVERSES_DIRECTORY_URLS",
     "DataverseApiError",
     "DataverseServer",
     "SearchParameters",
     "ServerInstallation",
     "fetch_dataverse_installations",
+    "get_iso2_code",
+    "matches_country",
     "ServerHarvester",
     "fetch_active_datasets",
     "fetch_server_stats",

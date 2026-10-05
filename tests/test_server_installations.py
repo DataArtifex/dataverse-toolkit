@@ -166,6 +166,8 @@ def test_cli_smart_dash_normalization(monkeypatch):
 
 
 def test_cli_stats_command_flags():
+    import re
+
     from typer.testing import CliRunner
 
     from dartfx.dataverse.cli import app
@@ -173,6 +175,7 @@ def test_cli_stats_command_flags():
     runner = CliRunner()
     result = runner.invoke(app, ["stats", "--help"])
     assert result.exit_code == 0
-    assert "--refresh" in result.stdout
-    assert "-r" in result.stdout
-    assert "--cache-ttl" in result.stdout
+    clean_output = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", result.stdout)
+    assert "--refresh" in clean_output
+    assert "-r" in clean_output
+    assert "--cache-ttl" in clean_output

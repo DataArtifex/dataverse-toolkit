@@ -427,6 +427,22 @@ def stats(
             help="Dataverse API Token (or set DATAVERSE_API_KEY env var) for repositories requiring authentication.",
         ),
     ] = None,
+    refresh: Annotated[
+        bool,
+        typer.Option(
+            "--refresh",
+            "--refresh-catalog",
+            "-r",
+            help="Force a live statistics refresh from servers, bypassing local 24-hour cache.",
+        ),
+    ] = False,
+    cache_ttl: Annotated[
+        int,
+        typer.Option(
+            "--cache-ttl",
+            help="Statistics cache expiration time in hours (default: 24).",
+        ),
+    ] = 24,
 ) -> None:
     """Display live dataset, total file, and tabular data file counts for Dataverse servers."""
     from dartfx.dataverse.harvester import harvest as run_harvest
@@ -438,6 +454,8 @@ def stats(
         query=query,
         metadata_format=None,
         show_stats=True,
+        refresh_catalog=refresh,
+        cache_ttl=cache_ttl,
         api_token=api_token,
     )
 

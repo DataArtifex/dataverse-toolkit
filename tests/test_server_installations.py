@@ -163,3 +163,16 @@ def test_cli_smart_dash_normalization(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["dartfx-dataverse", "stats", "-–country", "CA", "—limit", "5"])
     _normalize_smart_dashes()
     assert sys.argv == ["dartfx-dataverse", "stats", "--country", "CA", "--limit", "5"]
+
+
+def test_cli_stats_command_flags():
+    from typer.testing import CliRunner
+
+    from dartfx.dataverse.cli import app
+
+    runner = CliRunner()
+    result = runner.invoke(app, ["stats", "--help"])
+    assert result.exit_code == 0
+    assert "--refresh" in result.stdout
+    assert "-r" in result.stdout
+    assert "--cache-ttl" in result.stdout

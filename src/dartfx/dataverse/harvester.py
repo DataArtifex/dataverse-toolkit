@@ -14,6 +14,7 @@ import time
 import urllib.parse
 import warnings
 import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from typing import Annotated, Any
@@ -790,7 +791,7 @@ def fetch_server_stats(
     host: str,
     query: str | None = None,
     api_token: str | None = None,
-    timeout: int = 15,
+    timeout: int = 10,
     repo_root: Path | None = None,
     refresh_cache: bool = False,
     cache_ttl_hours: float = 24.0,
@@ -821,7 +822,7 @@ def fetch_server_stats(
                 if cached_at_str and cdata.get("query") == solr_query:
                     dt = datetime.fromisoformat(cached_at_str)
                     age_hours = (datetime.now(UTC) - dt).total_seconds() / 3600.0
-                    if age_hours < cache_ttl_hours and (cdata.get("is_dataverse") or cdata.get("requires_token")):
+                    if age_hours < cache_ttl_hours:
                         cdata["cached"] = True
                         return cdata
         except Exception:
@@ -836,6 +837,20 @@ def fetch_server_stats(
         "error": None,
         "version": None,
     }
+
+    def _save_and_return(result_stats: dict[str, Any]) -> dict[str, Any]:
+        if cache_file:
+            try:
+                cache_file.parent.mkdir(parents=True, exist_ok=True)
+                save_payload = dict(result_stats)
+                save_payload["server"] = clean_host
+                save_payload["query"] = solr_query
+                save_payload["cached_at"] = datetime.now(UTC).isoformat()
+                with open(cache_file, "w", encoding="utf-8") as f:
+                    json.dump(save_payload, f, indent=2)
+            except Exception:
+                pass
+        return result_stats
 
     try:
         r_ds = requests.get(
@@ -859,7 +874,7 @@ def fetch_server_stats(
                         pass
                 else:
                     stats["error"] = "Not a Dataverse server (invalid API response)"
-                    return stats
+                    return _save_and_return(stats)
             except Exception:
                 text_low = r_ds.text.lower()
                 if (
@@ -871,7 +886,7 @@ def fetch_server_stats(
                     stats["error"] = "WAF / Bot Protection Interstitial"
                 else:
                     stats["error"] = "Not a Dataverse server (HTML response)"
-                return stats
+                return _save_and_return(stats)
         elif r_ds.status_code == 401:
             # Check /api/info/version to verify if active Dataverse node with token requirement
             try:
@@ -882,11 +897,11 @@ def fetch_server_stats(
                     ver = r_ver.json().get("data", {}).get("version", "")
                     stats["version"] = ver
                     stats["error"] = "Requires Token (pass -k/--api-token)"
-                    return stats
+                    return _save_and_return(stats)
             except Exception:
                 pass
             stats["error"] = "HTTP 401 (Authentication Required)"
-            return stats
+            return _save_and_return(stats)
         elif r_ds.status_code == 403:
             # Check if Dataverse version responds or Cloudflare WAF
             try:
@@ -897,35 +912,35 @@ def fetch_server_stats(
                     ver = r_ver.json().get("data", {}).get("version", "")
                     stats["version"] = ver
                     stats["error"] = "Requires Token (pass -k/--api-token)"
-                    return stats
+                    return _save_and_return(stats)
             except Exception:
                 pass
             if "just a moment" in r_ds.text.lower() or "cloudflare" in r_ds.text.lower():
                 stats["error"] = "Cloudflare WAF / Bot Protection"
             else:
                 stats["error"] = "HTTP 403 (Access Denied / WAF)"
-            return stats
+            return _save_and_return(stats)
         elif r_ds.status_code == 202:
             stats["error"] = "AWS ELB / WAF (HTTP 202)"
-            return stats
+            return _save_and_return(stats)
         elif r_ds.status_code in (404, 502, 503):
             stats["error"] = f"HTTP {r_ds.status_code} (Inactive / Not Found)"
-            return stats
+            return _save_and_return(stats)
         else:
             stats["error"] = f"HTTP {r_ds.status_code}"
-            return stats
+            return _save_and_return(stats)
     except requests.exceptions.SSLError:
         stats["error"] = "SSL / TLS Certificate Error"
-        return stats
+        return _save_and_return(stats)
     except requests.exceptions.ConnectionError:
         stats["error"] = "Unreachable (DNS / Connection Failure)"
-        return stats
+        return _save_and_return(stats)
     except requests.exceptions.Timeout:
         stats["error"] = "Connection Timed Out"
-        return stats
+        return _save_and_return(stats)
     except Exception as e:
         stats["error"] = str(e)
-        return stats
+        return _save_and_return(stats)
 
     try:
         r_files = requests.get(
@@ -949,19 +964,7 @@ def fetch_server_stats(
     except Exception:
         pass
 
-    if cache_file and (stats.get("is_dataverse") or stats.get("requires_token")):
-        try:
-            cache_file.parent.mkdir(parents=True, exist_ok=True)
-            save_payload = dict(stats)
-            save_payload["server"] = clean_host
-            save_payload["query"] = solr_query
-            save_payload["cached_at"] = datetime.now(UTC).isoformat()
-            with open(cache_file, "w", encoding="utf-8") as f:
-                json.dump(save_payload, f, indent=2)
-        except Exception:
-            pass
-
-    return stats
+    return _save_and_return(stats)
 
 
 def fetch_active_datasets(
@@ -1941,19 +1944,35 @@ def harvest(
             console=console,
         ) as progress:
             task = progress.add_task("[bold cyan]Fetching repository statistics...", total=len(installations))
-            for inst in installations:
-                host = inst.get("hostname", "")
-                progress.update(task, description=f"[bold yellow]Querying {host}...[/bold yellow]")
-                if api_token and fetch_target:
-                    save_server_token(host, api_token, None)
-                counts = fetch_server_stats(
-                    host,
+
+            if api_token and fetch_target:
+                for inst in installations:
+                    save_server_token(inst.get("hostname", ""), api_token, None)
+
+            def fetch_single(inst_item):
+                h = inst_item.get("hostname", "")
+                res = fetch_server_stats(
+                    h,
                     query=query,
                     api_token=api_token,
                     repo_root=output_dir,
                     refresh_cache=refresh_catalog,
                     cache_ttl_hours=float(cache_ttl),
                 )
+                return inst_item, res
+
+            max_workers = min(32, len(installations)) if len(installations) > 1 else 1
+            results_dict = {}
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                future_to_inst = {executor.submit(fetch_single, inst): inst for inst in installations}
+                for future in as_completed(future_to_inst):
+                    inst_item, counts = future.result()
+                    results_dict[inst_item["hostname"]] = (inst_item, counts)
+                    progress.advance(task)
+
+            for inst in installations:
+                inst_item, counts = results_dict.get(inst["hostname"], (inst, {}))
+                host = inst_item.get("hostname", "")
                 is_dv = counts.get("is_dataverse", False)
                 err = counts.get("error")
 
@@ -2008,7 +2027,6 @@ def harvest(
                         if counts.get("cached")
                         else "[bold green]Online[/bold green]",
                     )
-                progress.advance(task)
 
         console.print()
         console.print(table)

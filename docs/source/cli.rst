@@ -332,6 +332,8 @@ Options
 * ``--country``, ``-c`` *(string)*: Filter servers by 2-letter ISO 3166-1 code (e.g. ``NL``, ``US``, ``FR``, ``DE``, ``CA``, ``GB``).
 * ``--query``, ``-q`` *(string)*: Filter statistics by search keyword (e.g. ``climate``).
 * ``--api-token`` / ``--key``, ``-k`` *(string)*: API token for protected servers.
+* ``--refresh`` / ``--refresh-catalog``, ``-r`` *(flag)*: Force a live statistics refresh from servers, bypassing local 24-hour cache.
+* ``--cache-ttl`` *(integer)*: Statistics cache expiration time in hours (default: ``24``).
 
 Examples
 ~~~~~~~~
@@ -341,6 +343,12 @@ Examples
 .. code-block:: bash
 
    dartfx-dataverse stats --country NL
+
+**Force refresh statistics bypassing cache:**
+
+.. code-block:: bash
+
+   dartfx-dataverse stats --server dataverse.harvard.edu --refresh
 
 **Check statistics for Harvard Dataverse matching a keyword:**
 

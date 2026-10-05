@@ -41,8 +41,6 @@ uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS]
 | **`--verify-sha256`** | Flag | `False` | Force downloading metadata files and verifying SHA-256 for all records, bypassing fast timestamp checks. |
 | **`--dry-run`** | Flag | `False` | Preview additions, updates, and deletions without writing or deleting local files. |
 | **`--verbose` / `-v`** | Flag | `False` | Enable detailed activity logging (API queries, file operations, SHA-256 diff checks). |
-| **`--list-servers` / `-l`** | Flag | `False` | List matching Dataverse server hostnames in a Rich table and exit. |
-| **`--stats` / `--server-stats`** | Flag | `False` | Query and display live counts of datasets, total files, tabular data files, and tabular % for matching servers, then exit. |
 | **`--api-token` / `-k`** | Option (String) | *(None)* | Dataverse API Token (or set `DATAVERSE_API_TOKEN` environment variable) for repositories requiring token authentication (e.g. UNC, Texas Digital Library). |
 
 > [!NOTE]
@@ -113,7 +111,7 @@ uv run dartfx-dataverse installations
 uv run dartfx-dataverse installations --country NL
 ```
 
-#### 9. Reporting Repository Statistics (`--stats` / `--server-stats`)
+#### 9. Reporting Repository Statistics (`dartfx-dataverse stats`)
 Inspect live counts of datasets, total files, tabular data files with variables, and tabular percentage across servers:
 ```bash
 # Query statistics for a single server
@@ -420,7 +418,7 @@ When querying or harvesting global Dataverse servers, you may encounter differen
 #### 2. Bot Protection Interstitials & WAFs (HTTP 403 / HTTP 200 HTML)
 * **Examples**: `archive.data.jhu.edu` (Cloudflare Bot Challenge), `dataverse.whoi.edu` / `dataverse.ucla.edu` (Security Check Interstitials).
 * **Cause**: Campus network security WAFs (Cloudflare, AWS ELB, custom bot gateways) intercept headless HTTP requests with JavaScript-rendered interstitial verification pages.
-* **Harvester Handling**: The harvester automatically passes modern browser `User-Agent` and `Accept` headers to minimize false blocks. When a security gateway intercepts the request, the `--stats` table explicitly flags the server as `WAF / Bot Protection Interstitial` or `Cloudflare WAF / Bot Protection`.
+* **Harvester Handling**: The harvester automatically passes modern browser `User-Agent` and `Accept` headers to minimize false blocks. When a security gateway intercepts the request, the `stats` table explicitly flags the server as `WAF / Bot Protection Interstitial` or `Cloudflare WAF / Bot Protection`.
 
 #### 3. Legacy Directory Hostnames (HTTP 404)
 * **Examples**: `dataverse.acg.maine.edu/dvn`.

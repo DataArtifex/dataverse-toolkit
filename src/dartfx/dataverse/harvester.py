@@ -1754,6 +1754,144 @@ class ServerHarvester:
         return stats
 
 
+def display_server_stats(
+    server: str = "ALL",
+    country: str | None = None,
+    query: str | None = None,
+    api_token: str | None = None,
+    refresh_cache: bool = False,
+    cache_ttl_hours: float = 24.0,
+    repo_root: Path | None = None,
+) -> None:
+    """Display dataset, total file, and tabular data file counts for matching Dataverse servers."""
+    fetch_target = None if server.upper() == "ALL" else server
+    installations = get_global_installations(target_server=fetch_target, country_filter=country)
+    if not installations:
+        console.print("[bold red]No matching Dataverse servers found.[/bold red]")
+        raise typer.Exit(code=1)
+
+    table = Table(
+        title=f"Dataverse Server Statistics ({len(installations)} server(s))",
+        header_style="bold magenta",
+        expand=False,
+    )
+    table.add_column("Hostname", style="cyan", no_wrap=True)
+    table.add_column("Country", style="green", no_wrap=True)
+    table.add_column("Version", style="dim magenta", justify="center", no_wrap=True)
+    table.add_column("Datasets", style="bold yellow", justify="right", no_wrap=True)
+    table.add_column("Files", style="white", justify="right", no_wrap=True)
+    table.add_column("Tabular", style="bold green", justify="right", no_wrap=True)
+    table.add_column("Tabular %", style="dim cyan", justify="right", no_wrap=True)
+    table.add_column("Status / Note", style="italic")
+
+    suggestions_to_show = []
+    raw_installations = fetch_raw_installations()
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        BarColumn(),
+        MofNCompleteColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("[bold cyan]Fetching repository statistics...", total=len(installations))
+
+        if api_token and fetch_target:
+            for inst in installations:
+                save_server_token(inst.get("hostname", ""), api_token, None)
+
+        def fetch_single(inst_item):
+            h = inst_item.get("hostname", "")
+            res = fetch_server_stats(
+                h,
+                query=query,
+                api_token=api_token,
+                repo_root=repo_root,
+                refresh_cache=refresh_cache,
+                cache_ttl_hours=float(cache_ttl_hours),
+            )
+            return inst_item, res
+
+        max_workers = min(32, len(installations)) if len(installations) > 1 else 1
+        results_dict = {}
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_inst = {executor.submit(fetch_single, inst): inst for inst in installations}
+            for future in as_completed(future_to_inst):
+                inst_item, counts = future.result()
+                results_dict[inst_item["hostname"]] = (inst_item, counts)
+                progress.advance(task)
+
+        for inst in installations:
+            inst_item, counts = results_dict.get(inst["hostname"], (inst, {}))
+            host = inst_item.get("hostname", "")
+            is_dv = counts.get("is_dataverse", False)
+            err = counts.get("error")
+
+            url = f"https://{host}" if not host.startswith("http") else host
+            clickable_host = f"[link={url}]{host}[/link]"
+
+            ver_val = format_version(counts.get("version"))
+            country_val = inst.get("country", "") or "Global"
+
+            if counts.get("requires_token") and not counts.get("datasets"):
+                table.add_row(
+                    clickable_host,
+                    country_val,
+                    ver_val,
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                    "[bold yellow]Requires Token (-k)[/bold yellow]",
+                )
+            elif not is_dv:
+                err_msg = str(err) if err else "Not a Dataverse server"
+                table.add_row(
+                    clickable_host,
+                    country_val,
+                    ver_val,
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                    f"[bold red]{err_msg}[/bold red]",
+                )
+                if fetch_target:
+                    suggs = find_registry_suggestions(fetch_target, raw_installations)
+                    for s in suggs:
+                        if s["hostname"].lower() != host.lower() and s not in suggestions_to_show:
+                            suggestions_to_show.append(s)
+            else:
+                ds_count = int(counts["datasets"] or 0)
+                files_count = int(counts["files"] or 0)
+                tab_count = int(counts["tabular_files"] or 0)
+                pct_str = f"{(tab_count / files_count * 100):.1f}%" if files_count > 0 else "0.0%"
+                table.add_row(
+                    clickable_host,
+                    country_val,
+                    ver_val,
+                    f"{ds_count:,}",
+                    f"{files_count:,}",
+                    f"{tab_count:,}",
+                    pct_str,
+                    "[bold green]Online[/bold green] [dim](cached)[/dim]"
+                    if counts.get("cached")
+                    else "[bold green]Online[/bold green]",
+                )
+
+    console.print()
+    console.print(table)
+
+    if suggestions_to_show:
+        console.print()
+        console.print(
+            "[bold yellow]Did you mean one of these known Dataverse installations from the registry?[/bold yellow]"
+        )
+        for s in suggestions_to_show:
+            console.print(f"  • [bold cyan]{s['hostname']}[/bold cyan] ({s['name']} - {s['country']})")
+        console.print()
+
+
 @app.command()
 def harvest(
     output_dir: Annotated[
@@ -1883,22 +2021,6 @@ def harvest(
             help="Harvest only datasets containing rectangular/tabular data files with variables (default behavior).",
         ),
     ] = True,
-    list_servers: Annotated[
-        bool,
-        typer.Option(
-            "--list-servers",
-            "-l",
-            help="List available Dataverse servers matching filters and exit.",
-        ),
-    ] = False,
-    show_stats: Annotated[
-        bool,
-        typer.Option(
-            "--stats",
-            "--server-stats",
-            help="Display dataset, total file, and tabular data file counts for matching Dataverse servers and exit.",
-        ),
-    ] = False,
     api_token: Annotated[
         str | None,
         typer.Option(
@@ -1912,163 +2034,6 @@ def harvest(
     """
     Harvest and incrementally sync Dataverse metadata records across servers into local directory structures.
     """
-    if show_stats:
-        fetch_target = None if server.upper() == "ALL" else server
-        installations = get_global_installations(target_server=fetch_target, country_filter=country)
-        if not installations:
-            console.print("[bold red]No matching Dataverse servers found.[/bold red]")
-            raise typer.Exit(code=1)
-
-        table = Table(
-            title=f"Dataverse Server Statistics ({len(installations)} server(s))",
-            header_style="bold magenta",
-            expand=False,
-        )
-        table.add_column("Hostname", style="cyan", no_wrap=True)
-        table.add_column("Country", style="green", no_wrap=True)
-        table.add_column("Version", style="dim magenta", justify="center", no_wrap=True)
-        table.add_column("Datasets", style="bold yellow", justify="right", no_wrap=True)
-        table.add_column("Files", style="white", justify="right", no_wrap=True)
-        table.add_column("Tabular", style="bold green", justify="right", no_wrap=True)
-        table.add_column("Tabular %", style="dim cyan", justify="right", no_wrap=True)
-        table.add_column("Status / Note", style="italic")
-
-        suggestions_to_show = []
-        raw_installations = fetch_raw_installations()
-
-        with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
-            BarColumn(),
-            MofNCompleteColumn(),
-            console=console,
-        ) as progress:
-            task = progress.add_task("[bold cyan]Fetching repository statistics...", total=len(installations))
-
-            if api_token and fetch_target:
-                for inst in installations:
-                    save_server_token(inst.get("hostname", ""), api_token, None)
-
-            def fetch_single(inst_item):
-                h = inst_item.get("hostname", "")
-                res = fetch_server_stats(
-                    h,
-                    query=query,
-                    api_token=api_token,
-                    repo_root=output_dir,
-                    refresh_cache=refresh_catalog,
-                    cache_ttl_hours=float(cache_ttl),
-                )
-                return inst_item, res
-
-            max_workers = min(32, len(installations)) if len(installations) > 1 else 1
-            results_dict = {}
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                future_to_inst = {executor.submit(fetch_single, inst): inst for inst in installations}
-                for future in as_completed(future_to_inst):
-                    inst_item, counts = future.result()
-                    results_dict[inst_item["hostname"]] = (inst_item, counts)
-                    progress.advance(task)
-
-            for inst in installations:
-                inst_item, counts = results_dict.get(inst["hostname"], (inst, {}))
-                host = inst_item.get("hostname", "")
-                is_dv = counts.get("is_dataverse", False)
-                err = counts.get("error")
-
-                url = f"https://{host}" if not host.startswith("http") else host
-                clickable_host = f"[link={url}]{host}[/link]"
-
-                ver_val = format_version(counts.get("version"))
-                country_val = inst.get("country", "") or "Global"
-
-                if counts.get("requires_token") and not counts.get("datasets"):
-                    table.add_row(
-                        clickable_host,
-                        country_val,
-                        ver_val,
-                        "-",
-                        "-",
-                        "-",
-                        "-",
-                        "[bold yellow]Requires Token (-k)[/bold yellow]",
-                    )
-                elif not is_dv:
-                    err_msg = str(err) if err else "Not a Dataverse server"
-                    table.add_row(
-                        clickable_host,
-                        country_val,
-                        ver_val,
-                        "-",
-                        "-",
-                        "-",
-                        "-",
-                        f"[bold red]{err_msg}[/bold red]",
-                    )
-                    if fetch_target:
-                        suggs = find_registry_suggestions(fetch_target, raw_installations)
-                        for s in suggs:
-                            if s["hostname"].lower() != host.lower() and s not in suggestions_to_show:
-                                suggestions_to_show.append(s)
-                else:
-                    ds_count = int(counts["datasets"] or 0)
-                    files_count = int(counts["files"] or 0)
-                    tab_count = int(counts["tabular_files"] or 0)
-                    pct_str = f"{(tab_count / files_count * 100):.1f}%" if files_count > 0 else "0.0%"
-                    table.add_row(
-                        clickable_host,
-                        country_val,
-                        ver_val,
-                        f"{ds_count:,}",
-                        f"{files_count:,}",
-                        f"{tab_count:,}",
-                        pct_str,
-                        "[bold green]Online[/bold green] [dim](cached)[/dim]"
-                        if counts.get("cached")
-                        else "[bold green]Online[/bold green]",
-                    )
-
-        console.print()
-        console.print(table)
-
-        if suggestions_to_show:
-            console.print()
-            console.print(
-                "[bold yellow]Did you mean one of these known Dataverse installations from the registry?[/bold yellow]"
-            )
-            for s in suggestions_to_show:
-                console.print(f"  • [bold cyan]{s['hostname']}[/bold cyan] ({s['name']} - {s['country']})")
-            console.print()
-
-        raise typer.Exit(code=0)
-
-    if list_servers:
-        # Override target_server if ALL so we fetch global list
-        fetch_target = None if server.upper() == "ALL" else server
-        installations = get_global_installations(target_server=fetch_target, country_filter=country)
-        if not installations:
-            console.print("[bold red]No matching Dataverse servers found.[/bold red]")
-            raise typer.Exit(code=1)
-
-        table = Table(title=f"Global Dataverse Servers ({len(installations)} found)", header_style="bold magenta")
-        table.add_column("Hostname", style="cyan", no_wrap=True)
-        table.add_column("Institution / Name", style="white")
-        table.add_column("Country", style="green", no_wrap=True)
-        table.add_column("Country Code", style="yellow", justify="center")
-
-        for inst in installations:
-            host = inst.get("hostname", "")
-            url = f"https://{host}" if not host.startswith("http") else host
-            clickable_host = f"[link={url}]{host}[/link]"
-            table.add_row(
-                clickable_host,
-                inst.get("name", ""),
-                inst.get("country", "") or "Global",
-                inst.get("country_code", "") or "-",
-            )
-
-        console.print(table)
-        raise typer.Exit(code=0)
 
     if not output_dir:
         env_repo = os.environ.get("DARTFX_DATAVERSE_REPOSITORY")

@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Refined format unsupported detection to ensure individual dataset permissions (`HTTP 403 Forbidden` / restricted datasets) do not falsely trigger server-wide format skipping.
   - Deferred local server directory creation and added empty directory cleanup to prevent creating orphan folders when harvesting non-existent or unreachable servers.
   - Multi-threaded concurrent repository statistics fetching via `ThreadPoolExecutor` and comprehensive 24-hour error/offline status caching in `.stats_cache.json` for sub-second subsequent `stats` runs.
+  - Streamlined CLI by removing redundant `--stats` and `--list-servers` options from `dartfx-dataverse harvest` in favor of dedicated top-level `dartfx-dataverse stats` and `dartfx-dataverse installations` commands.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).

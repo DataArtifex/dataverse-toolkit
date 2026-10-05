@@ -445,18 +445,15 @@ def stats(
     ] = 24,
 ) -> None:
     """Display live dataset, total file, and tabular data file counts for Dataverse servers."""
-    from dartfx.dataverse.harvester import harvest as run_harvest
+    from dartfx.dataverse.harvester import display_server_stats
 
-    run_harvest(
-        output_dir=None,
+    display_server_stats(
         server=server,
         country=country,
         query=query,
-        metadata_format=None,
-        show_stats=True,
-        refresh_catalog=refresh,
-        cache_ttl=cache_ttl,
         api_token=api_token,
+        refresh_cache=refresh,
+        cache_ttl_hours=float(cache_ttl),
     )
 
 

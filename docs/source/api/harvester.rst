@@ -52,6 +52,8 @@ Token & Configuration Management
 Utility Functions
 ~~~~~~~~~~~~~~~~~
 
+.. autofunction:: dartfx.dataverse.format_dataset_url
+
 .. autofunction:: dartfx.dataverse.harvester.sanitize_pid
 
 .. autofunction:: dartfx.dataverse.harvester.get_format_extension

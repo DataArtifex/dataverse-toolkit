@@ -526,12 +526,13 @@ def errors(
     if format == OutputFormat.CSV:
         writer = csv.writer(sys.stdout)
         if details:
-            writer.writerow(["server", "pid", "format", "error_type", "failed_at", "reason"])
+            writer.writerow(["server", "pid", "url", "format", "error_type", "failed_at", "reason"])
             for rec in analysis.get("records", []):
                 writer.writerow(
                     [
                         rec.get("server", ""),
                         rec.get("pid", ""),
+                        rec.get("url", ""),
                         rec.get("format", ""),
                         rec.get("error_type", ""),
                         rec.get("failed_at", ""),

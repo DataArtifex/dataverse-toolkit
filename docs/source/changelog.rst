@@ -33,6 +33,7 @@ Added
   * Added dedicated ``Response`` column to ``stats`` table with color-coded performance tier badges (``⚡ <3s`` Fast, ``🟢 3–8s`` Normal, ``🟡 8–15s`` Moderate, ``🔴 >15s`` Degraded, ``🔒`` Protected, ``❌`` Failed).
   * Added configurable ``--timeout`` / ``-t`` option to ``dartfx-dataverse stats`` and parallelized metrics queries via ``ThreadPoolExecutor``.
   * Fine-grained SSL certificate diagnostics distinguishing missing intermediate CA certificates, expired certificates, hostname mismatches, and self-signed certificates.
+  * Active clickable hyperlink URLs for ``Dataset PID / Record`` in error detail tables (``Failed Records Details`` and ``dartfx-dataverse errors --details``), linking directly to the dataset resource landing page, with ``url`` column support in CSV exports.
   * Set default harvesting record limit to 10 datasets per server (pass ``--limit 0`` for unlimited).
   * Enabled tabular dataset filtering by default (pass ``--all-types`` to harvest all datasets).
   * Added ``Version`` column to ``stats`` table with compact semantic version formatting.
@@ -40,9 +41,9 @@ Added
 
 * **Documentation & Tests**:
   * Comprehensive user guide for Harvester in Sphinx documentation (``harvester.md``).
-  * Added API documentation reference for ``dartfx.dataverse.harvester`` in Sphinx including ``format_response_latency``.
+  * Added API documentation reference for ``dartfx.dataverse.harvester`` in Sphinx including ``format_response_latency`` and ``format_dataset_url``.
   * Documentation for multi-tabular dataset export behavior, dataset-level packaging granularity, and cross-standard representation.
-  * Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, latency formatting, and limit normalization (47 tests passing).
+  * Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, latency formatting, active URL generation, and limit normalization (49 tests passing).
 
 [0.1.0] - 2026-03-11
 --------------------

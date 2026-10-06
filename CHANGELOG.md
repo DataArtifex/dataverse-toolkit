@@ -46,13 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added configurable `--timeout` / `-t` option to `dartfx-dataverse stats` and parallelized sub-queries (files and tabular counts) to accelerate queries on slow servers.
   - Added dedicated `Response` column to `dartfx-dataverse stats` table featuring color-coded performance tier badges (`⚡ <3s Fast`, `🟢 3–8s Normal`, `🟡 8–15s Moderate`, `🔴 >15s Degraded`).
   - Fine-grained SSL error classification distinguishing incomplete certificate chains (`SSL: Missing Intermediate CA / Incomplete Chain`), expired certificates, hostname mismatches, and self-signed certificates.
+  - Active clickable hyperlink URLs for `Dataset PID / Record` in error detail tables (`Failed Records Details` and `dartfx-dataverse errors --details`), linking directly to the dataset resource landing page, with `url` column support in CSV exports.
   - Streamlined CLI by removing redundant `--stats` and `--list-servers` options from `dartfx-dataverse harvest` in favor of dedicated top-level `dartfx-dataverse stats` and `dartfx-dataverse installations` commands.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
 - **Documentation & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).
   - Added documentation explaining multi-tabular dataset export behavior, dataset-level packaging granularity, and cross-standard representation (Croissant, DDI, Schema.org, Native JSON, DataCite).
   - Added API documentation reference for `harvester` in Sphinx.
-  - Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, and limit normalization (30 tests passing).
+  - Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, latency formatting, active URL generation, and limit normalization (49 tests passing).
 
 ## [0.1.0] - 2026-03-11
 

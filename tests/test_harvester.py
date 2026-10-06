@@ -537,3 +537,85 @@ def test_non_existent_server_leaves_no_empty_directory(tmp_path, monkeypatch):
     assert "Unreachable or not a valid Dataverse server" in reason or "DNS" in reason
     # Verify no empty directory was left behind in repo root
     assert not (tmp_path / server_host).exists()
+
+
+def test_format_dataset_url():
+    from dartfx.dataverse.harvester import format_dataset_url
+
+    # Canonical DOI with server
+    assert (
+        format_dataset_url("doi:10.7910/DVN/WGCRY7", host="dataverse.harvard.edu")
+        == "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/WGCRY7"
+    )
+
+    # Canonical DOI without server (fallback to doi.org)
+    assert format_dataset_url("doi:10.7910/DVN/WGCRY7") == "https://doi.org/10.7910/DVN/WGCRY7"
+
+    # Handle with server
+    assert (
+        format_dataset_url("hdl:1902.1/21929", host="dataverse.harvard.edu")
+        == "https://dataverse.harvard.edu/dataset.xhtml?persistentId=hdl:1902.1/21929"
+    )
+
+    # Handle without server (fallback to hdl.handle.net)
+    assert format_dataset_url("hdl:1902.1/21929") == "https://hdl.handle.net/1902.1/21929"
+
+    # Sanitized directory format
+    assert (
+        format_dataset_url("doi_10.5683_SP3_7ZG4XV", host="borealisdata.ca")
+        == "https://borealisdata.ca/dataset.xhtml?persistentId=doi:10.5683/SP3/7ZG4XV"
+    )
+
+    # Direct URL
+    assert (
+        format_dataset_url("https://dataverse.harvard.edu/dataset.xhtml?id=123")
+        == "https://dataverse.harvard.edu/dataset.xhtml?id=123"
+    )
+
+    # All datasets placeholder
+    assert (
+        format_dataset_url("dataverse.unc.edu (all datasets)", host="dataverse.unc.edu") == "https://dataverse.unc.edu"
+    )
+
+    # Empty / None
+    assert format_dataset_url(None) is None
+    assert format_dataset_url("-") is None
+    assert format_dataset_url("Unknown") is None
+
+
+def test_render_harvest_errors_links():
+    import io
+
+    from rich.console import Console
+
+    from dartfx.dataverse.harvester import render_harvest_errors
+
+    analysis = {
+        "total_errors": 1,
+        "total_datasets": 1,
+        "servers_with_errors": 1,
+        "by_type": {"HTTP 404: Dataset / Exporter Not Found": 1},
+        "by_format": {"croissant": 1},
+        "by_server": {"dataverse.nl": 1},
+        "records": [
+            {
+                "server": "dataverse.nl",
+                "pid": "doi:10.34894/GJKOCJ",
+                "url": "https://dataverse.nl/dataset.xhtml?persistentId=doi:10.34894/GJKOCJ",
+                "format": "croissant",
+                "error_type": "HTTP 404: Dataset / Exporter Not Found",
+                "reason": "HTTP 404 Not Found",
+                "failed_at": "2026-10-05T00:00:00Z",
+                "non_recoverable": True,
+            }
+        ],
+    }
+
+    buf = io.StringIO()
+    test_console = Console(file=buf, width=200, force_terminal=True, color_system=None)
+    render_harvest_errors(analysis, details=True, console_out=test_console)
+    output = buf.getvalue()
+
+    assert "Detailed Error Records" in output
+    assert "doi:10.34894/GJKOCJ" in output
+    assert "dataverse.nl" in output

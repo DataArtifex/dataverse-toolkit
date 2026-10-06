@@ -153,6 +153,65 @@ def get_format_extension(fmt: str) -> str:
     return FORMAT_EXTENSIONS.get(fmt.strip().lower(), f".{fmt.strip().lower()}.json")
 
 
+def format_dataset_url(pid: str | None, host: str | None = None) -> str | None:
+    """
+    Resolve active web resource URL for a dataset PID and optional Dataverse host.
+
+    Supports canonical DOIs (doi:10.xxx), Handles (hdl:xxx), raw DOIs (10.xxx),
+    directory-style sanitized DOIs (doi_10.xxx), and direct server landing page
+    URLs (https://<host>/dataset.xhtml?persistentId=<pid>).
+    """
+    if not pid:
+        return None
+
+    clean_pid = str(pid).strip()
+    if not clean_pid or clean_pid in ("-", "Unknown", "None"):
+        return None
+
+    if clean_pid.startswith("http://") or clean_pid.startswith("https://"):
+        return clean_pid
+
+    clean_host = (
+        host.replace("https://", "").replace("http://", "").strip("/")
+        if host and str(host).strip() not in ("-", "Unknown", "None")
+        else None
+    )
+
+    # If clean_pid ends with '(all datasets)' or is a hostname placeholder
+    if clean_pid.endswith("(all datasets)"):
+        server_part = clean_pid.split(" (")[0].strip()
+        clean_srv = server_part.replace("https://", "").replace("http://", "").strip("/")
+        return f"https://{clean_srv}" if clean_srv else (f"https://{clean_host}" if clean_host else None)
+
+    # If clean_pid matches the host itself
+    if clean_host and clean_pid.lower() == clean_host.lower():
+        return f"https://{clean_host}"
+
+    # Handle directory-style sanitized DOIs (e.g. doi_10.5683_SP3_7ZG4XV)
+    if clean_pid.startswith("doi_10."):
+        suffix = clean_pid[4:]
+        if "_" in suffix:
+            prefix, rest = suffix.split("_", 1)
+            clean_pid = f"doi:{prefix}/{rest.replace('_', '/')}"
+
+    # Prioritize direct server landing page if host is available
+    if clean_host:
+        if clean_pid.startswith("doi:") or clean_pid.startswith("hdl:") or clean_pid.startswith("10."):
+            return f"https://{clean_host}/dataset.xhtml?persistentId={clean_pid}"
+
+    # Fallback to global resolver
+    if clean_pid.startswith("doi:"):
+        return f"https://doi.org/{clean_pid[4:]}"
+    elif clean_pid.startswith("hdl:"):
+        return f"https://hdl.handle.net/{clean_pid[4:]}"
+    elif clean_pid.startswith("10."):
+        return f"https://doi.org/{clean_pid}"
+    elif clean_host:
+        return f"https://{clean_host}/dataset.xhtml?persistentId={clean_pid}"
+
+    return None
+
+
 DEFAULT_REQUEST_HEADERS: dict[str, str] = {
     "User-Agent": f"dartfx-dataverse/{__version__} (Research Harvester; +https://github.com/DataArtifex/dataverse-toolkit)",
     "Accept": "application/json, text/plain, */*",
@@ -578,12 +637,14 @@ def analyze_harvest_errors(
                 matrix[err_type] = {}
             matrix[err_type][fmt] = matrix[err_type].get(fmt, 0) + 1
 
+            url = format_dataset_url(pid, host=srv_name)
             affected_pids.add(pid)
             records.append(
                 {
                     "server": srv_name,
                     "key": key,
                     "pid": pid,
+                    "url": url,
                     "format": fmt,
                     "error_type": err_type,
                     "reason": reason,
@@ -705,9 +766,9 @@ def render_harvest_errors(
             header_style="bold yellow",
             show_header=True,
         )
-        rec_table.add_column("Server", style="dim")
-        rec_table.add_column("Dataset PID", style="cyan")
-        rec_table.add_column("Format", style="yellow", justify="center")
+        rec_table.add_column("Server", style="dim", no_wrap=True)
+        rec_table.add_column("Dataset PID", style="cyan", no_wrap=True)
+        rec_table.add_column("Format", style="yellow", justify="center", no_wrap=True)
         rec_table.add_column("Error Category", style="magenta")
         rec_table.add_column("Reason / Snippet", style="red", no_wrap=False)
 
@@ -715,9 +776,17 @@ def render_harvest_errors(
             reason = rec.get("reason", "")
             if len(reason) > 90:
                 reason = reason[:87] + "..."
+            srv = rec.get("server", "-")
+            pid = rec.get("pid", "-")
+            url = rec.get("url") or format_dataset_url(pid, host=srv)
+
+            clean_srv = srv.replace("https://", "").replace("http://", "").strip("/") if srv else ""
+            srv_display = f"[link=https://{clean_srv}]{clean_srv}[/link]" if clean_srv and clean_srv != "-" else srv
+            pid_display = f"[link={url}]{pid}[/link]" if url and pid != "-" else pid
+
             rec_table.add_row(
-                rec.get("server", "-"),
-                rec.get("pid", "-"),
+                srv_display,
+                pid_display,
                 rec.get("format", "-"),
                 rec.get("error_type", "-"),
                 reason,
@@ -2344,8 +2413,8 @@ def harvest(
 
     file_logger.log("================ Sync Summary Report ================")
     for host, country_name, datasets_cnt, added, updated, unchanged, deleted, errors in summary_rows:
-        url = f"https://{host}" if not host.startswith("http") else host
-        clickable_host = f"[link={url}]{host}[/link]"
+        server_url = f"https://{host}" if not host.startswith("http") else host
+        clickable_host = f"[link={server_url}]{host}[/link]"
         results_table.add_row(
             clickable_host,
             country_name or "Global",
@@ -2414,27 +2483,34 @@ def harvest(
 
         # 2. Detailed Error Table
         err_table = Table(title="Failed Records Details", show_header=True, header_style="bold yellow")
-        err_table.add_column("Dataset PID / Record", style="cyan")
-        err_table.add_column("Format", style="yellow", justify="center")
+        err_table.add_column("Dataset PID / Record", style="cyan", no_wrap=True)
+        err_table.add_column("Format", style="yellow", justify="center", no_wrap=True)
         err_table.add_column("Error Category", style="magenta")
         err_table.add_column("Error Reason / Details", style="bold red", no_wrap=False)
 
         file_logger.log(f"==== Harvesting Errors Report ({len(all_errors)} Failed) ====")
 
         for err in all_errors:
+            dataset_url: str | None = None
             if isinstance(err, dict):
-                pid_display = err.get("pid") or err.get("key", "Unknown")
+                pid_raw = err.get("pid") or err.get("key", "Unknown")
                 fmt_display = err.get("format", "-")
                 reason_display = err.get("reason", "Unknown error")
+                err_server = err.get("server") or (pid_raw.split(" (")[0] if " (" in str(pid_raw) else None)
+                dataset_url = str(err.get("url")) if err.get("url") else format_dataset_url(pid_raw, host=err_server)
             else:
-                pid_display = str(err)
+                pid_raw = str(err)
                 fmt_display = "-"
                 reason_display = "Error occurred"
+                dataset_url = format_dataset_url(pid_raw)
 
             cat_display = classify_harvest_error(reason_display)
+            pid_display = (
+                f"[link={dataset_url}]{pid_raw}[/link]" if dataset_url and pid_raw != "Unknown" else str(pid_raw)
+            )
             err_table.add_row(pid_display, fmt_display, cat_display, reason_display)
             file_logger.log(
-                f"PID: {pid_display} | Format: {fmt_display} | Category: {cat_display} | Reason: {reason_display}",
+                f"PID: {pid_raw} | Format: {fmt_display} | Category: {cat_display} | Reason: {reason_display}",
                 level="ERROR",
             )
 

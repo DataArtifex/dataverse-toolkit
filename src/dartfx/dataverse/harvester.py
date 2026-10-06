@@ -841,7 +841,7 @@ def fetch_server_stats(
         except Exception:
             pass
 
-    stats: dict[str, int | bool | str | None] = {
+    stats: dict[str, int | bool | str | float | None] = {
         "datasets": 0,
         "files": 0,
         "tabular_files": 0,
@@ -849,9 +849,13 @@ def fetch_server_stats(
         "requires_token": False,
         "error": None,
         "version": None,
+        "latency_seconds": None,
     }
 
+    t0 = time.time()
+
     def _save_and_return(result_stats: dict[str, Any]) -> dict[str, Any]:
+        result_stats["latency_seconds"] = round(time.time() - t0, 2)
         if cache_file:
             try:
                 cache_file.parent.mkdir(parents=True, exist_ok=True)
@@ -964,7 +968,7 @@ def fetch_server_stats(
         stats["error"] = "Unreachable (DNS / Connection Failure)"
         return _save_and_return(stats)
     except requests.exceptions.Timeout:
-        stats["error"] = "Connection Timed Out"
+        stats["error"] = f"Timeout ({timeout}s)"
         return _save_and_return(stats)
     except Exception as e:
         stats["error"] = str(e)
@@ -1894,6 +1898,17 @@ def display_server_stats(
                 files_count = int(counts["files"] or 0)
                 tab_count = int(counts["tabular_files"] or 0)
                 pct_str = f"{(tab_count / files_count * 100):.1f}%" if files_count > 0 else "0.0%"
+                latency = counts.get("latency_seconds")
+                is_slow = latency is not None and float(latency) >= 4.0
+
+                if is_slow:
+                    status_text = f"[bold yellow]Online (Slow: {float(latency):.1f}s)[/bold yellow]"
+                else:
+                    status_text = "[bold green]Online[/bold green]"
+
+                if counts.get("cached"):
+                    status_text += " [dim](cached)[/dim]"
+
                 table.add_row(
                     clickable_host,
                     country_val,
@@ -1902,9 +1917,7 @@ def display_server_stats(
                     f"{files_count:,}",
                     f"{tab_count:,}",
                     pct_str,
-                    "[bold green]Online[/bold green] [dim](cached)[/dim]"
-                    if counts.get("cached")
-                    else "[bold green]Online[/bold green]",
+                    status_text,
                 )
 
     console.print()

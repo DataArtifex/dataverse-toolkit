@@ -334,6 +334,7 @@ Options
 * ``--api-token`` / ``--key``, ``-k`` *(string)*: API token for protected servers.
 * ``--refresh`` / ``--refresh-catalog``, ``-r`` *(flag)*: Force a live statistics refresh from servers, bypassing local 24-hour cache.
 * ``--cache-ttl`` *(integer)*: Statistics cache expiration time in hours (default: ``24``).
+* ``--timeout``, ``-t`` *(integer)*: HTTP request timeout in seconds per server query (default: ``10``).
 
 Examples
 ~~~~~~~~

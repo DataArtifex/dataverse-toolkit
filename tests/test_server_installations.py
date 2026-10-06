@@ -179,3 +179,5 @@ def test_cli_stats_command_flags():
     assert "--refresh" in clean_output
     assert "-r" in clean_output
     assert "--cache-ttl" in clean_output
+    assert "--timeout" in clean_output
+    assert "-t" in clean_output

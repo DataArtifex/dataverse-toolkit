@@ -443,6 +443,14 @@ def stats(
             help="Statistics cache expiration time in hours (default: 24).",
         ),
     ] = 24,
+    timeout: Annotated[
+        int,
+        typer.Option(
+            "--timeout",
+            "-t",
+            help="HTTP request timeout in seconds per server query (default: 10).",
+        ),
+    ] = 10,
 ) -> None:
     """Display live dataset, total file, and tabular data file counts for Dataverse servers."""
     from dartfx.dataverse.harvester import display_server_stats
@@ -454,6 +462,7 @@ def stats(
         api_token=api_token,
         refresh_cache=refresh,
         cache_ttl_hours=float(cache_ttl),
+        timeout=timeout,
     )
 
 

@@ -970,27 +970,25 @@ def fetch_server_stats(
         stats["error"] = str(e)
         return _save_and_return(stats)
 
-    try:
-        r_files = requests.get(
-            f"{base_url}/api/search?q={encoded_query}&type=file&per_page=1",
-            headers=headers,
-            timeout=timeout,
-        )
-        if r_files.status_code == 200:
-            stats["files"] = r_files.json().get("data", {}).get("total_count", 0)
-    except Exception:
-        pass
+    def _fetch_file_count(url: str) -> int:
+        try:
+            r = requests.get(url, headers=headers, timeout=timeout)
+            if r.status_code == 200:
+                data = r.json()
+                if isinstance(data, dict) and "data" in data:
+                    return int(data["data"].get("total_count", 0))
+        except Exception:
+            pass
+        return 0
 
-    try:
-        r_tab = requests.get(
-            f"{base_url}/api/search?q={encoded_query}&type=file&fq=fileTypeGroupFacet:%22Tabular%20Data%22&per_page=1",
-            headers=headers,
-            timeout=timeout,
-        )
-        if r_tab.status_code == 200:
-            stats["tabular_files"] = r_tab.json().get("data", {}).get("total_count", 0)
-    except Exception:
-        pass
+    url_files = f"{base_url}/api/search?q={encoded_query}&type=file&per_page=1"
+    url_tab = f"{base_url}/api/search?q={encoded_query}&type=file&fq=fileTypeGroupFacet:%22Tabular%20Data%22&per_page=1"
+
+    with ThreadPoolExecutor(max_workers=2) as sub_executor:
+        f_files = sub_executor.submit(_fetch_file_count, url_files)
+        f_tab = sub_executor.submit(_fetch_file_count, url_tab)
+        stats["files"] = f_files.result()
+        stats["tabular_files"] = f_tab.result()
 
     return _save_and_return(stats)
 
@@ -1789,6 +1787,7 @@ def display_server_stats(
     api_token: str | None = None,
     refresh_cache: bool = False,
     cache_ttl_hours: float = 24.0,
+    timeout: int = 10,
     repo_root: Path | None = None,
 ) -> None:
     """Display dataset, total file, and tabular data file counts for matching Dataverse servers."""
@@ -1834,6 +1833,7 @@ def display_server_stats(
                 h,
                 query=query,
                 api_token=api_token,
+                timeout=timeout,
                 repo_root=repo_root,
                 refresh_cache=refresh_cache,
                 cache_ttl_hours=float(cache_ttl_hours),

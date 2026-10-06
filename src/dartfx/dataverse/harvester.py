@@ -479,6 +479,19 @@ def classify_harvest_error(reason: str | None) -> str:
         return "Parse Error: Malformed XML / JSON"
 
     if "ssl" in r_low or "certificate" in r_low:
+        if (
+            "unable to get local issuer certificate" in r_low
+            or "unable to verify the first certificate" in r_low
+            or "missing intermediate" in r_low
+            or "incomplete chain" in r_low
+        ):
+            return "Network: SSL Incomplete Chain (Missing Intermediate CA)"
+        if "expired" in r_low:
+            return "Network: SSL Certificate Expired"
+        if "hostname" in r_low and ("mismatch" in r_low or "doesn't match" in r_low):
+            return "Network: SSL Hostname Mismatch"
+        if "self-signed" in r_low or "self signed" in r_low:
+            return "Network: SSL Self-Signed Certificate"
         return "Network: SSL / TLS Certificate Error"
 
     return "Other Error"
@@ -929,8 +942,23 @@ def fetch_server_stats(
         else:
             stats["error"] = f"HTTP {r_ds.status_code}"
             return _save_and_return(stats)
-    except requests.exceptions.SSLError:
-        stats["error"] = "SSL / TLS Certificate Error"
+    except requests.exceptions.SSLError as e:
+        err_str = str(e).lower()
+        if (
+            "unable to get local issuer certificate" in err_str
+            or "unable to verify the first certificate" in err_str
+            or "missing intermediate" in err_str
+            or "incomplete chain" in err_str
+        ):
+            stats["error"] = "SSL: Missing Intermediate CA / Incomplete Chain"
+        elif "expired" in err_str:
+            stats["error"] = "SSL: Certificate Expired"
+        elif "hostname" in err_str and ("mismatch" in err_str or "doesn't match" in err_str):
+            stats["error"] = "SSL: Hostname Mismatch"
+        elif "self-signed" in err_str or "self signed" in err_str:
+            stats["error"] = "SSL: Self-Signed Certificate"
+        else:
+            stats["error"] = "SSL / TLS Certificate Error"
         return _save_and_return(stats)
     except requests.exceptions.ConnectionError:
         stats["error"] = "Unreachable (DNS / Connection Failure)"

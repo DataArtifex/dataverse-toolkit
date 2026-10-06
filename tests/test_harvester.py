@@ -194,6 +194,22 @@ def test_classify_harvest_error():
         == "Network: Connection Failure"
     )
     assert classify_harvest_error("SSL: CERTIFICATE_VERIFY_FAILED") == "Network: SSL / TLS Certificate Error"
+    assert (
+        classify_harvest_error("certificate verify failed: unable to get local issuer certificate")
+        == "Network: SSL Incomplete Chain (Missing Intermediate CA)"
+    )
+    assert (
+        classify_harvest_error("certificate verify failed: certificate has expired")
+        == "Network: SSL Certificate Expired"
+    )
+    assert (
+        classify_harvest_error("Hostname mismatch: certificate is not valid for 'foo.example.com'")
+        == "Network: SSL Hostname Mismatch"
+    )
+    assert (
+        classify_harvest_error("certificate verify failed: self-signed certificate")
+        == "Network: SSL Self-Signed Certificate"
+    )
 
     # 6. Parse errors
     assert (

@@ -27,6 +27,12 @@ The toolkit is designed to be a high-level, type-safe wrapper around the Dataver
     - 24-hour catalog (`.catalog_cache.json`) and server statistics (`.stats_cache.json`) caching.
     - Automated API token discovery and resolution (`.api_token`, `.dataverse_tokens.json`, environment variables).
     - Intelligent error classification (short-circuiting non-recoverable exporter errors).
+6.  **Server Statistics, Performance Latency & Diagnostics Subsystem**:
+    - **Concurrent Metric Queries**: Queries files and tabular files counts in parallel via `ThreadPoolExecutor(max_workers=2)` for low response latency.
+    - **Configurable Timeout Protection**: Query timeouts are configurable (default 10s) and explicitly reported in status messages (e.g. `Timeout (10s)`).
+    - **Performance Tier Rating Engine** (`format_response_latency`): Classifies response times into semantic color-coded tiers (`⚡ <3s` Fast, `🟢 3–8s` Normal, `🟡 8–15s` Moderate, `🔴 >15s` Degraded, `🔒` Protected, `❌` Failed).
+    - **Deep SSL/TLS Diagnostics** (`classify_harvest_error`): Inspects peer certificates and verification error chains to isolate incomplete intermediate CA chains (missing intermediate CA), certificate expirations, hostname mismatches, and self-signed certificates.
+    - **24-Hour Persistence**: Stores metrics in `.stats_cache.json` under each server directory with sub-second CLI re-rendering.
 
 ## Design Decisions
 

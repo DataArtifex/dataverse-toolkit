@@ -31,6 +31,8 @@ Repository Statistics & Profiling
 
 .. autofunction:: dartfx.dataverse.format_version
 
+.. autofunction:: dartfx.dataverse.format_response_latency
+
 Error Classification & Diagnostics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

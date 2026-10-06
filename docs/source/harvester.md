@@ -26,7 +26,7 @@ uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS]
 
 | Parameter | Type | Required / Default | Description |
 | :--- | :---: | :---: | :--- |
-| **`OUTPUT_DIR`** | Positional Argument (Path) | **Required** *(except with `-l`)* | Repository root directory on local disk where server subdirectories will be created. |
+| **`OUTPUT_DIR`** | Positional Argument (Path) | **Required** | Repository root directory on local disk where server subdirectories will be created. |
 | **`--format` / `-f`** | Option (List / String) | **Required** | Target metadata format(s): `croissant`, `native`, `ddi`, `schema.org`, `datacite`, or `all`. Accepts comma-separated values (`croissant,native`), repeated flags (`-f native -f ddi`), or `all`. |
 | **`--server` / `-s`** | Option (String) | `ALL` | Target Dataverse server hostname (e.g. `dataverse.nl`, `dataverse.harvard.edu`) or `ALL`. |
 | **`--country` / `-c`** | Option (String) | *(None)* | Filter Dataverse servers by 2-letter ISO 3166-1 Alpha-2 code (`NL`, `US`, `FR`, `DE`, `CA`, `GB`). Uses an internal crosswalk engine mapping raw country names to 2-letter ISO codes. |
@@ -112,7 +112,7 @@ uv run dartfx-dataverse installations --country NL
 ```
 
 #### 9. Reporting Repository Statistics (`dartfx-dataverse stats`)
-Inspect live counts of datasets, total files, tabular data files with variables, and tabular percentage across servers:
+Inspect live counts of datasets, total files, tabular data files with variables, tabular percentage, query response latency, and server health status across repositories:
 ```bash
 # Query statistics for a single server
 uv run dartfx-dataverse stats --server ssh.datastations.nl
@@ -120,9 +120,28 @@ uv run dartfx-dataverse stats --server ssh.datastations.nl
 # Query statistics for all servers in a country
 uv run dartfx-dataverse stats --country NL
 
+# Force live refresh bypassing 24-hour cache
+uv run dartfx-dataverse stats --country US --refresh
+
+# Adjust timeout for slower repositories
+uv run dartfx-dataverse stats --country US --timeout 15
+
 # Combine with search keywords to check matching file/dataset counts
 uv run dartfx-dataverse stats --server dataverse.harvard.edu -q "climate"
 ```
+
+##### Server Latency & Performance Indicators
+
+The `dartfx-dataverse stats` table includes a dedicated, left-aligned **`Response`** column measuring total HTTP query latency with semantic performance tier badges:
+
+| Indicator | Latency Range | Performance Rating | Meaning |
+| :--- | :---: | :---: | :--- |
+| **`⚡ <3.0s`** | `< 3.0s` | **High Performance** | Fast indexing and rapid Solr response times. |
+| **`🟢 3.0s–8.0s`** | `3.0s – 8.0s` | **Normal** | Standard enterprise throughput (e.g. Harvard with 5.5M files). |
+| **`🟡 8.0s–15.0s`** | `8.0s – 15.0s` | **Moderate / Slow** | Slower Solr facet indexing or high server traffic. |
+| **`🔴 >15.0s`** | `> 15.0s` | **Degraded** | High latency or severe infrastructure lag. |
+| **`🔒`** | N/A | **Protected** | Server requires an API token (`-k` or `DATAVERSE_API_TOKEN`). |
+| **`❌`** | N/A | **Failed / Offline** | Connection failure, SSL certificate error, WAF block, or timeout. |
 
 **Via cURL**:
 ```bash
@@ -423,6 +442,16 @@ When querying or harvesting global Dataverse servers, you may encounter differen
 #### 3. Legacy Directory Hostnames (HTTP 404)
 * **Examples**: `dataverse.acg.maine.edu/dvn`.
 * **Cause**: Older versions of the global installations registry contain paths pointing to decommissioned DVN 3.x installations. The CLI flags these as `HTTP 404 (Inactive / Not Found)`.
+
+#### 4. SSL / TLS Certificate Diagnostics & Incomplete Chains
+* **Examples**: `dataverse.carc.usc.edu` (USC Dataverse).
+* **Cause**: Some institutional servers send an incomplete certificate chain (omitting the intermediate CA certificate or serving an expired intermediate like InCommon RSA Server CA).
+* **Why Browsers Work While Python Fails**: Web browsers implement **AIA Chasing** (Authority Information Access), which automatically downloads missing intermediate certificates on the fly over HTTP. Standard TLS libraries (OpenSSL, Python `ssl`/`requests`, `curl`) strictly evaluate the certificates sent by the server without AIA chasing, resulting in `SSLCertVerificationError: unable to get local issuer certificate`.
+* **Harvester Diagnostics**: The toolkit inspects the remote certificate and chain during connection failures to report fine-grained classifications:
+  * `SSL: Missing Intermediate CA / Incomplete Chain`
+  * `SSL: Certificate Expired`
+  * `SSL: Hostname Mismatch`
+  * `SSL: Self-Signed Certificate`
 
 ---
 

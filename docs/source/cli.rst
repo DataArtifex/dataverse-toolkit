@@ -316,7 +316,7 @@ Examples
 6. ``stats`` - Global Repository Statistics
 -------------------------------------------
 
-Queries and presents live and 24-hour cached counts of total datasets, files, tabular rectangular data files (with variables), and tabular percentage across servers.
+Queries and presents live and 24-hour cached counts of total datasets, files, tabular rectangular data files (with variables), and tabular percentage across servers, along with real-time response latency indicators and fine-grained server status diagnostics.
 
 Syntax
 ~~~~~~
@@ -336,6 +336,70 @@ Options
 * ``--cache-ttl`` *(integer)*: Statistics cache expiration time in hours (default: ``24``).
 * ``--timeout``, ``-t`` *(integer)*: HTTP request timeout in seconds per server query (default: ``10``).
 
+Output Table Columns
+~~~~~~~~~~~~~~~~~~~~
+
+The ``stats`` command renders an interactive Rich table with the following columns:
+
+* **Hostname**: Target repository domain (rendered as a live clickable hyperlink in supporting terminals).
+* **Country**: 2-letter ISO 3166-1 Alpha-2 country code (e.g. ``US``, ``NL``, ``CA``).
+* **Version**: Clean semantic version string (e.g. ``v6.3``, ``v5.14``) normalized from upstream build info.
+* **Datasets**: Total count of published datasets indexed on the server.
+* **Files**: Total count of data files across all datasets.
+* **Tabular**: Count of rectangular tabular data files (CSV, SPSS, Stata, SAS, RData) indexed with variable metadata.
+* **Tabular %**: Percentage of total files that are tabular data files.
+* **Response**: Real-time HTTP query latency and performance rating badge (see tiers below).
+* **Status / Note**: Server health indicator, cache status (``[cached]``), or specific diagnostics reason.
+
+Response Latency & Performance Indicators
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The **Response** column measures total round-trip query time and assigns a semantic icon and color badge:
+
+.. list-table::
+   :widths: 20 25 55
+   :header-rows: 1
+
+   * - Indicator
+     - Latency Range
+     - Performance Classification
+   * - ``⚡ <3.0s``
+     - Under 3.0 seconds
+     - **Fast / High Performance**: High-throughput indexing and responsive Solr engine.
+   * - ``🟢 3.0s–8.0s``
+     - 3.0 to 8.0 seconds
+     - **Normal**: Standard enterprise response time for large multi-million file repositories.
+   * - ``🟡 8.0s–15.0s``
+     - 8.0 to 15.0 seconds
+     - **Moderate / Slow**: Slower response time or high concurrent search load.
+   * - ``🔴 >15.0s``
+     - Over 15.0 seconds
+     - **Degraded**: Severe latency or infrastructure bottleneck.
+   * - ``🔒``
+     - N/A
+     - **Protected**: Repository requires an API token (``-k`` or ``DATAVERSE_API_TOKEN``).
+   * - ``❌``
+     - N/A
+     - **Failed / Offline**: Connection error, SSL failure, WAF block, or timeout.
+
+Server Status & Diagnostics
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The **Status / Note** column displays fine-grained diagnostics for unreachable or restricted repositories:
+
+* **Fine-Grained SSL Certificate Diagnostics**:
+  * ``SSL: Missing Intermediate CA / Incomplete Chain``: Server configuration omits the intermediate CA certificate (often works in web browsers due to automatic AIA fetching, but fails in strict OpenSSL/Python clients).
+  * ``SSL: Certificate Expired``: Server TLS certificate validity period has expired.
+  * ``SSL: Hostname Mismatch``: Certificate Common Name / SAN does not match repository domain.
+  * ``SSL: Self-Signed Certificate``: Untrusted self-signed certificate.
+* **Network & Gateway Diagnostics**:
+  * ``Timeout (10s)``: Query exceeded the configured timeout limit (adjust with ``--timeout`` / ``-t``).
+  * ``Cloudflare WAF / Bot Protection``: Cloudflare challenge page intercepted automated query.
+  * ``WAF / Bot Protection Interstitial``: Institutional security gateway (AWS/custom) blocked headless request.
+  * ``Protected (API Token Required)``: Server configured with ``:SearchApiRequiresToken = true``.
+  * ``Host Unreachable / DNS Failure``: DNS resolution error or server host offline.
+  * ``HTTP 404 (Inactive / Not Found)``: Obsolete registry path or decommissioned instance.
+
 Examples
 ~~~~~~~~
 
@@ -350,6 +414,12 @@ Examples
 .. code-block:: bash
 
    dartfx-dataverse stats --server dataverse.harvard.edu --refresh
+
+**Adjust query timeout for slow servers:**
+
+.. code-block:: bash
+
+   dartfx-dataverse stats --country US --timeout 15
 
 **Check statistics for Harvard Dataverse matching a keyword:**
 

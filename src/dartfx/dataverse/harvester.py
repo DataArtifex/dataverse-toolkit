@@ -800,6 +800,32 @@ def find_registry_suggestions(
     return suggestions
 
 
+def format_response_latency(
+    latency: float | int | None,
+    is_online: bool = True,
+    requires_token: bool = False,
+    is_error: bool = False,
+) -> str:
+    """Format response latency with a color-coded performance or status badge."""
+    if latency is None:
+        return "-"
+    lat = float(latency)
+    if is_error or not is_online:
+        return f"[dim red]❌ {lat:.1f}s[/dim red]"
+    if requires_token:
+        return f"[yellow]🔒 {lat:.1f}s[/yellow]"
+
+    # Online performance tiers
+    if lat < 3.0:
+        return f"[bold green]⚡ {lat:.1f}s[/bold green]"
+    elif lat <= 8.0:
+        return f"[green]🟢 {lat:.1f}s[/green]"
+    elif lat <= 15.0:
+        return f"[yellow]🟡 {lat:.1f}s[/yellow]"
+    else:
+        return f"[bold red]🔴 {lat:.1f}s[/bold red]"
+
+
 def fetch_server_stats(
     host: str,
     query: str | None = None,
@@ -1812,7 +1838,8 @@ def display_server_stats(
     table.add_column("Datasets", style="bold yellow", justify="right", no_wrap=True)
     table.add_column("Files", style="white", justify="right", no_wrap=True)
     table.add_column("Tabular", style="bold green", justify="right", no_wrap=True)
-    table.add_column("Tabular %", style="dim cyan", justify="right", no_wrap=True)
+    table.add_column("Tab %", style="dim cyan", justify="right", no_wrap=True)
+    table.add_column("Response", justify="left", no_wrap=True)
     table.add_column("Status / Note", style="italic")
 
     suggestions_to_show = []
@@ -1866,6 +1893,7 @@ def display_server_stats(
             country_val = inst.get("country", "") or "Global"
 
             if counts.get("requires_token") and not counts.get("datasets"):
+                resp_val = format_response_latency(counts.get("latency_seconds"), requires_token=True)
                 table.add_row(
                     clickable_host,
                     country_val,
@@ -1874,10 +1902,12 @@ def display_server_stats(
                     "-",
                     "-",
                     "-",
+                    resp_val,
                     "[bold yellow]Requires Token (-k)[/bold yellow]",
                 )
             elif not is_dv:
                 err_msg = str(err) if err else "Not a Dataverse server"
+                resp_val = format_response_latency(counts.get("latency_seconds"), is_error=True)
                 table.add_row(
                     clickable_host,
                     country_val,
@@ -1886,6 +1916,7 @@ def display_server_stats(
                     "-",
                     "-",
                     "-",
+                    resp_val,
                     f"[bold red]{err_msg}[/bold red]",
                 )
                 if fetch_target:
@@ -1898,14 +1929,9 @@ def display_server_stats(
                 files_count = int(counts["files"] or 0)
                 tab_count = int(counts["tabular_files"] or 0)
                 pct_str = f"{(tab_count / files_count * 100):.1f}%" if files_count > 0 else "0.0%"
-                latency = counts.get("latency_seconds")
-                is_slow = latency is not None and float(latency) >= 4.0
+                resp_val = format_response_latency(counts.get("latency_seconds"), is_online=True)
 
-                if is_slow:
-                    status_text = f"[bold yellow]Online (Slow: {float(latency):.1f}s)[/bold yellow]"
-                else:
-                    status_text = "[bold green]Online[/bold green]"
-
+                status_text = "[bold green]Online[/bold green]"
                 if counts.get("cached"):
                     status_text += " [dim](cached)[/dim]"
 
@@ -1917,6 +1943,7 @@ def display_server_stats(
                     f"{files_count:,}",
                     f"{tab_count:,}",
                     pct_str,
+                    resp_val,
                     status_text,
                 )
 

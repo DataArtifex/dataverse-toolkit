@@ -224,6 +224,37 @@ def test_classify_harvest_error():
     assert classify_harvest_error(None) == "Unknown Error"
 
 
+def test_format_response_latency():
+    import re
+
+    from dartfx.dataverse.harvester import format_response_latency
+
+    assert format_response_latency(None) == "-"
+    fast_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(1.2))
+    assert "⚡" in fast_str
+    assert "1.2s" in fast_str
+
+    normal_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(4.5))
+    assert "🟢" in normal_str
+    assert "4.5s" in normal_str
+
+    mod_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(9.0))
+    assert "🟡" in mod_str
+    assert "9.0s" in mod_str
+
+    slow_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(47.0))
+    assert "🔴" in slow_str
+    assert "47.0s" in slow_str
+
+    err_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(0.1, is_error=True))
+    assert "❌" in err_str
+    assert "0.1s" in err_str
+
+    token_str = re.sub(r"\x1b\[[0-9;]*[a-zA-Z]", "", format_response_latency(0.5, requires_token=True))
+    assert "🔒" in token_str
+    assert "0.5s" in token_str
+
+
 def test_analyze_harvest_errors_empty(tmp_path):
     from dartfx.dataverse.harvester import analyze_harvest_errors
 

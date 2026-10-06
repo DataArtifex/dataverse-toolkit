@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Deferred local server directory creation and added empty directory cleanup to prevent creating orphan folders when harvesting non-existent or unreachable servers.
   - Multi-threaded concurrent repository statistics fetching via `ThreadPoolExecutor` and comprehensive 24-hour error/offline status caching in `.stats_cache.json` for sub-second subsequent `stats` runs.
   - Added configurable `--timeout` / `-t` option to `dartfx-dataverse stats` and parallelized sub-queries (files and tabular counts) to accelerate queries on slow servers.
+  - Added dedicated `Response` column to `dartfx-dataverse stats` table featuring color-coded performance tier badges (`⚡ <3s Fast`, `🟢 3–8s Normal`, `🟡 8–15s Moderate`, `🔴 >15s Degraded`).
   - Fine-grained SSL error classification distinguishing incomplete certificate chains (`SSL: Missing Intermediate CA / Incomplete Chain`), expired certificates, hostname mismatches, and self-signed certificates.
   - Streamlined CLI by removing redundant `--stats` and `--list-servers` options from `dartfx-dataverse harvest` in favor of dedicated top-level `dartfx-dataverse stats` and `dartfx-dataverse installations` commands.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.

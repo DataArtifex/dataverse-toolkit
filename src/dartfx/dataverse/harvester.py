@@ -50,7 +50,7 @@ except ImportError:
     try:
         from dartfx.dataverse.__about__ import __version__
     except ImportError:
-        __version__ = "0.2.0"
+        __version__ = "0.5.0"
 
 from .dataverse import (
     ServerInstallation,

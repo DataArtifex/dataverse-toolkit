@@ -198,16 +198,18 @@ Table of Contents
 Roadmap
 -------
 
-Completed Features (v0.2.0)
+Completed Features (v0.5.0)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * **First-Class Metadata Harvester & Sync Subsystem** (``dartfx-dataverse harvest``): Incremental synchronization and SHA-256 hash verification of Croissant ML, Native Dataverse JSON, DDI Codebook XML, Schema.org JSON-LD, and DataCite XML.
 * **Global Server Statistics & Tabular Profiling** (``dartfx-dataverse stats``): Live and 24h-cached metrics for datasets, total files, tabular data files, and tabular file percentages.
+* **Response Latency & Performance Indicators**: Visual real-time response time indicators and performance tier badges (``⚡``, ``🟢``, ``🟡``, ``🔴``).
+* **Fine-Grained SSL Certificate Diagnostics**: Deep TLS chain analysis detecting missing intermediate CAs, expired certificates, and hostname mismatches.
 * **Harvest Error Classification & Reporting** (``dartfx-dataverse errors``): Categorization of network timeouts, HTTP status errors, WAF/Cloudflare interstitials, authentication blocks, and unsupported exporters.
 * **Multi-Format Export Support**: Native JSON, Croissant ML, DDI Codebook XML, Schema.org JSON-LD, and DataCite XML.
 * **24h Persistent Catalog/Stats Caching & Per-Server Token Management**: Fast incremental sync with ``.catalog_cache.json``, ``.stats_cache.json``, and ``.dataverse_tokens.json``.
 
-Planned Features (v0.3.0+)
+Planned Features (v0.6.0+)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 * Direct file downloading and data streaming capabilities with progress bars.

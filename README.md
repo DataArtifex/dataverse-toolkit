@@ -290,15 +290,17 @@ server = DataverseServer(
 
 ## Project Status & Roadmap
 
-### Current Version: 0.2.0 (Active Release)
+### Current Version: 0.5.0 (Active Release)
 
 This is an early development release. Expect the unexpected and breaking changes. Feedback and contributions are much appreciated.
 
 ### Roadmap
 
-#### Completed Features (v0.2.0)
+#### Completed Features (v0.5.0)
 - [x] First-class Metadata Harvester & Sync subsystem (`dartfx-dataverse harvest`)
 - [x] Repository statistics table with 24h caching (`dartfx-dataverse stats`)
+- [x] Real-time query response latency indicators and performance ratings (`⚡`, `🟢`, `🟡`, `🔴`)
+- [x] Fine-grained SSL certificate diagnostics and chain verification
 - [x] Support for multi-format exports (`croissant`, `native`, `ddi`, `schema.org`, `datacite`)
 - [x] Local storage root management via `DARTFX_DATAVERSE_REPOSITORY`
 - [x] Automatic `.env` loading using `python-dotenv`
@@ -314,9 +316,8 @@ This is an early development release. Expect the unexpected and breaking changes
 - [x] Search API wrapper with caching
 - [x] CLI for discovery and search
 
-#### Future (v0.3.0+)
+#### Future (v0.6.0+)
 - [ ] File metadata retrieval
-- [ ] Support for additional metadata formats (Croissant, schema.org)
 - [ ] Dataset and file download capabilities
 - [ ] Download progress tracking and resuming
 - [ ] Stable API (v1.0.0)

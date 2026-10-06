@@ -94,7 +94,7 @@ Development Tools (``[dev]``)
 
 * **pytest** (>=7.0) - Testing framework
 * **coverage** (>=6.5) - Code coverage measurement
-* **mypy** (>=1.0.0) - Static type checker
+* **pyrefly** (>=1.0.0) - Static type checker
 * **ruff** (>=0.1.0) - Fast Python linter and formatter
 
 Documentation Tools (``[docs]``)

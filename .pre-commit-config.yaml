@@ -19,9 +19,11 @@ repos:
       - id: check-toml
       - id: check-merge-conflict
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.15.0
+  - repo: local
     hooks:
-      - id: mypy
-        additional_dependencies: [pydantic, requests, types-requests]
-        args: []
+      - id: pyrefly
+        name: pyrefly
+        entry: uv run pyrefly check
+        language: system
+        types: [python]
+        pass_filenames: false

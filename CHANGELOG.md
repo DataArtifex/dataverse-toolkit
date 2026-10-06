@@ -49,10 +49,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Active clickable hyperlink URLs for `Dataset PID / Record` in error detail tables (`Failed Records Details` and `dartfx-dataverse errors --details`), linking directly to the dataset resource landing page, with `url` column support in CSV exports.
   - Streamlined CLI by removing redundant `--stats` and `--list-servers` options from `dartfx-dataverse harvest` in favor of dedicated top-level `dartfx-dataverse stats` and `dartfx-dataverse installations` commands.
   - Robust edge gateway User-Agent header for bypassing WAF/bot challenge interstitials on Dataverse repositories.
-- **Documentation & Tests**:
+- **Documentation, Tooling & Tests**:
   - Comprehensive user guide for Harvester in Sphinx documentation (`docs/source/harvester.md`).
   - Added documentation explaining multi-tabular dataset export behavior, dataset-level packaging granularity, and cross-standard representation (Croissant, DDI, Schema.org, Native JSON, DataCite).
   - Added API documentation reference for `harvester` in Sphinx.
+  - Upgraded static type checking infrastructure from Mypy to Pyrefly (v1.0.0+), including pre-commit hooks, Hatch environment scripts, CI workflows, and documentation.
   - Extensive unit test suite covering token resolution, manifest persistence, error classification, stats caching, latency formatting, active URL generation, and limit normalization (49 tests passing).
 
 ## [0.1.0] - 2026-03-11

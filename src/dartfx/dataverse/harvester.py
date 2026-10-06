@@ -37,10 +37,10 @@ from rich.table import Table
 from rich.text import Text
 
 try:
-    from pyDataverse.Croissant import Croissant
+    from pyDataverse.Croissant import Croissant  # type: ignore
 except ImportError:
     try:
-        from pyDataverse import Croissant
+        from pyDataverse import Croissant  # type: ignore
     except ImportError:
         Croissant = None
 
@@ -1279,9 +1279,9 @@ def fetch_active_datasets(
 
     # Save to server root catalog cache
     if server_dir and active_datasets:
+        cache_file = server_dir / ".catalog_cache.json"
         try:
             server_dir.mkdir(parents=True, exist_ok=True)
-            cache_file = server_dir / ".catalog_cache.json"
             cache_content = {
                 "cached_at": datetime.now(UTC).isoformat(),
                 "server": host,

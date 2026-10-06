@@ -1,4 +1,4 @@
-# Contributing to hatch-foo
+# Contributing to dataverse-toolkit
 
 Thank you for your interest in contributing! We welcome all types of contributions, from bug reports and documentation improvements to new features and bug fixes.
 
@@ -20,7 +20,7 @@ uv run pre-commit install
 
 ### 2. Standards
 - **Linting & Formatting**: We use [Ruff](https://beta.astral-sh/ruff/). Run `uv run ruff check .` and `uv run ruff format .` before committing.
-- **Type Checking**: We use [Mypy](http://mypy-lang.org/). Run `hatch run types:check`.
+- **Type Checking**: We use [Pyrefly](https://github.com/facebook/pyrefly). Run `uv run pyrefly check` or `hatch run types:check`.
 - **Testing**: We use [Pytest](https://docs.pytest.org/). Run `uv run pytest`.
 
 ## Contribution Process

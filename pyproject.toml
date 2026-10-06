@@ -51,7 +51,7 @@ dev = [
   "coverage[toml]>=7.0.0",
   "pytest>=9",
   "pytest-benchmark>=5.0.0",
-  "mypy>=1.0.0",
+  "pyrefly>=1.0.0",
   "python-dotenv>=1.0.0",
   "ruff>=0.3.0",
   "pre-commit>=4.0.0",
@@ -78,7 +78,7 @@ python = ["3.12", "3.13"]
 [tool.hatch.envs.types]
 dependencies = [{ include-group = "dev" }]
 [tool.hatch.envs.types.scripts]
-check = "mypy --install-types --non-interactive {args:src tests}"
+check = "pyrefly check {args:src tests}"
 
 [tool.hatch.envs.docs]
 dependencies = [{ include-group = "docs" }]
@@ -142,12 +142,6 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[tool.mypy]
-python_version = "3.12"
-check_untyped_defs = true
-ignore_missing_imports = true
-warn_unused_ignores = true
-show_error_codes = true
-mypy_path = "src"
-explicit_package_bases = true
-plugins = ["pydantic.mypy"]
+[tool.pyrefly]
+search-path = ["src"]
+python-version = "3.12"

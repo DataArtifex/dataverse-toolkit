@@ -1,6 +1,6 @@
 # Harvester Subsystem & CLI Utility (`dartfx-dataverse harvest`)
 
-The **Harvester Subsystem & CLI** is an intelligent, incremental metadata synchronization engine designed to discover, profile, harvest, and sync multi-standard metadata records (**Croissant ML JSON-LD**, **Native Dataverse JSON**, **DDI Codebook 2.5 XML**, **Schema.org JSON-LD**, and **DataCite XML**) across global Dataverse repositories into a structured local directory layout.
+The **Harvester Subsystem & CLI** is an intelligent, incremental metadata synchronization engine designed to discover, profile, harvest, and sync multi-standard metadata records (**Croissant ML JSON-LD**, **Croissant Slim**, **Native Dataverse JSON**, **DDI Codebook 2.5 XML**, **OAI-DDI Study-Level XML**, **Schema.org JSON-LD**, **DataCite XML**, **OAI-ORE JSON Graph**, and **Dublin Core `dcterms` XML**) across global Dataverse repositories into a structured local directory layout.
 
 Built with **Typer** for command-line handling and **Rich** for modern, color-coded terminal progress bars, tables, and execution reports, with a complete programmatic Python API.
 
@@ -27,7 +27,7 @@ uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS]
 | Parameter | Type | Required / Default | Description |
 | :--- | :---: | :---: | :--- |
 | **`OUTPUT_DIR`** | Positional Argument (Path) | **Required** | Repository root directory on local disk where server subdirectories will be created. |
-| **`--format` / `-f`** | Option (List / String) | **Required** | Target metadata format(s): `croissant`, `native`, `ddi`, `schema.org`, `datacite`, or `all`. Accepts comma-separated values (`croissant,native`), repeated flags (`-f native -f ddi`), or `all`. |
+| **`--format` / `-f`** | Option (List / String) | **Required** | Target metadata format(s): `croissant`, `croissant_slim`, `native`, `ddi`, `oai_ddi`, `schema.org`, `datacite`, `oai_ore`, `dcterms`, or `all`. Accepts comma-separated values (`croissant,native,oai_ore`), repeated flags (`-f native -f oai_ddi`), or `all`. |
 | **`--server` / `-s`** | Option (String) | `ALL` | Target Dataverse server hostname (e.g. `dataverse.nl`, `dataverse.harvard.edu`) or `ALL`. |
 | **`--country` / `-c`** | Option (String) | *(None)* | Filter Dataverse servers by 2-letter ISO 3166-1 Alpha-2 code (`NL`, `US`, `FR`, `DE`, `CA`, `GB`). Uses an internal crosswalk engine mapping raw country names to 2-letter ISO codes. |
 | **`--since` / `--start-date`**| Option (String) | *(None)* | Harvest datasets added or updated since specified date (`YYYY-MM-DD` or relative `7d`, `30d`). |
@@ -89,7 +89,7 @@ uv run dartfx-dataverse harvest ./multi_records --server dataverse.nl --format c
 # Harvest Croissant, Native JSON, and DDI Codebook XML via repeated flags
 uv run dartfx-dataverse harvest ./multi_records --server dataverse.nl -f croissant -f native -f ddi
 
-# Harvest ALL supported metadata formats (Croissant, Native, DDI, Schema.org, DataCite)
+# Harvest ALL supported metadata formats (Croissant, Croissant Slim, Native, DDI, OAI-DDI, Schema.org, DataCite, OAI-ORE, DCTerms)
 uv run dartfx-dataverse harvest ./all_records --country NL --format all
 ```
 
@@ -177,7 +177,7 @@ flowchart TD
 
 ### Local Directory Structure & Manifests
 
-Each Dataverse server gets an isolated directory, and each harvested dataset receives its own **dedicated dataset directory** containing a clean **`metadata/`** subdirectory. This separates metadata formats (`croissant.json`, `dataverse.json`, `ddi-c.xml`, `schema.json`, `datacite.xml`) from future data downloads, documentation, or processing assets:
+Each Dataverse server gets an isolated directory, and each harvested dataset receives its own **dedicated dataset directory** containing a clean **`metadata/`** subdirectory. This separates metadata formats (`croissant.json`, `croissant-slim.json`, `dataverse.json`, `ddi-c.xml`, `oai-ddi.xml`, `schema.json`, `datacite.xml`, `ore.json`, `dcterms.xml`) from future data downloads, documentation, or processing assets:
 
 ```
 harvested_records/
@@ -187,18 +187,22 @@ harvested_records/
 │   │   ├── metadata/
 │   │   │   ├── croissant.json
 │   │   │   ├── dataverse.json
-│   │   │   └── ddi-c.xml
+│   │   │   ├── ddi-c.xml
+│   │   │   ├── ore.json
+│   │   │   └── dcterms.xml
 │   │   ├── data/              # (Reserved for data downloads)
 │   │   └── docs/              # (Reserved for documentation)
 │   └── doi_10.7910_DVN_6TFFPG/
 │       └── metadata/
-│           └── croissant.json
+│           ├── croissant.json
+│           └── croissant-slim.json
 ├── dataverse.nl/
 │   ├── .manifest.json
 │   └── doi_10.34894_GJKOCJ/
 │       └── metadata/
 │           ├── croissant.json
-│           └── dataverse.json
+│           ├── dataverse.json
+│           └── oai-ddi.xml
 ```
 
 #### Manifest File (`.manifest.json`)

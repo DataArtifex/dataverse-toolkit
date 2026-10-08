@@ -20,8 +20,30 @@ def test_normalize_doi():
 def test_normalize_formats():
     assert normalize_formats("croissant") == ["croissant"]
     assert normalize_formats("croissant,native,ddi") == ["croissant", "native", "ddi"]
-    assert normalize_formats("all") == ["croissant", "native", "ddi", "schema.org", "datacite"]
+    assert normalize_formats("all") == [
+        "croissant",
+        "croissant_slim",
+        "native",
+        "ddi",
+        "oai_ddi",
+        "schema.org",
+        "datacite",
+        "oai_ore",
+        "dcterms",
+    ]
     assert normalize_formats("schemaorg") == ["schema.org"]
+    assert normalize_formats("oai-ddi") == ["oai_ddi"]
+    assert normalize_formats("oai_ddi") == ["oai_ddi"]
+    assert normalize_formats("croissant-slim") == ["croissant_slim"]
+    assert normalize_formats("croissantslim") == ["croissant_slim"]
+    assert normalize_formats("oai-ore") == ["oai_ore"]
+    assert normalize_formats("ore") == ["oai_ore"]
+    assert normalize_formats("oaiore") == ["oai_ore"]
+    assert normalize_formats("dcterms") == ["dcterms"]
+    assert normalize_formats("dc") == ["dcterms"]
+    assert normalize_formats("dublin_core") == ["dcterms"]
+    assert normalize_formats("oai_dc") == ["dcterms"]
+    assert normalize_formats("oai-dc") == ["dcterms"]
     assert normalize_formats(None) == []
 
 
@@ -177,13 +199,22 @@ def test_classify_harvest_error():
         == "Croissant Validation: Schema Incompatibility"
     )
 
-    # 3. Exporter unsupported
+    # 3. Exporter unsupported & Dataverse Export failures
     assert classify_harvest_error("Exporter not found on server") == "Exporter Not Supported on Server"
+    assert classify_harvest_error("HTTP 403: Export Failed") == "Dataverse Server Export Failure"
+    assert classify_harvest_error("Export Failed") == "Dataverse Server Export Failure"
 
     # 4. HTTP status codes
     assert classify_harvest_error("HTTP 401: Unauthorized") == "HTTP 401: Authentication Required (API Token)"
+    assert (
+        classify_harvest_error("HTTP 403: Forbidden (dataset restricted or requires authentication)")
+        == "HTTP 403: Restricted Dataset (Authentication Required)"
+    )
     assert classify_harvest_error("HTTP 403: Cloudflare Challenge") == "HTTP 403: Forbidden / Bot Protection (WAF)"
+    assert classify_harvest_error("HTTP 403: Forbidden") == "HTTP 403: Forbidden"
+    assert classify_harvest_error("HTTP 403") == "HTTP 403: Forbidden"
     assert classify_harvest_error("HTTP 404: Not Found") == "HTTP 404: Dataset / Exporter Not Found"
+    assert classify_harvest_error("HTTP 410: Dataset Deaccessioned") == "HTTP 410: Dataset Deaccessioned"
     assert classify_harvest_error("HTTP 422: Unprocessable Entity") == "HTTP 422: Unprocessable Entity"
     assert classify_harvest_error("HTTP 500: Internal Server Error") == "HTTP 5xx: Server / Upstream Error"
 
@@ -619,3 +650,90 @@ def test_render_harvest_errors_links():
     assert "Detailed Error Records" in output
     assert "doi:10.34894/GJKOCJ" in output
     assert "dataverse.nl" in output
+
+
+def test_fetch_metadata_record_oai_ddi(monkeypatch):
+    import requests
+
+    from dartfx.dataverse.harvester import fetch_metadata_record
+
+    class MockResponse:
+        status_code = 200
+        content = b"<codeBook>Mock OAI-DDI XML</codeBook>"
+
+    def mock_get(url, *_args, **_kwargs):
+        assert "exporter=oai_ddi" in url
+        return MockResponse()
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+    content, ext, err = fetch_metadata_record("demo.dataverse.org", "doi:10.5072/FK2/TEST", metadata_format="oai_ddi")
+    assert content == b"<codeBook>Mock OAI-DDI XML</codeBook>"
+    assert ext == ".oai-ddi.xml"
+    assert err is None
+
+
+def test_fetch_metadata_record_croissant_slim(monkeypatch):
+    import requests
+
+    from dartfx.dataverse.harvester import fetch_metadata_record
+
+    class MockResponse:
+        status_code = 200
+        content = b'{"@context": "http://schema.org", "@type": "Dataset", "name": "Slim Test"}'
+
+    def mock_get(url, *_args, **_kwargs):
+        assert "exporter=croissantSlim" in url
+        return MockResponse()
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+    content, ext, err = fetch_metadata_record(
+        "demo.dataverse.org", "doi:10.5072/FK2/SLIM", metadata_format="croissant_slim"
+    )
+    assert content == b'{"@context": "http://schema.org", "@type": "Dataset", "name": "Slim Test"}'
+    assert ext == ".croissant-slim.json"
+    assert err is None
+
+
+def test_fetch_metadata_record_oai_ore(monkeypatch):
+    import requests
+
+    from dartfx.dataverse.harvester import fetch_metadata_record
+
+    class MockResponse:
+        status_code = 200
+        content = b'{"@id": "https://doi.org/10.5072/FK2/ORE", "describes": {}}'
+
+    def mock_get(url, *_args, **_kwargs):
+        assert "exporter=OAI_ORE" in url
+        return MockResponse()
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+    content, ext, err = fetch_metadata_record("demo.dataverse.org", "doi:10.5072/FK2/ORE", metadata_format="oai_ore")
+    assert content == b'{"@id": "https://doi.org/10.5072/FK2/ORE", "describes": {}}'
+    assert ext == ".ore.json"
+    assert err is None
+
+
+def test_fetch_metadata_record_dcterms(monkeypatch):
+    import requests
+
+    from dartfx.dataverse.harvester import fetch_metadata_record
+
+    class MockResponse:
+        status_code = 200
+        content = b'<dcterms:record xmlns:dcterms="http://purl.org/dc/terms/"><dcterms:title>DC</dcterms:title></dcterms:record>'
+
+    def mock_get(url, *_args, **_kwargs):
+        assert "exporter=dcterms" in url
+        return MockResponse()
+
+    monkeypatch.setattr(requests, "get", mock_get)
+
+    content, ext, err = fetch_metadata_record("demo.dataverse.org", "doi:10.5072/FK2/DC", metadata_format="dcterms")
+    assert content is not None
+    assert b"dcterms:record" in content
+    assert ext == ".dcterms.xml"
+    assert err is None

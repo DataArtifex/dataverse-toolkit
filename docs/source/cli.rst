@@ -445,7 +445,7 @@ Key Features
 ~~~~~~~~~~~~
 
 * **Incremental Synchronization**: Checks timestamps and SHA-256 hashes to download only new and modified datasets.
-* **Multi-Format Support**: Harvests ``croissant``, ``native``, ``ddi``, ``schema.org``, ``datacite``, or ``all`` formats simultaneously.
+* **Multi-Format Support**: Harvests ``croissant``, ``croissant_slim``, ``native``, ``ddi``, ``oai_ddi``, ``schema.org``, ``datacite``, ``oai_ore``, ``dcterms``, or ``all`` formats simultaneously.
 * **Resilient Error Handling**: Short-circuits non-recoverable schema errors and logs failures to ``.manifest.json``.
 * **Repository Caching**: 24-hour catalog caching (``.catalog_cache.json``) for rapid incremental runs.
 
@@ -470,7 +470,7 @@ Arguments & Options
 
 * ``REPO_DIR`` *(positional, optional)*: Local storage repository root directory (or specific server subdirectory). Defaults to ``DARTFX_DATAVERSE_REPOSITORY`` env var or current directory.
 * ``--server``, ``-s`` *(string)*: Filter error report by server hostname or ``ALL`` (default: ``ALL``).
-* ``--by-format`` *(flag)*: Breakdown error counts into a matrix by metadata format (Croissant, Native, DDI, Schema.org, DataCite).
+* ``--by-format`` *(flag)*: Breakdown error counts into a matrix by metadata format (Croissant, Croissant Slim, Native, DDI, OAI-DDI, Schema.org, DataCite, OAI-ORE, DCTerms).
 * ``--by-server`` *(flag)*: Breakdown error counts by server repository hostname.
 * ``--details``, ``-d`` *(flag)*: Display individual failed dataset records, PIDs, formats, categories, and error reasons.
 * ``--format``, ``-f`` *(string)*: Output format: ``table`` (default), ``json``, or ``csv``.

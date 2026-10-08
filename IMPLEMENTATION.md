@@ -21,12 +21,12 @@ The toolkit is designed to be a high-level, type-safe wrapper around the Dataver
     - Automatic fallback synthesis for unlisted/private Dataverse deployments.
 5.  **`ServerHarvester` / Metadata Harvester**: A resilient bulk metadata synchronization subsystem.
     - Consumes the unified `fetch_dataverse_installations` registry engine.
-    - Multi-format harvesting (`croissant`, `native`, `ddi`, `schema.org`, `datacite`).
+    - Multi-format harvesting (`croissant`, `croissant_slim`, `native`, `ddi`, `oai_ddi`, `schema.org`, `datacite`, `oai_ore`, `dcterms`).
     - **Dataset-Level Export Granularity**: Exports are fetched per-dataset from Dataverse endpoints (`/api/datasets/export`). Multi-tabular datasets yield exactly one export document per format with standard-specific inner representations (e.g. multiple `RecordSet` items in Croissant, `<fileDscr>` + `<dataDscr>` variables in DDI).
     - Fast timestamp checking and SHA-256 integrity verification via `.manifest.json`.
     - 24-hour catalog (`.catalog_cache.json`) and server statistics (`.stats_cache.json`) caching.
     - Automated API token discovery and resolution (`.api_token`, `.dataverse_tokens.json`, environment variables).
-    - Intelligent error classification (short-circuiting non-recoverable exporter errors).
+    - **Intelligent Error Classification Engine** (`classify_harvest_error`): Categorizes failure reasons into distinct taxonomies (Croissant format/checksum validation, Exporter Not Supported on Server, Dataverse Server Export Failure, HTTP 401 Authentication Required, HTTP 403 Restricted Dataset, HTTP 403 Forbidden / Bot Protection (WAF), HTTP 404 Not Found, HTTP 410 Deaccessioned, HTTP 5xx Server Errors, Network Timeouts/Connection Failures, Parse Errors, and SSL/TLS Certificate Diagnostics).
 6.  **Server Statistics, Performance Latency & Diagnostics Subsystem**:
     - **Concurrent Metric Queries**: Queries files and tabular files counts in parallel via `ThreadPoolExecutor(max_workers=2)` for low response latency.
     - **Configurable Timeout Protection**: Query timeouts are configurable (default 10s) and explicitly reported in status messages (e.g. `Timeout (10s)`).

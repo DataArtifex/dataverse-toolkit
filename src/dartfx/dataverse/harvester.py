@@ -140,11 +140,26 @@ def get_dataset_metadata_path(server_dir: Path, pid: str, ext: str = ".croissant
 
 FORMAT_EXTENSIONS: dict[str, str] = {
     "croissant": ".croissant.json",
+    "croissant_slim": ".croissant-slim.json",
+    "croissant-slim": ".croissant-slim.json",
+    "croissantslim": ".croissant-slim.json",
     "native": ".dataverse.json",
     "ddi": ".ddi-c.xml",
+    "oai_ddi": ".oai-ddi.xml",
+    "oai-ddi": ".oai-ddi.xml",
     "schema.org": ".schema.json",
     "schemaorg": ".schema.json",
     "datacite": ".datacite.xml",
+    "oai_ore": ".ore.json",
+    "oai-ore": ".ore.json",
+    "oaiore": ".ore.json",
+    "ore": ".ore.json",
+    "dcterms": ".dcterms.xml",
+    "dc": ".dcterms.xml",
+    "dublin_core": ".dcterms.xml",
+    "dublincore": ".dcterms.xml",
+    "oai_dc": ".dcterms.xml",
+    "oai-dc": ".dcterms.xml",
 }
 
 
@@ -425,7 +440,7 @@ def is_format_unsupported_error(err_msg: str | None) -> bool:
 
 
 def is_non_recoverable_error(err_msg: str | None) -> bool:
-    """Determine if an error is non-recoverable (format validation failure, 404, 400, 401, 403, 422, 501)."""
+    """Determine if an error is non-recoverable (validation failure, 4xx/5xx HTTP codes, export failed)."""
     if not err_msg:
         return False
     msg_low = err_msg.lower()
@@ -441,6 +456,7 @@ def is_non_recoverable_error(err_msg: str | None) -> bool:
             "syntaxerror",
             "unsupported format",
             "empty metadata response",
+            "export failed",
         ]
     ):
         return True
@@ -453,6 +469,7 @@ def is_non_recoverable_error(err_msg: str | None) -> bool:
             "http 400",
             "http 401",
             "http 403",
+            "http 410",
             "http 422",
             "http 501",
             "forbidden",
@@ -464,6 +481,21 @@ def is_non_recoverable_error(err_msg: str | None) -> bool:
     return False
 
 
+def _extract_http_error_reason(r: requests.Response) -> str:
+    """Extract informative error reason from HTTP response."""
+    try:
+        data = r.json()
+        if isinstance(data, dict) and "message" in data and data["message"]:
+            return f"HTTP {r.status_code}: {data['message']}"
+    except Exception:
+        pass
+    if r.status_code == 403:
+        return "HTTP 403: Forbidden"
+    if r.status_code == 404:
+        return "HTTP 404: Not Found"
+    return f"HTTP {r.status_code}"
+
+
 def classify_harvest_error(reason: str | None) -> str:
     """
     Categorize an error message string into a standardized, descriptive error category.
@@ -472,28 +504,69 @@ def classify_harvest_error(reason: str | None) -> str:
         return "Unknown Error"
     r_low = reason.lower()
 
+    # 1. Croissant Validation Errors
     if "croissant" in r_low or "mlcroissant" in r_low:
         if any(k in r_low for k in ["md5", "sha256", "fileobject"]):
             return "Croissant Validation: Missing Checksum (md5/sha256)"
         if "mandatory" in r_low or "required" in r_low:
             return "Croissant Validation: Missing Mandatory Field"
-        return "Croissant Validation: Schema Incompatibility"
+        if any(k in r_low for k in ["validation", "schema", "syntax", "parse", "exception"]):
+            return "Croissant Validation: Schema Incompatibility"
 
+    # 2. Exporter Not Supported / Missing on Server
     if any(k in r_low for k in ["not supported", "exporter not found", "module not found", "unsupported format"]):
         return "Exporter Not Supported on Server"
 
+    # 3. Dataverse Server Export Failure (Internal Error / Exporter Crash / Missing Plugin)
+    if any(k in r_low for k in ["export failed", "export error", "exportexception", "failed to export"]):
+        return "Dataverse Server Export Failure"
+
+    # 4. Authentication / Token Required
     if "401" in r_low or "searchapirequirestoken" in r_low or "unauthorized" in r_low:
         return "HTTP 401: Authentication Required (API Token)"
 
-    if "403" in r_low or "forbidden" in r_low or "cloudflare" in r_low or "waf" in r_low or "bot protection" in r_low:
+    # 5. Access Restricted / Permission Denied (Dataset Level)
+    if any(
+        k in r_low
+        for k in [
+            "restricted",
+            "not permitted",
+            "guest is not permitted",
+            "permission denied",
+            "requires authentication",
+        ]
+    ):
+        return "HTTP 403: Restricted Dataset (Authentication Required)"
+
+    # 6. Bot Protection / WAF (Cloudflare, AWS WAF, Akamai, Captcha)
+    if any(
+        k in r_low
+        for k in [
+            "cloudflare",
+            "bot protection",
+            "waf",
+            "captcha",
+            "ddos-guard",
+            "incapsula",
+        ]
+    ):
         return "HTTP 403: Forbidden / Bot Protection (WAF)"
 
-    if "404" in r_low or "not found" in r_low:
-        return "HTTP 404: Dataset / Exporter Not Found"
+    # 7. Generic HTTP 403 Forbidden
+    if "403" in r_low or "forbidden" in r_low:
+        return "HTTP 403: Forbidden"
 
+    # 8. HTTP 404 / 410 (Not Found / Deaccessioned)
+    if "404" in r_low or "not found" in r_low or "could not be found" in r_low:
+        return "HTTP 404: Dataset / Exporter Not Found"
+    if "410" in r_low or "deaccessioned" in r_low or "gone" in r_low:
+        return "HTTP 410: Dataset Deaccessioned"
+
+    # 9. HTTP 422 Unprocessable Entity
     if "422" in r_low or "unprocessable" in r_low:
         return "HTTP 422: Unprocessable Entity"
 
+    # 10. HTTP 5xx Server Errors
     if any(
         k in r_low
         for k in [
@@ -509,6 +582,7 @@ def classify_harvest_error(reason: str | None) -> str:
     ):
         return "HTTP 5xx: Server / Upstream Error"
 
+    # 11. Network Errors
     if any(k in r_low for k in ["timeout", "timed out", "connecttimeout", "readtimeout"]):
         return "Network: Request Timeout"
 
@@ -524,6 +598,7 @@ def classify_harvest_error(reason: str | None) -> str:
     ):
         return "Network: Connection Failure"
 
+    # 12. Parse Errors (XML / JSON)
     if any(
         k in r_low
         for k in [
@@ -533,10 +608,12 @@ def classify_harvest_error(reason: str | None) -> str:
             "xml.etree",
             "invalid xml",
             "invalid json",
+            "empty metadata response",
         ]
     ):
         return "Parse Error: Malformed XML / JSON"
 
+    # 13. SSL / TLS Certificate Diagnostics
     if "ssl" in r_low or "certificate" in r_low:
         if (
             "unable to get local issuer certificate" in r_low
@@ -1305,7 +1382,17 @@ def fetch_active_datasets(
     return active_datasets
 
 
-ALL_SUPPORTED_FORMATS = ["croissant", "native", "ddi", "schema.org", "datacite"]
+ALL_SUPPORTED_FORMATS = [
+    "croissant",
+    "croissant_slim",
+    "native",
+    "ddi",
+    "oai_ddi",
+    "schema.org",
+    "datacite",
+    "oai_ore",
+    "dcterms",
+]
 
 
 def normalize_formats(formats_input: str | list[str] | None) -> list[str]:
@@ -1325,8 +1412,16 @@ def normalize_formats(formats_input: str | list[str] | None) -> list[str]:
                 continue
             if fmt_clean == "all":
                 return list(ALL_SUPPORTED_FORMATS)
-            if fmt_clean == "schemaorg":
+            if fmt_clean in ("croissant-slim", "croissantslim"):
+                fmt_clean = "croissant_slim"
+            elif fmt_clean == "schemaorg":
                 fmt_clean = "schema.org"
+            elif fmt_clean in ("oai-ddi", "oaiddi"):
+                fmt_clean = "oai_ddi"
+            elif fmt_clean in ("oai-ore", "ore", "oaiore"):
+                fmt_clean = "oai_ore"
+            elif fmt_clean in ("dc", "dublin_core", "dublincore", "oai_dc", "oai-dc"):
+                fmt_clean = "dcterms"
             if fmt_clean in ALL_SUPPORTED_FORMATS and fmt_clean not in parsed:
                 parsed.append(fmt_clean)
     return parsed
@@ -1368,12 +1463,10 @@ def fetch_metadata_record(
                 except Exception as py_err:
                     return None, ".croissant.json", f"Croissant exception: {py_err}"
 
-            if r.status_code == 403:
-                return None, ".croissant.json", "HTTP 403: Forbidden (dataset restricted or requires authentication)"
-            elif r.status_code in (404, 501):
+            err_reason = _extract_http_error_reason(r)
+            if r.status_code in (404, 501):
                 return None, ".croissant.json", f"Format 'croissant' not supported on server (HTTP {r.status_code})"
-            else:
-                return None, ".croissant.json", f"HTTP {r.status_code}"
+            return None, ".croissant.json", err_reason
         except Exception as e:
             if Croissant is not None:
                 try:
@@ -1387,6 +1480,27 @@ def fetch_metadata_record(
                     return None, ".croissant.json", f"Croissant exception: {py_err}"
             return None, ".croissant.json", f"Croissant export error: {e}"
 
+    elif fmt in ("croissant_slim", "croissant-slim", "croissantslim"):
+        url = f"{base_host}/api/datasets/export?exporter=croissantSlim&persistentId={urllib.parse.quote(pid)}"
+        if verbose:
+            console.print(f"[dim]  [API] GET {url}[/dim]")
+        try:
+            r = requests.get(url, headers=headers, timeout=20)
+            if r.status_code == 200:
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".croissant-slim.json", None
+                return None, ".croissant-slim.json", "Empty metadata response from server (0 bytes)"
+            else:
+                err_msg = _extract_http_error_reason(r)
+                if verbose:
+                    console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
+                return None, ".croissant-slim.json", err_msg
+        except Exception as e:
+            err_msg = str(e)
+            if verbose:
+                console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
+            return None, ".croissant-slim.json", err_msg
+
     elif fmt == "native":
         url = f"{base_host}/api/datasets/:persistentId/?persistentId={urllib.parse.quote(pid)}"
         if verbose:
@@ -1398,7 +1512,7 @@ def fetch_metadata_record(
                     return r.content, ".dataverse.json", None
                 return None, ".dataverse.json", "Empty metadata response from server (0 bytes)"
             else:
-                err_msg = f"HTTP {r.status_code}"
+                err_msg = _extract_http_error_reason(r)
                 if verbose:
                     console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
                 return None, ".dataverse.json", err_msg
@@ -1419,7 +1533,7 @@ def fetch_metadata_record(
                     return r.content, ".ddi-c.xml", None
                 return None, ".ddi-c.xml", "Empty metadata response from server (0 bytes)"
             else:
-                err_msg = f"HTTP {r.status_code}"
+                err_msg = _extract_http_error_reason(r)
                 if verbose:
                     console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
                 return None, ".ddi-c.xml", err_msg
@@ -1428,6 +1542,27 @@ def fetch_metadata_record(
             if verbose:
                 console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
             return None, ".ddi-c.xml", err_msg
+
+    elif fmt in ("oai_ddi", "oai-ddi"):
+        url = f"{base_host}/api/datasets/export?exporter=oai_ddi&persistentId={urllib.parse.quote(pid)}"
+        if verbose:
+            console.print(f"[dim]  [API] GET {url}[/dim]")
+        try:
+            r = requests.get(url, headers=headers, timeout=20)
+            if r.status_code == 200:
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".oai-ddi.xml", None
+                return None, ".oai-ddi.xml", "Empty metadata response from server (0 bytes)"
+            else:
+                err_msg = _extract_http_error_reason(r)
+                if verbose:
+                    console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
+                return None, ".oai-ddi.xml", err_msg
+        except Exception as e:
+            err_msg = str(e)
+            if verbose:
+                console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
+            return None, ".oai-ddi.xml", err_msg
 
     elif fmt in ("schema.org", "schemaorg"):
         url = f"{base_host}/api/datasets/export?exporter=schema.org&persistentId={urllib.parse.quote(pid)}"
@@ -1440,7 +1575,7 @@ def fetch_metadata_record(
                     return r.content, ".schema.json", None
                 return None, ".schema.json", "Empty metadata response from server (0 bytes)"
             else:
-                err_msg = f"HTTP {r.status_code}"
+                err_msg = _extract_http_error_reason(r)
                 if verbose:
                     console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
                 return None, ".schema.json", err_msg
@@ -1461,7 +1596,7 @@ def fetch_metadata_record(
                     return r.content, ".datacite.xml", None
                 return None, ".datacite.xml", "Empty metadata response from server (0 bytes)"
             else:
-                err_msg = f"HTTP {r.status_code}"
+                err_msg = _extract_http_error_reason(r)
                 if verbose:
                     console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
                 return None, ".datacite.xml", err_msg
@@ -1470,6 +1605,48 @@ def fetch_metadata_record(
             if verbose:
                 console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
             return None, ".datacite.xml", err_msg
+
+    elif fmt in ("oai_ore", "oai-ore", "ore", "oaiore"):
+        url = f"{base_host}/api/datasets/export?exporter=OAI_ORE&persistentId={urllib.parse.quote(pid)}"
+        if verbose:
+            console.print(f"[dim]  [API] GET {url}[/dim]")
+        try:
+            r = requests.get(url, headers=headers, timeout=20)
+            if r.status_code == 200:
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".ore.json", None
+                return None, ".ore.json", "Empty metadata response from server (0 bytes)"
+            else:
+                err_msg = _extract_http_error_reason(r)
+                if verbose:
+                    console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
+                return None, ".ore.json", err_msg
+        except Exception as e:
+            err_msg = str(e)
+            if verbose:
+                console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
+            return None, ".ore.json", err_msg
+
+    elif fmt in ("dcterms", "dc", "dublin_core", "dublincore", "oai_dc", "oai-dc"):
+        url = f"{base_host}/api/datasets/export?exporter=dcterms&persistentId={urllib.parse.quote(pid)}"
+        if verbose:
+            console.print(f"[dim]  [API] GET {url}[/dim]")
+        try:
+            r = requests.get(url, headers=headers, timeout=20)
+            if r.status_code == 200:
+                if r.content and len(r.content.strip()) > 0:
+                    return r.content, ".dcterms.xml", None
+                return None, ".dcterms.xml", "Empty metadata response from server (0 bytes)"
+            else:
+                err_msg = _extract_http_error_reason(r)
+                if verbose:
+                    console.print(f"[bold red]  [API] {err_msg} for {url}[/bold red]")
+                return None, ".dcterms.xml", err_msg
+        except Exception as e:
+            err_msg = str(e)
+            if verbose:
+                console.print(f"[bold red]  [API] Exception for {url}: {e}[/bold red]")
+            return None, ".dcterms.xml", err_msg
 
     return None, ".croissant.json", "Unsupported format"
 
@@ -2084,7 +2261,10 @@ def harvest(
         typer.Option(
             "--format",
             "-f",
-            help="[REQUIRED] Target metadata format(s): croissant, native, ddi, schema.org, datacite, or 'all'.",
+            help=(
+                "[REQUIRED] Target metadata format(s): croissant, croissant_slim, native, ddi, oai_ddi, schema.org, "
+                "datacite, oai_ore, dcterms, or 'all'."
+            ),
         ),
     ] = None,
     limit: Annotated[
@@ -2193,7 +2373,10 @@ def harvest(
         console.print(
             "[yellow]Usage: uv run dartfx-dataverse harvest <OUTPUT_DIR> --format <FORMAT> [OPTIONS][/yellow]"
         )
-        console.print("[yellow]Available formats: croissant, native, ddi, schema.org, datacite, or 'all'[/yellow]")
+        console.print(
+            "[yellow]Available formats: croissant, croissant_slim, native, ddi, oai_ddi, schema.org, "
+            "datacite, oai_ore, dcterms, or 'all'[/yellow]"
+        )
         raise typer.Exit(code=1)
 
     # Initialize Repository Root File Logger

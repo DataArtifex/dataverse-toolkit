@@ -22,7 +22,7 @@ Added
   * Local catalog and statistics 24-hour caching (``.catalog_cache.json`` and ``.stats_cache.json``) with ``--refresh-catalog`` (``-r``) and ``--cache-ttl`` options.
   * Per-server API token resolution via ``.api_token``, ``.dataverse_tokens.json``, and environment variables.
   * Support for multi-format harvesting (``--format all`` or comma-separated lists).
-  * Native Croissant endpoint prioritization with automatic graceful fallback.
+  * Upfront server export format capability probing (``/api/info/exportFormats`` via ``fetch_server_export_formats`` and ``is_format_supported_on_server``) to automatically skip uninstalled exporter formats before making dataset requests, preventing mass HTTP 403 errors on unsupported formats.
   * Single-notice reporting and auto-skipping for unsupported format exporters on remote servers.
 
 * **Environment & Configuration Management**:

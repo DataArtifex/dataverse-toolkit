@@ -737,3 +737,47 @@ def test_fetch_metadata_record_dcterms(monkeypatch):
     assert b"dcterms:record" in content
     assert ext == ".dcterms.xml"
     assert err is None
+
+
+def test_fetch_server_export_formats_and_support_filtering(monkeypatch):
+    import requests
+
+    from dartfx.dataverse.harvester import fetch_server_export_formats, is_format_supported_on_server
+
+    class MockResponse:
+        status_code = 200
+
+        def json(self):
+            return {
+                "status": "OK",
+                "data": {
+                    "OAI_ORE": {},
+                    "Datacite": {},
+                    "oai_dc": {},
+                    "schema.org": {},
+                    "ddi": {},
+                    "dcterms": {},
+                    "dataverse_json": {},
+                    "oai_ddi": {},
+                },
+            }
+
+    monkeypatch.setattr(requests, "get", lambda *_args, **_kwargs: MockResponse())
+
+    exporters = fetch_server_export_formats("borealisdata.ca")
+    assert exporters is not None
+    assert "ddi" in exporters
+    assert "croissantslim" not in exporters
+
+    # Test format support checking
+    assert is_format_supported_on_server("native", exporters) is True
+    assert is_format_supported_on_server("ddi", exporters) is True
+    assert is_format_supported_on_server("oai_ddi", exporters) is True
+    assert is_format_supported_on_server("schema.org", exporters) is True
+    assert is_format_supported_on_server("datacite", exporters) is True
+    assert is_format_supported_on_server("oai_ore", exporters) is True
+    assert is_format_supported_on_server("dcterms", exporters) is True
+    assert is_format_supported_on_server("croissant_slim", exporters) is False
+
+    # When exporters is None (endpoint unavailable), assume True as fallback
+    assert is_format_supported_on_server("croissant_slim", None) is True

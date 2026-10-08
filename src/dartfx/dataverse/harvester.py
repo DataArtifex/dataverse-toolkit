@@ -416,6 +416,79 @@ def normalize_doi(doi_str: str) -> str:
     return raw
 
 
+FORMAT_EXPORTER_REQUIREMENTS: dict[str, list[str]] = {
+    "croissant": ["croissant"],
+    "croissant_slim": ["croissantslim", "croissant_slim"],
+    "native": [],
+    "ddi": ["ddi"],
+    "oai_ddi": ["oai_ddi"],
+    "schema.org": ["schema.org"],
+    "datacite": ["oai_datacite", "datacite"],
+    "oai_ore": ["oai_ore"],
+    "dcterms": ["dcterms", "oai_dc"],
+}
+
+
+def fetch_server_export_formats(
+    host: str,
+    verbose: bool = False,
+    api_token: str | None = None,
+    repo_root: Path | None = None,
+    timeout: int = 10,
+) -> set[str] | None:
+    """
+    Query Dataverse /api/info/exportFormats to discover installed exporter plugins.
+    Returns a set of lowercase exporter identifiers, or None if endpoint is unavailable.
+    """
+    base_host = f"https://{host}" if not host.startswith("http") else host
+    url = f"{base_host}/api/info/exportFormats"
+    headers = get_request_headers(host=host, api_token=api_token, repo_root=repo_root)
+
+    try:
+        r = requests.get(url, headers=headers, timeout=timeout)
+        if r.status_code == 200:
+            data = r.json()
+            if isinstance(data, dict) and data.get("status") == "OK":
+                raw_formats = data.get("data", {})
+                if isinstance(raw_formats, dict):
+                    exporters = {str(k).strip().lower() for k in raw_formats.keys()}
+                    if verbose:
+                        console.print(
+                            f"[dim]  [API] Discovered export formats on {host}: {', '.join(sorted(exporters))}[/dim]"
+                        )
+                    return exporters
+        elif r.status_code in (404, 501):
+            if verbose:
+                console.print(
+                    f"[dim]  [API] /api/info/exportFormats not available on {host} (HTTP {r.status_code})[/dim]"
+                )
+    except Exception as e:
+        if verbose:
+            console.print(f"[dim]  [API] Failed probing export formats on {host}: {e}[/dim]")
+
+    return None
+
+
+def is_format_supported_on_server(fmt: str, server_exporters: set[str] | None) -> bool:
+    """
+    Check if a metadata format is supported based on server's /api/info/exportFormats response.
+    Returns True if format is supported, or if server capabilities are unknown (fallback to runtime).
+    """
+    fmt_clean = fmt.strip().lower()
+    if server_exporters is None:
+        return True
+
+    reqs = FORMAT_EXPORTER_REQUIREMENTS.get(fmt_clean, [fmt_clean])
+    if not reqs:  # e.g. native JSON
+        return True
+
+    # For croissant, if server lacks exporter but pyDataverse is available, Croissant can be built dynamically
+    if fmt_clean == "croissant" and Croissant is not None:
+        return True
+
+    return any(req.lower() in server_exporters for req in reqs)
+
+
 def is_format_unsupported_error(err_msg: str | None) -> bool:
     """Determine if an error indicates that a metadata format exporter is completely unavailable on the server."""
     if not err_msg:
@@ -1838,9 +1911,24 @@ class ServerHarvester:
                             del self.manifest["records"][key]
 
         # Determine Additions and Updates across all requested formats:
-        total_items = len(active_datasets) * len(target_formats)
-        current_item = 0
+        server_exporters = fetch_server_export_formats(
+            self.host,
+            verbose=verbose,
+            repo_root=self.server_dir.parent,
+        )
         unsupported_formats: set[str] = set()
+
+        for fmt in target_formats:
+            if not is_format_supported_on_server(fmt, server_exporters):
+                unsupported_formats.add(fmt)
+                available_str = f" (available: {', '.join(sorted(server_exporters))})" if server_exporters else ""
+                msg = f"Exporter format '{fmt}' is not installed on {self.host}{available_str} - skipping."
+                console.print(f"  [bold yellow][!] {msg}[/bold yellow]")
+                file_logger.log(msg, level="WARNING")
+
+        active_target_formats = [f for f in target_formats if f not in unsupported_formats]
+        total_items = len(active_datasets) * len(active_target_formats)
+        current_item = 0
 
         for pid, meta in active_datasets.items():
             for fmt in target_formats:

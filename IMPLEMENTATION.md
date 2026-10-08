@@ -22,6 +22,7 @@ The toolkit is designed to be a high-level, type-safe wrapper around the Dataver
 5.  **`ServerHarvester` / Metadata Harvester**: A resilient bulk metadata synchronization subsystem.
     - Consumes the unified `fetch_dataverse_installations` registry engine.
     - Multi-format harvesting (`croissant`, `croissant_slim`, `native`, `ddi`, `oai_ddi`, `schema.org`, `datacite`, `oai_ore`, `dcterms`).
+    - **Upfront Exporter Capability Probing** (`fetch_server_export_formats`, `is_format_supported_on_server`): Probes `/api/info/exportFormats` before dataset iterations to discover installed exporter plugins per server and cleanly skip unsupported formats without making futile HTTP requests.
     - **Dataset-Level Export Granularity**: Exports are fetched per-dataset from Dataverse endpoints (`/api/datasets/export`). Multi-tabular datasets yield exactly one export document per format with standard-specific inner representations (e.g. multiple `RecordSet` items in Croissant, `<fileDscr>` + `<dataDscr>` variables in DDI).
     - Fast timestamp checking and SHA-256 integrity verification via `.manifest.json`.
     - 24-hour catalog (`.catalog_cache.json`) and server statistics (`.stats_cache.json`) caching.

@@ -1,16 +1,15 @@
 # dartfx-dataverse
 
-
 [![Development Status](https://img.shields.io/badge/status-early%20release-orange.svg)](https://github.com/DataArtifex/dataverse-toolkit)
-[![Documentation](https://img.shields.io/badge/docs-blue)](https://www.dataartifex.org/docs/dartfx-dataverse/)
-[![Ask DeepWiki](https://img.shields.io/badge/Ask%20DeepWiki-AI%20Docs-5C54E5?logo=bookstack&logoColor=white)](https://deepwiki.com/DataArtifex/dataverse-toolkit)
+[![Documentation](https://img.shields.io/badge/docs-blue)](https://www.dataartifex.org/dataverse-toolkit/)
+[![Ask DeepWiki](https://img.shields.io/badge/Ask%20DeepWiki-AI%20Docs-5C54E5)](https://deepwiki.com/DataArtifex/dataverse-toolkit)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Package Status](https://img.shields.io/badge/PyPI-not%20published-lightgrey)](https://github.com/DataArtifex/dataverse-toolkit)
 [![CI](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml/badge.svg)](https://github.com/DataArtifex/dataverse-toolkit/actions/workflows/test.yml)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230.svg?logo=ruff&logoColor=D7FF64)](https://github.com/astral-sh/ruff)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
-[![License](https://img.shields.io/github/license/DataArtifex/dataverse-toolkit.svg)](https://github.com/DataArtifex/dataverse-toolkit/blob/main/LICENSE.txt)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE.txt)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
 **A Python toolkit for interacting with Dataverse repositories**
 
